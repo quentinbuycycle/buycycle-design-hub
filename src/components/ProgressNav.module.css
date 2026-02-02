@@ -1,0 +1,86 @@
+/* ProgressNav - buycycle design system styling */
+.nav {
+  position: fixed;
+  left: var(--space-6);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: var(--space-4);
+  z-index: 50;
+}
+
+.progressBar {
+  width: 3px;
+  height: 200px;
+  background: var(--border-tertiary);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.progressFill {
+  width: 100%;
+  background: var(--content-primary);
+  border-radius: 100px;
+  transition: height 100ms ease-out;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--content-tertiary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.section:hover {
+  color: var(--content-secondary);
+  background: var(--bg-secondary);
+}
+
+.section.active {
+  color: var(--content-primary);
+}
+
+.section.active .number {
+  background: var(--content-primary);
+  color: var(--content-primary-reverse);
+}
+
+.number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: var(--bg-secondary);
+  border-radius: 50%;
+  font-weight: var(--font-medium);
+  font-size: 10px;
+  transition: all var(--transition-fast);
+}
+
+.title {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1280px) {
+  .nav {
+    display: none;
+  }
+}

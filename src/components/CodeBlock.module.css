@@ -1,0 +1,99 @@
+/* CodeBlock - light theme styling */
+.container {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: var(--space-4) 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-quartenary);
+  border-bottom: 1px solid var(--border-tertiary);
+}
+
+.language {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  color: var(--content-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.copyButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 4px;
+  color: var(--content-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.copyButton:hover {
+  background: var(--bg-primary);
+  color: var(--content-primary);
+  border-color: var(--border-secondary);
+}
+
+.copyButton svg {
+  flex-shrink: 0;
+}
+
+.pre {
+  margin: 0;
+  padding: var(--space-4);
+  overflow-x: auto;
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  color: var(--content-primary);
+}
+
+.line {
+  display: flex;
+}
+
+.lineNumber {
+  flex-shrink: 0;
+  width: 3ch;
+  color: var(--content-quartenary);
+  text-align: right;
+  margin-right: var(--space-4);
+  user-select: none;
+}
+
+.lineContent {
+  flex: 1;
+}
+
+/* Scrollbar for code blocks */
+.pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.pre::-webkit-scrollbar-thumb {
+  background: var(--border-tertiary);
+  border-radius: 3px;
+}
+
+.pre::-webkit-scrollbar-thumb:hover {
+  background: var(--border-secondary);
+}

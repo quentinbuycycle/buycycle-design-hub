@@ -1,0 +1,112 @@
+/* StepCard - buycycle design system styling */
+.card {
+  position: relative;
+  padding: var(--space-6);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.card:hover {
+  border-color: var(--border-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.numberBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: var(--bg-quartenary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  color: var(--content-primary);
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+}
+
+.numberBadge svg {
+  width: 20px;
+  height: 20px;
+  color: var(--content-primary);
+}
+
+.titleGroup {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-xl);
+  line-height: var(--leading-xl);
+  font-weight: var(--font-medium);
+  color: var(--content-primary);
+}
+
+.description {
+  margin: 0;
+  color: var(--content-tertiary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+}
+
+.content {
+  color: var(--content-secondary);
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+}
+
+.content p {
+  margin: 0 0 var(--space-4);
+}
+
+.content p:last-child {
+  margin-bottom: 0;
+}
+
+.content ul,
+.content ol {
+  margin: var(--space-4) 0;
+  padding-left: var(--space-6);
+}
+
+.content li {
+  margin-bottom: var(--space-2);
+}
+
+.content li:last-child {
+  margin-bottom: 0;
+}
+
+.content strong {
+  color: var(--content-primary);
+  font-weight: var(--font-medium);
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: var(--space-4);
+  }
+
+  .header {
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .numberBadge {
+    width: 40px;
+    height: 40px;
+  }
+}
