@@ -11,13 +11,13 @@
 .heroContent {
   max-width: 600px;
   margin: 0 auto;
-  animation: fadeInUp 600ms ease-out;
 }
 
-@keyframes fadeInUp {
+/* Hero entrance animations */
+@keyframes heroFadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -31,6 +31,7 @@
   font-weight: var(--font-bold);
   letter-spacing: -0.03em;
   color: var(--content-primary);
+  animation: heroFadeIn var(--duration-entrance) var(--ease-out) forwards;
 }
 
 .heroSubtitle {
@@ -38,6 +39,8 @@
   font-size: clamp(1rem, 2vw, 1.15rem);
   color: var(--content-secondary);
   line-height: var(--leading-base);
+  animation: heroFadeIn var(--duration-entrance) var(--ease-out) forwards;
+  animation-delay: var(--stagger-fast);
 }
 
 /* Container */
@@ -85,6 +88,25 @@
 .timelineItem {
   display: flex;
   gap: var(--space-6);
+  animation: timelineItemIn var(--duration-entrance) var(--ease-out) backwards;
+}
+
+.timelineItem:nth-child(1) { animation-delay: calc(var(--stagger-slow) * 1); }
+.timelineItem:nth-child(2) { animation-delay: calc(var(--stagger-slow) * 2); }
+.timelineItem:nth-child(3) { animation-delay: calc(var(--stagger-slow) * 3); }
+.timelineItem:nth-child(4) { animation-delay: calc(var(--stagger-slow) * 4); }
+.timelineItem:nth-child(5) { animation-delay: calc(var(--stagger-slow) * 5); }
+.timelineItem:nth-child(6) { animation-delay: calc(var(--stagger-slow) * 6); }
+
+@keyframes timelineItemIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .timelineConnector {
@@ -108,6 +130,19 @@
   font-size: var(--text-lg);
   font-weight: var(--font-bold);
   flex-shrink: 0;
+  animation: numberScaleIn var(--duration-entrance) var(--ease-out) backwards;
+  animation-delay: inherit;
+}
+
+@keyframes numberScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .timelineLine {
@@ -293,11 +328,28 @@
   background: var(--bg-primary);
   border: 1px solid var(--border-tertiary);
   border-radius: 6px;
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+  animation: tipCardIn 250ms var(--ease-out) backwards;
+}
+
+.tipCard:nth-child(1) { animation-delay: var(--stagger-base); }
+.tipCard:nth-child(2) { animation-delay: calc(var(--stagger-base) * 2); }
+.tipCard:nth-child(3) { animation-delay: calc(var(--stagger-base) * 3); }
+
+@keyframes tipCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tipCard:hover {
   border-color: var(--border-accent-green);
+  transform: translateY(-2px);
 }
 
 .tipNumber {
@@ -389,6 +441,11 @@
   border: 1px solid var(--border-accent-green);
   border-radius: 4px;
   color: var(--content-accent-green);
+  transition: transform var(--transition-fast);
+}
+
+.commandCode:hover {
+  transform: scale(1.02);
 }
 
 /* Footer */
