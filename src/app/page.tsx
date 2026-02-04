@@ -12,11 +12,12 @@ import Link from "next/link";
 
 const sections = [
   { id: "step-1", title: "Install Claude Code", number: 1 },
-  { id: "step-2", title: "Install Cursor", number: 2 },
-  { id: "step-3", title: "Add Extension", number: 3 },
-  { id: "step-4", title: "Workspace Layout", number: 4 },
-  { id: "step-5", title: "Design System", number: 5 },
-  { id: "step-6", title: "Commands Setup", number: 6 },
+  { id: "step-2", title: "Authenticate", number: 2 },
+  { id: "step-3", title: "Install Cursor", number: 3 },
+  { id: "step-4", title: "Add Extension", number: 4 },
+  { id: "step-5", title: "Workspace Layout", number: 5 },
+  { id: "step-6", title: "Design System", number: 6 },
+  { id: "step-7", title: "Commands Setup", number: 7 },
 ];
 
 const shortcuts = [
@@ -60,7 +61,7 @@ export default function SetupPage() {
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                 <polyline points="22 4 12 14.01 9 11.01" />
               </svg>
-              <span>6 steps</span>
+              <span>7 steps</span>
             </div>
           </div>
         </div>
@@ -90,15 +91,34 @@ export default function SetupPage() {
               />
               <p>Once installed, verify it&apos;s working:</p>
               <CodeBlock code="claude --version" language="bash" />
+            </StepCard>
+
+            {/* Step 2: Authenticate Claude Code */}
+            <StepCard
+              number={2}
+              title="Authenticate Claude Code"
+              description="Sign in with your Anthropic account"
+              icon={
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              }
+            >
+              <p>Run Claude in your terminal to start the authentication flow:</p>
+              <CodeBlock code="claude" language="bash" />
               <p>
-                Then authenticate by running <code>claude</code> and following the browser login prompt.
-                You&apos;ll be redirected to sign in with your Anthropic account.
+                This will open your browser where you can sign in with your Anthropic account.
+                Once authenticated, you&apos;ll be ready to use Claude Code.
+              </p>
+              <p className={styles.tip}>
+                <strong>Tip:</strong> If the browser doesn&apos;t open automatically, copy the URL from the terminal and paste it in your browser.
               </p>
             </StepCard>
 
-            {/* Step 2: Install Cursor */}
+            {/* Step 3: Install Cursor */}
             <StepCard
-              number={2}
+              number={3}
               title="Install Cursor"
               description="The AI-first code editor"
               icon={
@@ -125,9 +145,9 @@ export default function SetupPage() {
               </ul>
             </StepCard>
 
-            {/* Step 3: Add Claude Code Extension */}
+            {/* Step 4: Add Claude Code Extension */}
             <StepCard
-              number={3}
+              number={4}
               title="Add Claude Code Extension"
               description="Connect Claude to your editor"
               icon={
@@ -151,9 +171,9 @@ export default function SetupPage() {
               </p>
             </StepCard>
 
-            {/* Step 4: Workspace Layout */}
+            {/* Step 5: Workspace Layout */}
             <StepCard
-              number={4}
+              number={5}
               title="Workspace Layout"
               description="Set up the optimal 3-panel view"
               icon={
@@ -178,9 +198,9 @@ export default function SetupPage() {
               </div>
             </StepCard>
 
-            {/* Step 5: Design System Setup */}
+            {/* Step 6: Design System Setup */}
             <StepCard
-              number={5}
+              number={6}
               title="Design System Setup"
               description="Configure buycycle's design tokens"
               icon={
@@ -210,9 +230,9 @@ export default function SetupPage() {
               </p>
             </StepCard>
 
-            {/* Step 6: Commands Setup */}
+            {/* Step 7: Commands Setup */}
             <StepCard
-              number={6}
+              number={7}
               title="Commands Setup"
               description="Add custom slash commands"
               icon={
