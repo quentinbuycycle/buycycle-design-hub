@@ -1,0 +1,292 @@
+/* Upload Page */
+
+.page {
+  min-height: calc(100vh - 72px);
+  background: var(--bg-primary);
+}
+
+/* Password gate & success screen */
+.gateContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 72px);
+  padding: var(--space-6);
+}
+
+.gateCard {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--space-8);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  text-align: center;
+  animation: fadeInUp var(--duration-entrance) var(--ease-out) forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gateIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--space-6);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  color: var(--content-tertiary);
+}
+
+.successIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--space-6);
+  background: var(--bg-positive);
+  border: 1px solid var(--border-positive);
+  border-radius: 6px;
+  color: var(--content-positive);
+}
+
+.gateTitle {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-medium);
+  color: var(--content-primary);
+}
+
+.gateText {
+  margin: 0 0 var(--space-6);
+  font-size: var(--text-sm);
+  color: var(--content-tertiary);
+  line-height: var(--leading-sm);
+}
+
+.gateForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.successActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.errorMessage {
+  margin: var(--space-4) 0 0;
+  font-size: var(--text-sm);
+  color: var(--content-alert);
+}
+
+/* Form container */
+.container {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-6);
+}
+
+.header {
+  margin-bottom: var(--space-8);
+  animation: fadeInUp var(--duration-entrance) var(--ease-out) forwards;
+}
+
+.title {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  color: var(--content-primary);
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: var(--text-base);
+  color: var(--content-tertiary);
+  line-height: var(--leading-base);
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  animation: fadeInUp var(--duration-entrance) var(--ease-out) forwards;
+  animation-delay: var(--stagger-fast);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--content-primary);
+  line-height: var(--leading-sm);
+}
+
+.helper {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--content-quartenary);
+  line-height: var(--leading-xs);
+}
+
+/* Inputs */
+.input {
+  height: 44px;
+  padding: 0 var(--space-3);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  color: var(--content-primary);
+  transition: border-color var(--transition-fast);
+}
+
+.input::placeholder {
+  color: var(--content-quartenary);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--content-primary);
+}
+
+.select {
+  height: 44px;
+  padding: 0 var(--space-3);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  color: var(--content-primary);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23535353' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--content-primary);
+}
+
+.textarea {
+  padding: var(--space-3);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  color: var(--content-primary);
+  line-height: var(--leading-base);
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color var(--transition-fast);
+}
+
+.textarea::placeholder {
+  color: var(--content-quartenary);
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--content-primary);
+}
+
+.fileInput {
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-tertiary);
+  border-radius: 6px;
+  font-family: var(--font-primary);
+  font-size: var(--text-sm);
+  color: var(--content-secondary);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.fileInput:hover {
+  border-color: var(--border-secondary);
+}
+
+.fileInput:focus {
+  outline: none;
+  border-color: var(--content-primary);
+}
+
+/* Error banner */
+.errorBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-alert);
+  border: 1px solid var(--content-alert);
+  border-radius: 6px;
+  font-size: var(--text-sm);
+  color: var(--content-alert);
+  line-height: var(--leading-sm);
+}
+
+.errorBanner svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--content-primary-reverse);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 600ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .gateContainer {
+    padding: var(--space-4);
+  }
+
+  .gateCard {
+    padding: var(--space-6);
+  }
+}

@@ -20,12 +20,23 @@ function formatDate(dateStr: string): string {
   });
 }
 
+function isWithinLast30Days(dateStr: string): boolean {
+  if (!dateStr) return false;
+  const date = new Date(dateStr);
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30);
+  return date >= thirtyDaysAgo;
+}
+
 export function OutputGallery({ studies, allTags }: OutputGalleryProps) {
   const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [recentOnly, setRecentOnly] = useState(false);
 
-  const filtered = activeTag
-    ? studies.filter((s) => s.tags.includes(activeTag))
-    : studies;
+  const filtered = studies.filter((s) => {
+    if (activeTag && !s.tags.includes(activeTag)) return false;
+    if (recentOnly && !isWithinLast30Days(s.date)) return false;
+    return true;
+  });
 
   return (
     <section className={styles.main}>
@@ -48,6 +59,13 @@ export function OutputGallery({ studies, allTags }: OutputGalleryProps) {
                 {tag}
               </button>
             ))}
+            <span className={styles.filterDivider} />
+            <button
+              className={`${styles.filterPill} ${recentOnly ? styles.filterPillActive : ""}`}
+              onClick={() => setRecentOnly(!recentOnly)}
+            >
+              Last 30 days
+            </button>
           </div>
         )}
 
@@ -55,7 +73,11 @@ export function OutputGallery({ studies, allTags }: OutputGalleryProps) {
         {filtered.length > 0 ? (
           <div className={styles.cardsGrid}>
             {filtered.map((study) => (
-              <article key={study.slug} className={styles.card}>
+              <Link
+                key={study.slug}
+                href={`/output/${study.slug}`}
+                className={styles.card}
+              >
                 <h3 className={styles.cardTitle}>{study.title}</h3>
                 <div className={styles.cardMeta}>
                   <span>{study.author}</span>
@@ -74,25 +96,7 @@ export function OutputGallery({ studies, allTags }: OutputGalleryProps) {
                 {study.preview && (
                   <p className={styles.cardPreview}>{study.preview}</p>
                 )}
-                <Link
-                  href={`/output/${study.slug}`}
-                  className={styles.readMore}
-                >
-                  Read more
-                  <svg
-                    className={styles.readMoreArrow}
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M5 12h14" />
-                    <path d="M12 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              </article>
+              </Link>
             ))}
           </div>
         ) : (
@@ -112,9 +116,11 @@ export function OutputGallery({ studies, allTags }: OutputGalleryProps) {
                 <line x1="9" y1="15" x2="15" y2="15" />
               </svg>
             </div>
-            <h3 className={styles.emptyTitle}>No output published yet</h3>
+            <h3 className={styles.emptyTitle}>No case studies found</h3>
             <p className={styles.emptyText}>
-              Be the first — run the publish command in Claude Code.
+              {activeTag || recentOnly
+                ? "Try adjusting your filters."
+                : "Be the first — run the publish command in Claude Code."}
             </p>
           </div>
         )}

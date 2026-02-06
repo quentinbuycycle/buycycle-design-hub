@@ -20,6 +20,7 @@ export function Navigation() {
 
   const navItems = [
     { href: "/output", label: "Output" },
+    { href: "/upload", label: "Upload" },
     { href: "/onboarding", label: "Onboarding", exact: true },
     { href: "/onboarding/downloads", label: "Downloads" },
   ];

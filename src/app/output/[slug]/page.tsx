@@ -63,19 +63,23 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
             <span className={styles.metaText}>{study.author}</span>
             <span className={styles.metaDot} />
             <span className={styles.metaText}>{formatDate(study.date)}</span>
-            {study.tags.length > 0 && (
-              <>
-                <span className={styles.metaDot} />
-                <div className={styles.tags}>
-                  {study.tags.map((tag) => (
-                    <span key={tag} className={styles.tag}>
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </>
-            )}
           </div>
+          {study.tags.length > 0 && (
+            <div className={styles.tagRow}>
+              {study.tags[0] && (
+                <span className={styles.tagLabeled}>
+                  <span className={styles.tagCategory}>User type</span>
+                  {study.tags[0]}
+                </span>
+              )}
+              {study.tags[1] && (
+                <span className={styles.tagLabeled}>
+                  <span className={styles.tagCategory}>Core flow</span>
+                  {study.tags[1]}
+                </span>
+              )}
+            </div>
+          )}
           {study.prototype && (
             <a
               href={`/output/prototypes/${study.slug}.html`}

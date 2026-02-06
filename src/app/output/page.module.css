@@ -91,6 +91,13 @@
   font-weight: var(--font-medium);
 }
 
+.filterDivider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-tertiary);
+  align-self: center;
+}
+
 /* Cards Grid */
 .cardsGrid {
   display: grid;
@@ -106,6 +113,9 @@
   background: var(--bg-tertiary);
   border: 1px solid var(--border-tertiary);
   border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
   transition: border-color var(--transition-base),
               box-shadow var(--transition-base),
               transform var(--transition-base);
@@ -175,33 +185,11 @@
 }
 
 .cardPreview {
-  margin: 0 0 var(--space-4);
+  margin: 0;
   font-size: var(--text-sm);
   line-height: var(--leading-sm);
   color: var(--content-secondary);
   flex: 1;
-}
-
-.readMore {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--text-sm);
-  font-weight: var(--font-medium);
-  color: var(--content-primary);
-  transition: gap var(--transition-fast);
-}
-
-.readMore:hover {
-  gap: var(--space-2);
-}
-
-.readMoreArrow {
-  transition: transform var(--transition-fast);
-}
-
-.readMore:hover .readMoreArrow {
-  transform: translateX(2px);
 }
 
 /* Empty State */
