@@ -10,8 +10,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Claude Code + Cursor Setup | buycycle",
-  description: "Your AI-powered workflow for writing tickets, specs, and documentation at buycycle",
+  title: "buycycle Design Hub",
+  description: "Design resources, onboarding, and case studies for the buycycle design team",
   icons: {
     icon: "/favicon.ico",
   },

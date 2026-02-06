@@ -123,7 +123,7 @@ export default function DownloadsPage() {
               </p>
               <p>
                 For detailed instructions, see the{" "}
-                <Link href="/" className={styles.link}>
+                <Link href="/onboarding" className={styles.link}>
                   Setup Guide
                 </Link>
               </p>

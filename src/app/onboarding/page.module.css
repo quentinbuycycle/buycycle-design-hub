@@ -1,0 +1,327 @@
+/* Hero Section - buycycle design system styling */
+.hero {
+  position: relative;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, var(--bg-accent-green), transparent 70%),
+    var(--bg-primary);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 700px;
+}
+
+/* Hero entrance animations - staggered */
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--bg-accent-green);
+  border: 1px solid var(--border-accent-green);
+  border-radius: 100px;
+  font-size: var(--text-sm);
+  color: var(--content-accent-green);
+  font-weight: var(--font-medium);
+  margin-bottom: var(--space-6);
+  animation: heroFadeIn var(--duration-entrance) var(--ease-out) forwards;
+}
+
+.badgeDot {
+  width: 6px;
+  height: 6px;
+  background: var(--content-accent-green);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.heroTitle {
+  margin: 0 0 var(--space-4);
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: var(--font-bold);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--content-primary);
+  animation: heroFadeIn var(--duration-entrance) var(--ease-out) forwards;
+  animation-delay: var(--stagger-fast);
+}
+
+.heroTitleAccent {
+  position: relative;
+  display: inline-block;
+}
+
+.heroTitleAccent::after {
+  content: '';
+  position: absolute;
+  bottom: 0.1em;
+  left: 0;
+  right: 0;
+  height: 0.3em;
+  background: var(--bg-accent-yellow);
+  z-index: -1;
+  border-radius: 2px;
+}
+
+.heroSubtitle {
+  margin: 0 0 var(--space-8);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--content-secondary);
+  line-height: var(--leading-base);
+  animation: heroFadeIn var(--duration-entrance) var(--ease-out) forwards;
+  animation-delay: calc(var(--stagger-fast) * 2);
+}
+
+.heroMeta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  animation: heroFadeIn var(--duration-entrance) var(--ease-out) forwards;
+  animation-delay: calc(var(--stagger-fast) * 3);
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--content-tertiary);
+  font-size: var(--text-sm);
+}
+
+.metaItem svg {
+  color: var(--content-accent-green);
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+/* Steps Section */
+.stepsSection {
+  padding: var(--space-8) 0 var(--space-12);
+}
+
+.stepsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+/* Links - Tertiary button pattern with accent */
+.link {
+  color: var(--content-information);
+  text-decoration: underline;
+  font-weight: var(--font-regular);
+  transition: all var(--transition-fast);
+}
+
+.link:hover {
+  font-weight: var(--font-medium);
+}
+
+/* Tips - using accent yellow for visual pop */
+.tip {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--bg-accent-yellow);
+  border: 1px solid var(--border-accent-yellow);
+  border-left: 3px solid var(--content-accent-yellow);
+  border-radius: 6px;
+  font-size: var(--text-sm);
+  color: var(--content-accent-yellow);
+}
+
+.tip strong {
+  color: var(--content-accent-yellow);
+}
+
+/* Notes - using information blue for important info */
+.note {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--bg-information);
+  border: 1px solid var(--border-information);
+  border-left: 3px solid var(--content-information);
+  border-radius: 6px;
+  font-size: var(--text-sm);
+  color: var(--content-information);
+}
+
+/* Shortcuts Card */
+.shortcutsCard {
+  margin-top: var(--space-6);
+  padding: var(--space-6);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+}
+
+.shortcutsCard h4 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-base);
+  font-weight: var(--font-medium);
+  color: var(--content-primary);
+}
+
+/* Reference Section */
+.referenceSection {
+  padding: var(--space-12) 0;
+  background:
+    linear-gradient(135deg, var(--bg-accent-green) 0%, transparent 50%),
+    var(--bg-secondary);
+  border-top: 1px solid var(--border-tertiary);
+  border-bottom: 1px solid var(--border-tertiary);
+}
+
+.referenceCard {
+  padding: var(--space-8);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.referenceTitle {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-medium);
+  color: var(--content-primary);
+}
+
+.referenceSubtitle {
+  margin: 0 0 var(--space-8);
+  color: var(--content-tertiary);
+  font-size: var(--text-base);
+}
+
+/* Troubleshooting Section */
+.troubleshootingSection {
+  padding: var(--space-12) 0;
+}
+
+.sectionTitle {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-medium);
+  text-align: center;
+  color: var(--content-primary);
+}
+
+.sectionSubtitle {
+  margin: 0 0 var(--space-8);
+  color: var(--content-tertiary);
+  text-align: center;
+  font-size: var(--text-base);
+}
+
+/* Footer */
+.footer {
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--border-tertiary);
+}
+
+.footerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--content-primary);
+  font-weight: var(--font-medium);
+}
+
+.footerBrand p {
+  margin: 0;
+  color: var(--content-tertiary);
+  font-size: var(--text-sm);
+}
+
+.footerContact {
+  text-align: right;
+}
+
+.footerContact p {
+  margin: 0;
+  color: var(--content-secondary);
+  font-size: var(--text-sm);
+}
+
+.footerContact strong {
+  color: var(--content-primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero {
+    min-height: 40vh;
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .heroMeta {
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .container {
+    padding: 0 var(--space-4);
+  }
+
+  .referenceCard {
+    padding: var(--space-6);
+  }
+
+  .footerContent {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footerContact {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+}

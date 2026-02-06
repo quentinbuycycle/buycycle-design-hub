@@ -19,9 +19,8 @@ export function Navigation() {
   }, []);
 
   const navItems = [
-    { href: "/", label: "Setup Guide" },
-    { href: "/how-to-use", label: "How to Use" },
-    { href: "/downloads", label: "Downloads" },
+    { href: "/output", label: "Output" },
+    { href: "/onboarding", label: "Onboarding" },
   ];
 
   return (
@@ -37,20 +36,26 @@ export function Navigation() {
           </div>
           <span className={styles.logoText}>buycycle</span>
           <span className={styles.logoDivider}>/</span>
-          <span className={styles.logoSub}>onboarding</span>
+          <span className={styles.logoSub}>design hub</span>
         </Link>
 
         <div className={styles.navLinks}>
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`${styles.navLink} ${pathname === item.href ? styles.active : ""}`}
-            >
-              {item.label}
-              {pathname === item.href && <span className={styles.activeIndicator} />}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const isActive =
+              item.href === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`${styles.navLink} ${isActive ? styles.active : ""}`}
+              >
+                {item.label}
+                {isActive && <span className={styles.activeIndicator} />}
+              </Link>
+            );
+          })}
         </div>
 
         <button
@@ -67,16 +72,22 @@ export function Navigation() {
 
         {mobileMenuOpen && (
           <div className={styles.mobileMenu}>
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`${styles.mobileNavLink} ${pathname === item.href ? styles.active : ""}`}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const isActive =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`${styles.mobileNavLink} ${isActive ? styles.active : ""}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
         )}
       </nav>
