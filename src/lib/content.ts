@@ -14,6 +14,7 @@ export interface CaseStudyMeta {
   author: string;
   tags: string[];
   thumbnail: string;
+  prototype: string;
 }
 
 export interface CaseStudyCard extends CaseStudyMeta {
@@ -38,6 +39,7 @@ function parseMeta(slug: string, data: Record<string, unknown>): CaseStudyMeta {
     author: (data.author as string) ?? "",
     tags: (data.tags as string[]) ?? [],
     thumbnail: (data.thumbnail as string) ?? "",
+    prototype: (data.prototype as string) ?? "",
   };
 }
 

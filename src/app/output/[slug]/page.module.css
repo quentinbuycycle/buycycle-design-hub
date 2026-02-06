@@ -99,6 +99,42 @@
   color: var(--content-accent-green);
 }
 
+/* Prototype button */
+.prototypeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-accent-green);
+  border: 1px solid var(--border-accent-green);
+  border-radius: 6px;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--content-accent-green);
+  transition: all var(--transition-base);
+  animation: fadeIn var(--duration-entrance) var(--ease-out) forwards;
+  animation-delay: calc(var(--stagger-fast) * 1.5);
+}
+
+.prototypeBtn:hover {
+  background: var(--content-accent-green);
+  color: var(--bg-accent-green);
+  border-color: var(--content-accent-green);
+}
+
+.prototypeBtn:active {
+  transform: scale(0.97);
+}
+
+.prototypeBtnArrow {
+  transition: transform var(--transition-fast);
+}
+
+.prototypeBtn:hover .prototypeBtnArrow {
+  transform: translateX(2px);
+}
+
 /* Prose — markdown body */
 .prose {
   animation: fadeIn var(--duration-entrance) var(--ease-out) forwards;

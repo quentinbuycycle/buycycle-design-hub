@@ -5,6 +5,7 @@ date: "2026-02-06"
 author: "Quentin Musik"
 tags: ["pricing", "conversion", "trust", "checkout"]
 thumbnail: ""
+prototype: "/prototypes/loaded-price-display.html"
 ---
 
 # Loaded Price Display
