@@ -6,6 +6,11 @@ import html from "remark-html";
 
 const contentDirectory = path.join(process.cwd(), "content/output");
 
+function listMarkdownFiles(): string[] {
+  if (!fs.existsSync(contentDirectory)) return [];
+  return fs.readdirSync(contentDirectory).filter((f) => f.endsWith(".md"));
+}
+
 export interface CaseStudyMeta {
   slug: string;
   title: string;
@@ -60,7 +65,7 @@ function extractPreview(rawMarkdown: string, maxLength = 120): string {
 }
 
 export function getAllCaseStudies(): CaseStudyMeta[] {
-  const fileNames = fs.readdirSync(contentDirectory).filter((f) => f.endsWith(".md"));
+  const fileNames = listMarkdownFiles();
 
   const studies = fileNames.map((fileName) => {
     const slug = fileName.replace(/\.md$/, "");
@@ -74,7 +79,7 @@ export function getAllCaseStudies(): CaseStudyMeta[] {
 }
 
 export function getAllCaseStudiesWithPreview(): CaseStudyCard[] {
-  const fileNames = fs.readdirSync(contentDirectory).filter((f) => f.endsWith(".md"));
+  const fileNames = listMarkdownFiles();
 
   const studies = fileNames.map((fileName) => {
     const slug = fileName.replace(/\.md$/, "");
