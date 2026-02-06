@@ -20,7 +20,8 @@ export function Navigation() {
 
   const navItems = [
     { href: "/output", label: "Output" },
-    { href: "/onboarding", label: "Onboarding" },
+    { href: "/onboarding", label: "Onboarding", exact: true },
+    { href: "/onboarding/downloads", label: "Downloads" },
   ];
 
   return (
@@ -44,7 +45,9 @@ export function Navigation() {
             const isActive =
               item.href === "/"
                 ? pathname === "/"
-                : pathname.startsWith(item.href);
+                : item.exact
+                  ? pathname === item.href || pathname === item.href + "/how-to-use"
+                  : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
@@ -76,7 +79,9 @@ export function Navigation() {
               const isActive =
                 item.href === "/"
                   ? pathname === "/"
-                  : pathname.startsWith(item.href);
+                  : item.exact
+                    ? pathname === item.href || pathname === item.href + "/how-to-use"
+                    : pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}

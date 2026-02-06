@@ -243,6 +243,71 @@
   font-size: var(--text-base);
 }
 
+/* Next Steps Section */
+.nextStepsSection {
+  padding: var(--space-12) 0;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-tertiary);
+  border-bottom: 1px solid var(--border-tertiary);
+}
+
+.nextStepsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+}
+
+.nextStepCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 6px;
+  transition: border-color var(--transition-base),
+              box-shadow var(--transition-base),
+              transform var(--transition-base);
+}
+
+.nextStepCard:hover {
+  border-color: var(--border-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.nextStepIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--bg-accent-green);
+  border: 1px solid var(--border-accent-green);
+  border-radius: 6px;
+  color: var(--content-accent-green);
+  transition: all var(--transition-base);
+}
+
+.nextStepCard:hover .nextStepIcon {
+  background: var(--content-accent-green);
+  color: var(--bg-accent-green);
+}
+
+.nextStepCard h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--font-medium);
+  color: var(--content-primary);
+}
+
+.nextStepCard p {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-sm);
+  color: var(--content-secondary);
+}
+
 /* Footer */
 .footer {
   padding: var(--space-8) 0;
@@ -308,6 +373,11 @@
 
   .referenceCard {
     padding: var(--space-6);
+  }
+
+  .nextStepsGrid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
   }
 
   .footerContent {
