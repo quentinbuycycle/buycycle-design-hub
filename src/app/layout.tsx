@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
+import { cookies } from "next/headers";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 
@@ -17,16 +18,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const isAuthenticated = cookieStore.has("hub-auth");
+
   return (
     <html lang="en">
       <body className={`${jetbrainsMono.variable} antialiased`}>
-        <Navigation />
-        <main className="relative min-h-screen pt-[72px]">
+        {isAuthenticated && <Navigation />}
+        <main className={`relative min-h-screen ${isAuthenticated ? "pt-[72px]" : ""}`}>
           {children}
         </main>
       </body>

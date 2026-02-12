@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import crypto from "crypto";
 
 function slugify(title: string): string {
   return title
@@ -117,9 +119,31 @@ export async function POST(request: Request) {
       prototypeHtml,
     } = body;
 
-    // 1. Password check
+    // 1. Auth check: cookie-based (hub login) or password-based (external tools)
     const uploadPassword = process.env.UPLOAD_PASSWORD;
-    if (!uploadPassword || password !== uploadPassword) {
+    let authenticated = false;
+
+    if (uploadPassword) {
+      // Check cookie auth first
+      const cookieStore = await cookies();
+      const authCookie = cookieStore.get("hub-auth");
+      if (authCookie?.value) {
+        const expectedToken = crypto
+          .createHmac("sha256", uploadPassword)
+          .update("buycycle-hub-auth")
+          .digest("hex");
+        if (authCookie.value === expectedToken) {
+          authenticated = true;
+        }
+      }
+
+      // Fall back to password auth
+      if (!authenticated && password === uploadPassword) {
+        authenticated = true;
+      }
+    }
+
+    if (!authenticated) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

@@ -22,8 +22,6 @@ const USER_TYPES = ["Buyer", "Seller", "Buyer & Seller"];
 const CORE_FLOWS = ["Pre-transactional XP", "Seller XP", "Post-transaction XP"];
 
 export default function UploadPage() {
-  const [password, setPassword] = useState("");
-  const [authenticated, setAuthenticated] = useState(false);
   const [formState, setFormState] = useState<FormState>({ status: "idle" });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,13 +35,6 @@ export default function UploadPage() {
   const [solution, setSolution] = useState("");
   const [rationale, setRationale] = useState("");
   const [systemLimitations, setSystemLimitations] = useState("");
-
-  function handlePasswordSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (password.trim()) {
-      setAuthenticated(true);
-    }
-  }
 
   async function handleFormSubmit(e: FormEvent) {
     e.preventDefault();
@@ -68,7 +59,6 @@ export default function UploadPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          password,
           title,
           author,
           team,
@@ -86,12 +76,6 @@ export default function UploadPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        if (res.status === 401) {
-          setAuthenticated(false);
-          setPassword("");
-          setFormState({ status: "error", message: "Wrong password. Please re-enter." });
-          return;
-        }
         setFormState({ status: "error", message: data.error || "Something went wrong." });
         return;
       }
@@ -100,45 +84,6 @@ export default function UploadPage() {
     } catch {
       setFormState({ status: "error", message: "Network error. Please try again." });
     }
-  }
-
-  // Password gate
-  if (!authenticated) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.gateContainer}>
-          <div className={styles.gateCard}>
-            <div className={styles.gateIcon}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-              </svg>
-            </div>
-            <h1 className={styles.gateTitle}>Upload Case Study</h1>
-            <p className={styles.gateText}>
-              Enter the upload password to continue.
-            </p>
-            <form onSubmit={handlePasswordSubmit} className={styles.gateForm}>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                className={styles.input}
-                autoFocus
-                required
-              />
-              <button type="submit" className="btn-primary" style={{ width: "100%" }}>
-                Enter
-              </button>
-            </form>
-            {formState.status === "error" && (
-              <p className={styles.errorMessage}>{formState.message}</p>
-            )}
-          </div>
-        </div>
-      </div>
-    );
   }
 
   // Success state
