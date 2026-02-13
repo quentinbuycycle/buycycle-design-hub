@@ -112,9 +112,25 @@
   letter-spacing: 0.03em;
 }
 
+/* Prototypes header — heading + share button */
+.prototypesHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  animation: fadeIn var(--duration-entrance) var(--ease-out) forwards;
+  animation-delay: calc(var(--stagger-fast) * 1.5);
+}
+
+.prototypesHeading {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--content-primary);
+}
+
 /* Prototype sections */
 .prototypeSection {
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   animation: fadeIn var(--duration-entrance) var(--ease-out) forwards;
   animation-delay: calc(var(--stagger-fast) * 1.5);
 }

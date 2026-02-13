@@ -5,6 +5,7 @@ import {
   getAdjacentCaseStudies,
   getAllCaseStudies,
 } from "@/lib/content";
+import SharePrototypes from "@/components/SharePrototypes";
 import styles from "./page.module.css";
 
 interface CaseStudyPageProps {
@@ -88,9 +89,19 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
               )}
             </div>
           )}
+          {(study.prototypes.length > 0 || study.finalPrototypes.length > 0) && (
+            <div className={styles.prototypesHeader}>
+              <span className={styles.prototypesHeading}>Prototypes</span>
+              <SharePrototypes
+                slug={study.slug}
+                prototypes={study.prototypes}
+                finalPrototypes={study.finalPrototypes}
+              />
+            </div>
+          )}
           {study.prototypes.length > 0 && (
             <div className={styles.prototypeSection}>
-              <span className={styles.prototypeSectionLabel}>Prototypes to review</span>
+              <span className={styles.prototypeSectionLabel}>To review</span>
               <div className={styles.prototypeBtnRow}>
                 {study.prototypes.map((proto, i) => {
                   const filename = proto.replace(/^\/prototypes\//, "");
