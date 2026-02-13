@@ -4,9 +4,9 @@ import Link from "next/link";
 
 // Version configuration
 const DESIGN_SYSTEM_VERSION = "v1.0.0";
-const COMMANDS_VERSION = "v1.0.1";
+const COMMANDS_VERSION = "v1.1.0";
 const DESIGN_SYSTEM_DOWNLOAD_URL = "https://github.com/quentinbuycycle/buycycle-design-system/releases/download/v1.0.0/design-system-v1.0.0.zip";
-const COMMANDS_DOWNLOAD_URL = "https://github.com/quentinbuycycle/buycycle-design-hub/releases/download/commands-v1.0.1/commands.zip";
+const COMMANDS_DOWNLOAD_URL = "https://github.com/quentinbuycycle/buycycle-design-hub/releases/download/commands-v1.1.0/commands-v1.1.0.zip";
 
 const designSystemVersions = [
   {
@@ -28,9 +28,21 @@ const designSystemVersions = [
 const commandsVersions = [
   {
     version: COMMANDS_VERSION,
-    date: "February 6, 2026",
+    date: "February 13, 2026",
     isCurrent: true,
     downloadUrl: COMMANDS_DOWNLOAD_URL,
+    summary: "Multi-prototype support for /publish-to-hub plus all existing commands.",
+    releaseNotes: [
+      { type: "changed" as const, text: "/publish-to-hub now supports uploading multiple HTML prototypes per case study" },
+      { type: "added" as const, text: "Includes all existing commands from v1.0" },
+    ],
+  },
+  {
+    version: "v1.0.1",
+    date: "February 6, 2026",
+    isCurrent: false,
+    downloadUrl: "",
+    supersededBy: "v1.1.0",
     summary: "New publish-to-hub command plus all existing commands from v1.0.",
     releaseNotes: [
       { type: "added" as const, text: "/publish-to-hub command — automatically generates a structured case study from your Claude Code session and uploads it to the Design Hub. No git required." },
