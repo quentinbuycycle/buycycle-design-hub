@@ -118,9 +118,9 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
               </div>
             </div>
           )}
-          {study.finalPrototypes.length > 0 && (
-            <div className={styles.prototypeSection}>
-              <span className={styles.prototypeSectionLabel}>Final prototypes</span>
+          <div className={styles.prototypeSection}>
+            <span className={styles.prototypeSectionLabel}>Final prototypes</span>
+            {study.finalPrototypes.length > 0 ? (
               <div className={styles.prototypeBtnRow}>
                 {study.finalPrototypes.map((proto, i) => {
                   const filename = proto.replace(/^\/prototypes\//, "");
@@ -146,8 +146,10 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                   );
                 })}
               </div>
-            </div>
-          )}
+            ) : (
+              <p className={styles.prototypeEmpty}>No final prototypes yet.</p>
+            )}
+          </div>
         </header>
 
         {/* Markdown body */}
