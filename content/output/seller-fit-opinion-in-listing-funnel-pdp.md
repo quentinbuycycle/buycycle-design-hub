@@ -7,6 +7,7 @@ tags: ["Buyer & Seller","Seller XP"]
 prototypes:
   - "/prototypes/seller-fit-opinion-in-listing-funnel-pdp.html"
 finalPrototypes:
+  - "/prototypes/buycycle-pdp-insights-desktop_web.html"
   - "/prototypes/buycycle-pdp-insights-app.html"
   - "/prototypes/buycycle-listing-funnel-size-fit_final_web.html"
   - "/prototypes/buycycle-listing-funnel-size-fit-app.html"
