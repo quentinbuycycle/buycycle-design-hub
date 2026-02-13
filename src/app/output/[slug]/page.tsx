@@ -16,6 +16,14 @@ export async function generateStaticParams() {
   return studies.map((s) => ({ slug: s.slug }));
 }
 
+function protoLabel(path: string): string {
+  return path
+    .replace(/^\/prototypes\//, "")
+    .replace(/\.html$/, "")
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 function formatDate(dateStr: string): string {
   if (!dateStr) return "";
   const date = new Date(dateStr);
@@ -80,24 +88,65 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
               )}
             </div>
           )}
-          {study.prototype && (
-            <a
-              href={`/output/prototypes/${study.slug}.html`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.prototypeBtn}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-                <line x1="8" y1="21" x2="16" y2="21" />
-                <line x1="12" y1="17" x2="12" y2="21" />
-              </svg>
-              View Prototype
-              <svg className={styles.prototypeBtnArrow} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M7 17L17 7" />
-                <path d="M7 7h10v10" />
-              </svg>
-            </a>
+          {study.prototypes.length > 0 && (
+            <div className={styles.prototypeSection}>
+              <span className={styles.prototypeSectionLabel}>Prototypes to review</span>
+              <div className={styles.prototypeBtnRow}>
+                {study.prototypes.map((proto, i) => {
+                  const filename = proto.replace(/^\/prototypes\//, "");
+                  return (
+                    <a
+                      key={proto}
+                      href={`/output/prototypes/${filename}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.prototypeBtn}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                        <line x1="8" y1="21" x2="16" y2="21" />
+                        <line x1="12" y1="17" x2="12" y2="21" />
+                      </svg>
+                      {protoLabel(proto)}
+                      <svg className={styles.prototypeBtnArrow} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M7 17L17 7" />
+                        <path d="M7 7h10v10" />
+                      </svg>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {study.finalPrototypes.length > 0 && (
+            <div className={styles.prototypeSection}>
+              <span className={styles.prototypeSectionLabel}>Final prototypes</span>
+              <div className={styles.prototypeBtnRow}>
+                {study.finalPrototypes.map((proto, i) => {
+                  const filename = proto.replace(/^\/prototypes\//, "");
+                  return (
+                    <a
+                      key={proto}
+                      href={`/output/prototypes/${filename}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${styles.prototypeBtn} ${styles.prototypeBtnFinal}`}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                        <line x1="8" y1="21" x2="16" y2="21" />
+                        <line x1="12" y1="17" x2="12" y2="21" />
+                      </svg>
+                      {protoLabel(proto)}
+                      <svg className={styles.prototypeBtnArrow} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M7 17L17 7" />
+                        <path d="M7 7h10v10" />
+                      </svg>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
           )}
         </header>
 

@@ -4,7 +4,9 @@ author: "Sophie Schoen"
 date: "2026-02-12"
 team: "Product Design"
 tags: ["Seller","Seller XP"]
-prototype: "/prototypes/price-adjustment-modal-for-component-upgrades.html"
+prototypes:
+  - "/prototypes/price-adjustment-modal-for-component-upgrades.html"
+finalPrototypes: []
 ---
 
 ## Problem

@@ -19,7 +19,8 @@ export interface CaseStudyMeta {
   author: string;
   tags: string[];
   thumbnail: string;
-  prototype: string;
+  prototypes: string[];
+  finalPrototypes: string[];
 }
 
 export interface CaseStudyCard extends CaseStudyMeta {
@@ -36,6 +37,14 @@ export interface AdjacentStudies {
 }
 
 function parseMeta(slug: string, data: Record<string, unknown>): CaseStudyMeta {
+  // Support both old `prototype` (string) and new `prototypes` (array) format
+  let prototypes: string[] = [];
+  if (Array.isArray(data.prototypes)) {
+    prototypes = data.prototypes as string[];
+  } else if (typeof data.prototype === "string" && data.prototype) {
+    prototypes = [data.prototype as string];
+  }
+
   return {
     slug,
     title: (data.title as string) ?? slug,
@@ -44,7 +53,8 @@ function parseMeta(slug: string, data: Record<string, unknown>): CaseStudyMeta {
     author: (data.author as string) ?? "",
     tags: (data.tags as string[]) ?? [],
     thumbnail: (data.thumbnail as string) ?? "",
-    prototype: (data.prototype as string) ?? "",
+    prototypes,
+    finalPrototypes: (data.finalPrototypes as string[]) ?? [],
   };
 }
 

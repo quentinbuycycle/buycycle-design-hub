@@ -4,7 +4,9 @@ author: "Sophie Schoen"
 date: "2026-02-11"
 team: "Product Design"
 tags: ["Buyer & Seller","Seller XP"]
-prototype: "/prototypes/seller-fit-opinion-in-listing-funnel-pdp.html"
+prototypes:
+  - "/prototypes/seller-fit-opinion-in-listing-funnel-pdp.html"
+finalPrototypes: []
 ---
 
 ## Problem

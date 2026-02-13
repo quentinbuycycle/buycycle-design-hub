@@ -4,7 +4,9 @@ author: "Quentin Guislain"
 date: "2026-02-06"
 team: "Design"
 tags: ["Buyer","Pre-transactional XP"]
-prototype: "/prototypes/sub-category-chips-interactive-navigation.html"
+prototypes:
+  - "/prototypes/sub-category-chips-interactive-navigation.html"
+finalPrototypes: []
 ---
 
 ## Problem

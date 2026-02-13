@@ -40,7 +40,9 @@ author: "${data.author}"
 date: "${data.date}"
 team: "${data.team}"
 tags: ${tagsArray}
-prototype: "/prototypes/${data.slug}.html"
+prototypes:
+  - "/prototypes/${data.slug}.html"
+finalPrototypes: []
 ---
 
 ## Problem
