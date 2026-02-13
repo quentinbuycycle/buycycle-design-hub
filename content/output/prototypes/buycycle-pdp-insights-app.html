@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, initial-scale=1.0">
+  <title>buycycle App - PDP Bike Insights</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #FCFCFC;
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    // ==================== DESIGN TOKENS ====================
+    const tokens = {
+      colors: {
+        background: {
+          primary: '#FCFCFC',
+          secondary: '#F3F3F3',
+          tertiary: '#FFFFFF',
+          quaternary: '#EAEAEA',
+          reverse: '#090907',
+          positive: '#E8F8F0',
+          alert: '#FFEBEB',
+        },
+        content: {
+          primary: '#090907',
+          secondary: '#333333',
+          tertiary: '#535353',
+          quaternary: '#A9A9A9',
+          reverse: '#FCFCFC',
+          positive: '#146C43',
+          attention: '#92400E',
+          warning: '#EA580C',
+          alert: '#B91C1C',
+        },
+        border: {
+          primary: '#090907',
+          secondary: '#757575',
+          tertiary: '#EAEAEA',
+          quaternary: '#D0D0D0',
+        }
+      },
+      typography: {
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif",
+      },
+    };
+
+    // ==================== BIKE DATA ====================
+    const bikeData = {
+      brand: "Specialized",
+      model: "Tarmac SL7 Sport",
+      subtitle: "Shimano 105",
+      year: 2025,
+      frameSize: "58 cm",
+      color: "Purple",
+      condition: "New",
+      price: 2300,
+      originalPrice: 3299,
+      sellerName: "Andre michael k.",
+      sellerLocation: "Germany, Lutherstadt Wittenberg",
+      sellerLastActive: "2h ago",
+      sellerRating: 5,
+      shiftingType: "Mechanical",
+      brakeType: "Disc",
+      frameMaterial: "Carbon",
+      views: 500,
+      favorites: 43,
+
+      originalParts: [
+        { label: "Component group", value: "Shimano 105" },
+        { label: "Rear derailleur", value: "Shimano 105" },
+        { label: "Front derailleur", value: "Shimano 105" },
+        { label: "Crank", value: "Shimano 105" },
+        { label: "Wheels", value: "DT Swiss R470" },
+      ],
+
+      replacedParts: [
+        { label: "Cassette", value: "Shimano Ultegra R8000 11-28T" },
+        { label: "Wheel set", value: "Roval CLX 50 Disc" },
+      ],
+
+      insights: {
+        fit: {
+          heightRange: "178-188cm",
+          heightSource: "estimated",
+          riderNotes: [
+            { name: "Carlos E.", height: "177cm", legLength: "82cm", fit: "Too small" },
+            { name: "Marco T.", height: "183cm", legLength: "86cm", fit: "Perfect fit" },
+            { name: "Lisa W.", height: "180cm", legLength: "84cm", fit: "Too big" },
+          ],
+          sellerNote: {
+            name: "Andre michael k.",
+            height: "182cm",
+            legLength: "86cm",
+            fit: "Perfect fit",
+            agreesWithRecommendation: true,
+          }
+        },
+      }
+    };
+
+    const bikeImageUrl = "https://buycycle-prod-images.s3.eu-central-1.amazonaws.com/8f8d3f26-21ef-4b26-8d72-ed57d6b8e5c2/original";
+
+    // ==================== ICONS ====================
+    const InfoIcon = ({ size = 14 }) => (
+      <svg width={size} height={size} viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="6" stroke={tokens.colors.content.tertiary} strokeWidth="1"/>
+        <path d="M7 6V10M7 4.5V4" stroke={tokens.colors.content.tertiary} strokeWidth="1" strokeLinecap="round"/>
+      </svg>
+    );
+
+    const ShieldIcon = ({ size = 16 }) => (
+      <svg width={size} height={size} viewBox="0 0 16 16" fill="none">
+        <path d="M8 1L2 3V7C2 10.31 4.55 13.36 8 14.5C11.45 13.36 14 10.31 14 7V3L8 1Z" stroke={tokens.colors.content.positive} strokeWidth="1.5" strokeLinejoin="round"/>
+        <path d="M5.5 8L7 9.5L10.5 6" stroke={tokens.colors.content.positive} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    );
+
+    const StarFilledIcon = () => (
+      <svg width="15.67" height="15.67" viewBox="0 0 16 16" fill={tokens.colors.content.warning}>
+        <path d="M8 1.5L9.6 5.8L14 6.1L10.6 8.9L11.6 13.3L8 11L4.4 13.3L5.4 8.9L2 6.1L6.4 5.8L8 1.5Z"/>
+      </svg>
+    );
+
+    // ==================== iOS STATUS BAR ====================
+    const StatusBar = ({ light = false }) => (
+      <div style={{
+        width: '390px',
+        height: '47px',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        zIndex: 10,
+      }}>
+        <span style={{
+          position: 'absolute',
+          left: '27px',
+          top: '14px',
+          fontFamily: 'Inter, -apple-system, sans-serif',
+          fontWeight: 600,
+          fontSize: '17px',
+          lineHeight: '22px',
+          letterSpacing: '-0.408px',
+          color: light ? tokens.colors.content.reverse : tokens.colors.content.primary,
+        }}>
+          9:41
+        </span>
+        <div style={{
+          position: 'absolute',
+          right: '27px',
+          top: '19px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+        }}>
+          <svg width="18" height="12" viewBox="0 0 18 12" fill={light ? tokens.colors.content.reverse : tokens.colors.content.primary}>
+            <rect x="0" y="3" width="3" height="9" rx="1"/>
+            <rect x="5" y="2" width="3" height="10" rx="1"/>
+            <rect x="10" y="1" width="3" height="11" rx="1"/>
+            <rect x="15" y="0" width="3" height="12" rx="1"/>
+          </svg>
+          <svg width="17" height="12" viewBox="0 0 17 12" fill={light ? tokens.colors.content.reverse : tokens.colors.content.primary}>
+            <path d="M8.5 2.5C10.4 2.5 12.1 3.3 13.3 4.5L14.7 3.1C13.1 1.5 11 0.5 8.5 0.5C6 0.5 3.9 1.5 2.3 3.1L3.7 4.5C4.9 3.3 6.6 2.5 8.5 2.5Z"/>
+            <path d="M8.5 5.5C9.6 5.5 10.6 5.9 11.4 6.6L12.8 5.2C11.6 4.1 10.1 3.5 8.5 3.5C6.9 3.5 5.4 4.1 4.2 5.2L5.6 6.6C6.4 5.9 7.4 5.5 8.5 5.5Z"/>
+            <circle cx="8.5" cy="9.5" r="2"/>
+          </svg>
+          <div style={{ position: 'relative', width: '27.4px', height: '13px' }}>
+            <div style={{
+              width: '25px',
+              height: '13px',
+              border: `1.5px solid ${light ? tokens.colors.content.reverse : tokens.colors.content.primary}`,
+              borderRadius: '4px',
+              opacity: 0.35,
+            }}/>
+            <div style={{
+              position: 'absolute',
+              left: '2px',
+              top: '2px',
+              width: '18px',
+              height: '9px',
+              backgroundColor: light ? tokens.colors.content.reverse : tokens.colors.content.primary,
+              borderRadius: '2px',
+            }}/>
+            <div style={{
+              position: 'absolute',
+              right: '-3px',
+              top: '4px',
+              width: '1.5px',
+              height: '5px',
+              backgroundColor: light ? tokens.colors.content.reverse : tokens.colors.content.primary,
+              borderRadius: '1px',
+              opacity: 0.4,
+            }}/>
+          </div>
+        </div>
+      </div>
+    );
+
+    // ==================== IMAGE GALLERY (Figma: 390 x 292.5px) ====================
+    const ImageGallery = () => {
+      const [currentSlide, setCurrentSlide] = useState(0);
+      const totalSlides = 5;
+
+      return (
+        <div style={{
+          width: '390px',
+          height: '292.5px',
+          backgroundColor: tokens.colors.background.tertiary,
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          <img
+            src={bikeImageUrl}
+            alt="Specialized Tarmac SL7"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+
+          {/* Top gradient overlay */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '390px',
+            height: '72.36px',
+            background: 'linear-gradient(180deg, #000000 0%, rgba(0, 0, 0, 0) 100%)',
+            opacity: 0.2,
+            pointerEvents: 'none',
+          }} />
+
+          {/* Status bar over image */}
+          <StatusBar light />
+
+          {/* Back button — 32x32, dark bg, 4px radius */}
+          <div style={{
+            position: 'absolute',
+            top: '47px',
+            left: '16px',
+            width: '32px',
+            height: '32px',
+            borderRadius: '4px',
+            backgroundColor: 'rgba(9, 9, 7, 0.7)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="#FCFCFC" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+
+          {/* Bottom gradient overlay */}
+          <div style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '390px',
+            height: '42.66px',
+            background: 'linear-gradient(0deg, #000000 0%, rgba(0, 0, 0, 0) 100%)',
+            opacity: 0.4,
+            pointerEvents: 'none',
+          }} />
+
+          {/* Bottom action bar */}
+          <div style={{
+            position: 'absolute',
+            bottom: '12px',
+            left: '8px',
+            right: '8px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+          }}>
+            {/* Image count badge */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '6px 12px',
+              gap: '4px',
+              backgroundColor: 'rgba(9, 9, 7, 0.7)',
+              borderRadius: '4px',
+            }}>
+              <span style={{
+                fontSize: '12px',
+                lineHeight: '18px',
+                fontWeight: 400,
+                color: tokens.colors.content.reverse,
+                letterSpacing: '0.02em',
+                fontFamily: tokens.typography.fontFamily,
+              }}>
+                {currentSlide + 1}/{totalSlides}
+              </span>
+            </div>
+
+            {/* Right action buttons */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              gap: '12px',
+            }}>
+              {/* Views button */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 6px',
+                gap: '4px',
+                height: '32px',
+                backgroundColor: 'rgba(252, 252, 252, 0.9)',
+                borderRadius: '6px',
+                cursor: 'pointer',
+              }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke={tokens.colors.content.primary} strokeWidth="1.5"/>
+                  <circle cx="12" cy="12" r="3" fill={tokens.colors.content.primary}/>
+                </svg>
+                <span style={{
+                  fontSize: '12px',
+                  lineHeight: '18px',
+                  fontWeight: 400,
+                  color: tokens.colors.content.primary,
+                  fontFamily: tokens.typography.fontFamily,
+                }}>
+                  {bikeData.views}
+                </span>
+              </div>
+
+              {/* Heart/favorites button */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 6px',
+                gap: '4px',
+                height: '32px',
+                backgroundColor: 'rgba(252, 252, 252, 0.9)',
+                borderRadius: '6px',
+                cursor: 'pointer',
+              }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill={tokens.colors.content.alert}>
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+                <span style={{
+                  fontSize: '12px',
+                  lineHeight: '18px',
+                  fontWeight: 400,
+                  color: tokens.colors.content.primary,
+                  fontFamily: tokens.typography.fontFamily,
+                }}>
+                  {bikeData.favorites}
+                </span>
+              </div>
+
+              {/* Share button */}
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '4px',
+                backgroundColor: 'rgba(252, 252, 252, 0.9)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+              }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13" stroke={tokens.colors.content.primary} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // ==================== SELLER PROFILE (Figma: first after image) ====================
+    const SellerProfile = ({ bike }) => (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0',
+        gap: '16px',
+      }}>
+        {/* Avatar — 46x46px (DS seller_card mobile) */}
+        <div style={{
+          width: '46px',
+          height: '46px',
+          borderRadius: '50%',
+          backgroundColor: tokens.colors.background.secondary,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '16px',
+          fontWeight: 500,
+          color: tokens.colors.content.tertiary,
+          flexShrink: 0,
+          overflow: 'hidden',
+        }}>
+          {bike.sellerName.charAt(0).toUpperCase()}
+        </div>
+
+        {/* Info */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '4px',
+          flex: 1,
+        }}>
+          {/* Name — 16px/Medium */}
+          <div style={{
+            fontSize: '16px',
+            lineHeight: '24px',
+            fontWeight: 500,
+            color: tokens.colors.content.primary,
+            fontFamily: tokens.typography.fontFamily,
+          }}>
+            Sold by {bike.sellerName}
+          </div>
+          {/* Stars — orange */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {[...Array(bike.sellerRating)].map((_, i) => <StarFilledIcon key={i} />)}
+          </div>
+          {/* Location — 14px/Regular */}
+          <div style={{
+            fontSize: '14px',
+            lineHeight: '21px',
+            fontWeight: 400,
+            color: tokens.colors.content.tertiary,
+            fontFamily: tokens.typography.fontFamily,
+          }}>
+            {bike.sellerLocation}
+          </div>
+          {/* Last active — 14px/Regular */}
+          <div style={{
+            fontSize: '14px',
+            lineHeight: '21px',
+            fontWeight: 400,
+            color: tokens.colors.content.tertiary,
+            fontFamily: tokens.typography.fontFamily,
+          }}>
+            Last active: {bike.sellerLastActive}
+          </div>
+        </div>
+
+        {/* Contact button — border: 1px solid #757575, radius 4px */}
+        <button style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '8px 12px',
+          gap: '6px',
+          height: '36px',
+          backgroundColor: 'transparent',
+          border: `1px solid ${tokens.colors.border.secondary}`,
+          borderRadius: '4px',
+          fontSize: '14px',
+          lineHeight: '21px',
+          fontWeight: 400,
+          color: tokens.colors.content.primary,
+          cursor: 'pointer',
+          fontFamily: tokens.typography.fontFamily,
+          flexShrink: 0,
+        }}>
+          Contact
+        </button>
+      </div>
+    );
+
+    // ==================== PRODUCT DETAILS (Figma: brand, model, price) ====================
+    const ProductDetails = ({ bike }) => (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+        {/* Brand — 16px/Regular #333333 */}
+        <div style={{
+          fontSize: '16px',
+          lineHeight: '24px',
+          fontWeight: 400,
+          color: tokens.colors.content.secondary,
+          fontFamily: tokens.typography.fontFamily,
+        }}>
+          {bike.brand}
+        </div>
+        {/* Model — 24px/Medium #090907 */}
+        <h1 style={{
+          fontSize: '24px',
+          lineHeight: '32px',
+          fontWeight: 500,
+          color: tokens.colors.content.primary,
+          fontFamily: tokens.typography.fontFamily,
+          margin: 0,
+        }}>
+          {bike.model}
+        </h1>
+        {/* Price row */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '4px 0',
+          gap: '4px',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+          }}>
+            {/* Price — 24px/Medium */}
+            <span style={{
+              fontSize: '24px',
+              lineHeight: '32px',
+              fontWeight: 500,
+              color: tokens.colors.content.primary,
+              fontFamily: tokens.typography.fontFamily,
+            }}>
+              {'\u20AC'}{bike.price.toLocaleString()}
+            </span>
+            {/* Strikethrough — 16px/Regular */}
+            <span style={{
+              fontSize: '16px',
+              lineHeight: '24px',
+              fontWeight: 400,
+              color: tokens.colors.content.tertiary,
+              textDecoration: 'line-through',
+              fontFamily: tokens.typography.fontFamily,
+            }}>
+              {'\u20AC'} {bike.originalPrice.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+
+    // ==================== PRODUCT TAGS (Figma: flex-wrap, gap 12px 8px) ====================
+    const ProductTags = ({ bike }) => (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        alignContent: 'flex-start',
+        gap: '12px 8px',
+      }}>
+        {[
+          { label: bike.year.toString(), size: 'sm' },
+          { label: `Condition: ${bike.condition}`, size: 'xs', hasInfo: true },
+          { label: bike.frameSize, size: 'sm' },
+          { label: `Fits to height: ${bike.insights.fit.heightRange}`, size: 'xs', hasInfo: true },
+          { label: `Shifting type: ${bike.shiftingType}`, size: 'sm' },
+          { label: `${bike.subtitle}`, size: 'xs', hasIcon: true },
+          { label: `Brake type: ${bike.brakeType}`, size: 'sm' },
+          { label: `Frame material: ${bike.frameMaterial}`, size: 'sm' },
+          { label: `Color: ${bike.color}`, size: 'sm' },
+        ].map((tag, i) => (
+          <div key={i} style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '4px 12px',
+            gap: '4px',
+            backgroundColor: tokens.colors.background.secondary,
+            borderRadius: '24px',
+          }}>
+            {tag.hasIcon && (
+              <svg width="10.67" height="10.67" viewBox="0 0 12 12" fill={tokens.colors.content.primary}>
+                <path d="M7 1L4 6H7L5 11L10 5H6L8 1H7Z"/>
+              </svg>
+            )}
+            <span style={{
+              fontSize: tag.size === 'xs' ? '12px' : '14px',
+              lineHeight: tag.size === 'xs' ? '18px' : '21px',
+              fontWeight: 400,
+              color: tokens.colors.content.secondary,
+              fontFamily: tokens.typography.fontFamily,
+            }}>
+              {tag.label}
+            </span>
+            {tag.hasInfo && (
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7.5" stroke={tokens.colors.content.tertiary} strokeWidth="1.25"/>
+                <path d="M9 8V13M9 6V5" stroke={tokens.colors.content.primary} strokeWidth="1.25" strokeLinecap="round"/>
+              </svg>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+
+    // ==================== SELLER DESCRIPTION (Figma: 16px/Regular) ====================
+    const SellerDescription = ({ bike }) => {
+      const [expanded, setExpanded] = useState(false);
+
+      return (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+        }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
+          }}>
+            {/* Description text — 16px/Regular #090907 */}
+            <div style={{
+              fontSize: '16px',
+              lineHeight: '24px',
+              fontWeight: 400,
+              color: tokens.colors.content.primary,
+              fontFamily: tokens.typography.fontFamily,
+            }}>
+              I am selling this {bike.brand} {bike.model} road bike in size {bike.frameSize} purchased in April 2025 (only 2000km).
+              {expanded && (
+                <span> Shimano 105 Di2 12S power meter, CERAMICSPEED derailleur cage, new chain and brake pads.</span>
+              )}
+            </div>
+            {/* "more" link — 14px/Regular underline */}
+            <button
+              onClick={() => setExpanded(!expanded)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: 0,
+                gap: '8px',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: tokens.typography.fontFamily,
+              }}
+            >
+              <span style={{
+                fontSize: '14px',
+                lineHeight: '21px',
+                fontWeight: 400,
+                textDecoration: 'underline',
+                color: tokens.colors.content.primary,
+              }}>
+                {expanded ? 'less' : 'more'}
+              </span>
+            </button>
+          </div>
+          {/* Show original button — border: 1px solid #757575, radius 3px */}
+          <button style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '4px 8px',
+            gap: '4px',
+            width: 'fit-content',
+            height: '28px',
+            backgroundColor: 'transparent',
+            border: `1px solid ${tokens.colors.border.secondary}`,
+            borderRadius: '3px',
+            cursor: 'pointer',
+            fontFamily: tokens.typography.fontFamily,
+          }}>
+            <span style={{
+              fontSize: '14px',
+              lineHeight: '21px',
+              fontWeight: 400,
+              color: tokens.colors.content.primary,
+            }}>
+              Show original
+            </span>
+            {/* Translate icon */}
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M2 5H11M6.5 3V5M8.5 5C8.5 5 7.5 9 4 11M5.5 8C5.5 8 7 9.5 9 10" stroke={tokens.colors.content.primary} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M10 16L13 9L16 16M10.8 14H15.2" stroke={tokens.colors.content.primary} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      );
+    };
+
+    // ==================== BIKE DETAILS — Figma: plain rows, 20px/Bold headings ====================
+    const BikeDetails = ({ bike }) => (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px',
+      }}>
+        {/* Original Parts */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '8px 0',
+            gap: '8px',
+          }}>
+            <span style={{
+              fontSize: '20px',
+              lineHeight: '28px',
+              fontWeight: 700,
+              color: tokens.colors.content.primary,
+              fontFamily: tokens.typography.fontFamily,
+            }}>
+              Original Parts
+            </span>
+          </div>
+          {bike.originalParts.map((item, i) => (
+            <div key={i} style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '4px 0',
+              gap: '4px',
+            }}>
+              <span style={{
+                fontSize: '16px',
+                lineHeight: '24px',
+                fontWeight: 400,
+                color: tokens.colors.content.tertiary,
+                fontFamily: tokens.typography.fontFamily,
+              }}>
+                {item.label}
+              </span>
+              <span style={{
+                fontSize: '16px',
+                lineHeight: '24px',
+                fontWeight: 400,
+                color: tokens.colors.content.primary,
+                fontFamily: tokens.typography.fontFamily,
+                marginLeft: '8px',
+              }}>
+                {item.value}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Replaced Parts */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '8px 0',
+            gap: '8px',
+          }}>
+            <span style={{
+              fontSize: '20px',
+              lineHeight: '28px',
+              fontWeight: 700,
+              color: tokens.colors.content.primary,
+              fontFamily: tokens.typography.fontFamily,
+            }}>
+              Replaced Parts
+            </span>
+          </div>
+          {bike.replacedParts.map((item, i) => (
+            <div key={i} style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '4px 0',
+              gap: '4px',
+            }}>
+              <span style={{
+                fontSize: '16px',
+                lineHeight: '24px',
+                fontWeight: 400,
+                color: tokens.colors.content.tertiary,
+                fontFamily: tokens.typography.fontFamily,
+              }}>
+                {item.label}
+              </span>
+              <span style={{
+                fontSize: '16px',
+                lineHeight: '24px',
+                fontWeight: 400,
+                color: tokens.colors.content.primary,
+                fontFamily: tokens.typography.fontFamily,
+                marginLeft: '8px',
+              }}>
+                {item.value}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+
+    // ==================== FIT COLOR HELPER ====================
+    const getFitColor = (fit) => {
+      const lower = fit.toLowerCase();
+      if (lower.includes('perfect') || lower.includes('right') || lower.includes('ideal')) return tokens.colors.content.positive;
+      if (lower.includes('slightly')) return tokens.colors.content.attention;
+      if (lower.includes('too')) return tokens.colors.content.attention;
+      return tokens.colors.content.secondary;
+    };
+
+    // ==================== RIDER NOTE ROW ====================
+    const RiderNoteRow = ({ note }) => (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '12px',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{
+            width: '24px',
+            height: '24px',
+            borderRadius: '50%',
+            backgroundColor: tokens.colors.background.quaternary,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            lineHeight: '18px',
+            fontWeight: 700,
+            color: tokens.colors.content.tertiary,
+            fontFamily: tokens.typography.fontFamily,
+            flexShrink: 0,
+          }}>
+            {note.name.charAt(0)}
+          </div>
+          <div>
+            <div style={{ fontSize: '14px', lineHeight: '21px', fontWeight: 500, color: tokens.colors.content.primary, fontFamily: tokens.typography.fontFamily }}>
+              {note.height} · {note.legLength}
+            </div>
+            <div style={{ fontSize: '12px', lineHeight: '18px', color: tokens.colors.content.tertiary, fontFamily: tokens.typography.fontFamily }}>
+              {note.name}
+            </div>
+          </div>
+        </div>
+        {(() => {
+          const fitColor = getFitColor(note.fit);
+          return (
+            <div style={{
+              fontSize: '12px',
+              lineHeight: '18px',
+              fontWeight: 500,
+              color: fitColor,
+              border: `1px solid ${fitColor}`,
+              padding: '4px 8px',
+              borderRadius: '16px',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+              fontFamily: tokens.typography.fontFamily,
+            }}>
+              {note.fit}
+            </div>
+          );
+        })()}
+      </div>
+    );
+
+    // ==================== COMMUNITY RIDER FEEDBACK ====================
+    const CommunityRiderFeedback = ({ notes }) => (
+      <div style={{
+        marginTop: '12px',
+        backgroundColor: tokens.colors.background.secondary,
+        borderRadius: '8px',
+      }}>
+        <div style={{
+          padding: '12px 12px 0 12px',
+          fontSize: '12px',
+          lineHeight: '18px',
+          color: tokens.colors.content.tertiary,
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px',
+          fontWeight: 500,
+          fontFamily: tokens.typography.fontFamily,
+        }}>
+          Community rider feedback
+        </div>
+        <div style={{
+          padding: '0 12px',
+          fontSize: '12px',
+          lineHeight: '18px',
+          color: tokens.colors.content.tertiary,
+          fontFamily: tokens.typography.fontFamily,
+        }}>
+          Height · Leg length
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {notes.map((note, i) => (
+            <React.Fragment key={i}>
+              {i > 0 && <div style={{ height: '1px', backgroundColor: tokens.colors.border.tertiary, margin: '0 12px' }} />}
+              <RiderNoteRow note={note} />
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    );
+
+    // ==================== SELLER FIT CARD ====================
+    const SellerFitCard = ({ note }) => (
+      <div style={{
+        backgroundColor: tokens.colors.background.secondary,
+        borderRadius: '8px',
+      }}>
+        <div style={{
+          padding: '12px 12px 0 12px',
+          fontSize: '12px',
+          lineHeight: '18px',
+          color: tokens.colors.content.tertiary,
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px',
+          fontWeight: 500,
+          fontFamily: tokens.typography.fontFamily,
+        }}>
+          Seller's fit opinion
+        </div>
+        <div style={{
+          padding: '0 12px',
+          fontSize: '12px',
+          lineHeight: '18px',
+          color: tokens.colors.content.tertiary,
+          fontFamily: tokens.typography.fontFamily,
+        }}>
+          Height · Leg length
+        </div>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '12px',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
+              backgroundColor: tokens.colors.background.quaternary,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              lineHeight: '18px',
+              fontWeight: 700,
+              color: tokens.colors.content.tertiary,
+              fontFamily: tokens.typography.fontFamily,
+              flexShrink: 0,
+            }}>
+              {note.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div style={{ fontSize: '14px', lineHeight: '21px', fontWeight: 500, color: tokens.colors.content.primary, fontFamily: tokens.typography.fontFamily }}>
+                {note.height} · {note.legLength}
+              </div>
+              <div style={{ fontSize: '12px', lineHeight: '18px', color: tokens.colors.content.tertiary, fontFamily: tokens.typography.fontFamily }}>
+                {note.name}
+              </div>
+            </div>
+          </div>
+          {(() => {
+            const fitColor = getFitColor(note.fit);
+            return (
+              <div style={{
+                fontSize: '12px',
+                lineHeight: '18px',
+                fontWeight: 500,
+                color: fitColor,
+                border: `1px solid ${fitColor}`,
+                padding: '4px 8px',
+                borderRadius: '16px',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+                fontFamily: tokens.typography.fontFamily,
+              }}>
+                {note.fit}
+              </div>
+            );
+          })()}
+        </div>
+      </div>
+    );
+
+    // ==================== SIZE & FIT SECTION (NEW — inserted into PDP) ====================
+    const SizeAndFit = ({ insights }) => {
+      const [showReviews, setShowReviews] = useState(false);
+      const reviewCount = insights.fit.riderNotes.length;
+
+      return (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '8px 0',
+            gap: '8px',
+          }}>
+            <span style={{
+              fontSize: '20px',
+              lineHeight: '28px',
+              fontWeight: 700,
+              color: tokens.colors.content.primary,
+              fontFamily: tokens.typography.fontFamily,
+            }}>
+              Size & fit
+            </span>
+          </div>
+
+          {/* Two cards side by side */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+            {/* Recommended height */}
+            <div style={{
+              padding: '12px',
+              backgroundColor: tokens.colors.background.secondary,
+              borderRadius: '8px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+                <span style={{ fontSize: '12px', lineHeight: '18px', color: tokens.colors.content.tertiary, fontFamily: tokens.typography.fontFamily }}>
+                  Recommended height
+                </span>
+                <div style={{ position: 'relative', display: 'inline-flex' }} className="tooltip-trigger">
+                  <InfoIcon size={12} />
+                  <div className="tooltip-content" style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    left: '0',
+                    backgroundColor: tokens.colors.content.primary,
+                    color: tokens.colors.content.reverse,
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    fontSize: '12px',
+                    lineHeight: '18px',
+                    width: '200px',
+                    pointerEvents: 'none',
+                    opacity: 0,
+                    transition: 'opacity 150ms ease',
+                    zIndex: 10,
+                  }}>
+                    {insights.fit.heightSource === 'manufacturer'
+                      ? `Based on the official ${bikeData.brand} sizing chart for this frame size.`
+                      : insights.fit.heightSource === 'seller_adjusted'
+                        ? 'This height range was adjusted by the seller based on their experience with this bike.'
+                        : 'This height range is estimated based on the frame size. We recommend double-checking on the manufacturer\u2019s website for the most accurate sizing.'}
+                    <div style={{
+                      position: 'absolute',
+                      top: '-4px',
+                      left: '12px',
+                      transform: 'rotate(45deg)',
+                      width: '8px',
+                      height: '8px',
+                      backgroundColor: tokens.colors.content.primary,
+                    }} />
+                  </div>
+                </div>
+              </div>
+              <div style={{
+                fontSize: '16px',
+                lineHeight: '24px',
+                fontWeight: 700,
+                color: tokens.colors.content.primary,
+                fontFamily: tokens.typography.fontFamily,
+              }}>
+                {insights.fit.heightRange}
+              </div>
+            </div>
+            {/* Frame size */}
+            <div style={{
+              padding: '12px',
+              backgroundColor: tokens.colors.background.secondary,
+              borderRadius: '8px',
+            }}>
+              <div style={{ fontSize: '12px', lineHeight: '18px', color: tokens.colors.content.tertiary, marginBottom: '4px', fontFamily: tokens.typography.fontFamily }}>
+                Frame size
+              </div>
+              <div style={{
+                fontSize: '16px',
+                lineHeight: '24px',
+                fontWeight: 700,
+                color: tokens.colors.content.primary,
+                fontFamily: tokens.typography.fontFamily,
+              }}>
+                {bikeData.frameSize}
+              </div>
+            </div>
+          </div>
+
+          {/* Seller fit card */}
+          <SellerFitCard note={insights.fit.sellerNote} />
+
+          {/* Community reviews */}
+          {reviewCount > 0 && (
+            <button
+              onClick={() => setShowReviews(!showReviews)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: 0,
+                backgroundColor: 'transparent',
+                border: 'none',
+                fontSize: '14px',
+                lineHeight: '21px',
+                fontWeight: 500,
+                color: tokens.colors.content.primary,
+                cursor: 'pointer',
+                fontFamily: tokens.typography.fontFamily,
+              }}
+            >
+              <span style={{ textDecoration: 'underline' }}>
+                {showReviews ? 'Hide' : 'Show'} {reviewCount} rider {reviewCount === 1 ? 'review' : 'reviews'}
+              </span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ transform: showReviews ? 'rotate(180deg)' : 'none' }}>
+                <path d="M3 4.5L6 7.5L9 4.5" stroke={tokens.colors.content.primary} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          )}
+          {showReviews && (
+            <CommunityRiderFeedback notes={insights.fit.riderNotes} />
+          )}
+        </div>
+      );
+    };
+
+    // ==================== STICKY BOTTOM BAR ====================
+    const StickyBottomBar = ({ bike }) => (
+      <div style={{
+        position: 'fixed',
+        bottom: 0,
+        width: '390px',
+        zIndex: 50,
+      }}>
+        <div style={{
+          padding: '44px 16px 0',
+          backgroundImage: 'linear-gradient(179.636deg, rgba(252, 252, 252, 0) 0.95%, rgb(252, 252, 252) 39.17%)',
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '12px',
+          }}>
+            <div>
+              <div style={{
+                fontSize: '20px',
+                lineHeight: '28px',
+                fontWeight: 500,
+                color: tokens.colors.content.primary,
+                fontFamily: tokens.typography.fontFamily,
+              }}>
+                {'\u20AC'}{bike.price.toLocaleString()}
+              </div>
+              <div style={{
+                fontSize: '14px',
+                lineHeight: '21px',
+                fontWeight: 400,
+                color: tokens.colors.content.tertiary,
+                textDecoration: 'line-through',
+                fontFamily: tokens.typography.fontFamily,
+              }}>
+                {'\u20AC'} {bike.originalPrice.toLocaleString()}
+              </div>
+            </div>
+            <button style={{
+              height: '49px',
+              padding: '0 24px',
+              backgroundColor: tokens.colors.content.primary,
+              color: tokens.colors.content.reverse,
+              border: 'none',
+              borderRadius: '6px',
+              fontSize: '16px',
+              lineHeight: '24px',
+              fontWeight: 400,
+              cursor: 'pointer',
+              fontFamily: tokens.typography.fontFamily,
+            }}>
+              Show buying options
+            </button>
+          </div>
+        </div>
+        {/* Home indicator — 34px safe area */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          height: '34px',
+          alignItems: 'center',
+          backgroundColor: tokens.colors.background.primary,
+        }}>
+          <div style={{
+            width: '134px',
+            height: '5px',
+            backgroundColor: tokens.colors.content.primary,
+            borderRadius: '100px',
+          }} />
+        </div>
+      </div>
+    );
+
+    // ==================== LINE DIVIDER (Figma: 1px solid #EAEAEA) ====================
+    const LineDivider = () => (
+      <div style={{
+        width: '100%',
+        height: '0px',
+        borderBottom: `1px solid ${tokens.colors.border.tertiary}`,
+      }} />
+    );
+
+    // ==================== MAIN APP ====================
+    const App = () => (
+      <div style={{
+        width: '390px',
+        minHeight: '100vh',
+        backgroundColor: tokens.colors.background.primary,
+        position: 'relative',
+        paddingBottom: '100px',
+        overflowY: 'scroll',
+      }}>
+        {/* Image — 390 x 292.5px */}
+        <ImageGallery />
+
+        {/* Content area — Figma: padding 16px, gap 24px */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '16px',
+          gap: '24px',
+        }}>
+          {/* Seller profile — first after image */}
+          <SellerProfile bike={bikeData} />
+
+          {/* Divider line */}
+          <LineDivider />
+
+          {/* Details section — gap 24px */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+          }}>
+            {/* Product info: brand, model, price */}
+            <ProductDetails bike={bikeData} />
+
+            {/* Product tags */}
+            <ProductTags bike={bikeData} />
+
+            {/* Seller description */}
+            <SellerDescription bike={bikeData} />
+
+            {/* Size & fit — new section */}
+            <SizeAndFit insights={bikeData.insights} />
+
+            {/* Bike details (Original + Replaced parts) */}
+            <BikeDetails bike={bikeData} />
+          </div>
+        </div>
+
+        <StickyBottomBar bike={bikeData} />
+
+        <style>{`
+          button:hover { opacity: 0.95; }
+          button:active { transform: scale(0.99); }
+          .tooltip-trigger:hover .tooltip-content { opacity: 1 !important; }
+        `}</style>
+      </div>
+    );
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
