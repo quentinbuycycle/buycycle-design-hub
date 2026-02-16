@@ -1,0 +1,489 @@
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buycycle Enhanced Buttons - Sophisticated Micro-Interactions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    /* Neue Haas Grotesk Text Pro fallback */
+    @font-face {
+      font-family: 'Neue Haas Grotesk Text Pro';
+      src: local('Helvetica Neue'), local('Arial');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'Neue Haas Grotesk Text Pro';
+      src: local('Helvetica Neue'), local('Arial');
+      font-weight: 500;
+    }
+    @font-face {
+      font-family: 'Neue Haas Grotesk Text Pro';
+      src: local('Helvetica Neue'), local('Arial');
+      font-weight: 600;
+    }
+
+    * {
+      font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: #FCFCFC;
+      color: #090907;
+    }
+
+    /* Base button styles */
+    .btn-enhanced {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: all 200ms ease-out;
+      white-space: nowrap;
+    }
+
+    .btn-enhanced:active {
+      transform: scale(0.97);
+    }
+
+    /* Primary variant */
+    .btn-primary {
+      background: #090907;
+      color: #FCFCFC;
+      box-shadow: 0 2px 8px -2px rgba(9, 9, 7, 0.3);
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 200ms ease-out;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 16px -4px rgba(9, 9, 7, 0.4);
+      transform: translateY(-0.5px);
+    }
+
+    .btn-primary:hover::before {
+      opacity: 1;
+    }
+
+    .btn-primary:active {
+      transform: translateY(0) scale(0.97);
+      box-shadow: 0 1px 4px -1px rgba(9, 9, 7, 0.3);
+    }
+
+    .btn-primary:disabled {
+      background: #EAEAEA;
+      color: #535353;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Secondary variant */
+    .btn-secondary {
+      background: white;
+      color: #090907;
+      border: 1.5px solid #757575;
+    }
+
+    .btn-secondary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(9,9,7,0.05) 100%);
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 200ms ease-out;
+    }
+
+    .btn-secondary:hover {
+      border-color: #090907;
+      background: #F3F3F3;
+    }
+
+    .btn-secondary:hover::before {
+      opacity: 1;
+    }
+
+    .btn-secondary:active {
+      background: #EAEAEA;
+    }
+
+    .btn-secondary:disabled {
+      background: #EAEAEA;
+      color: #535353;
+      border-color: #EAEAEA;
+      cursor: not-allowed;
+    }
+
+    /* Tertiary variant */
+    .btn-tertiary {
+      background: transparent;
+      color: #090907;
+    }
+
+    .btn-tertiary::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      width: 0;
+      height: 1.5px;
+      background: #090907;
+      transition: all 200ms ease-out;
+      transform: translateX(-50%);
+    }
+
+    .btn-tertiary:hover::after {
+      width: calc(100% - 16px);
+    }
+
+    .btn-tertiary:active::after {
+      width: calc(100% - 20px);
+    }
+
+    .btn-tertiary:disabled {
+      background: #EAEAEA;
+      color: #535353;
+      cursor: not-allowed;
+    }
+
+    .btn-tertiary:disabled::after {
+      display: none;
+    }
+
+    /* NEW: Accent variant */
+    .btn-accent {
+      background: linear-gradient(135deg, #DAFDA0 0%, #FDFDA0 100%);
+      color: #2F4B02;
+      font-weight: 600;
+      box-shadow: 0 2px 12px -2px rgba(218, 253, 160, 0.4);
+    }
+
+    .btn-accent::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+      border-radius: inherit;
+      opacity: 0;
+      transition: opacity 200ms ease-out;
+    }
+
+    .btn-accent:hover {
+      box-shadow: 0 4px 20px -4px rgba(218, 253, 160, 0.6);
+      transform: translateY(-0.5px);
+    }
+
+    .btn-accent:hover::before {
+      opacity: 1;
+    }
+
+    .btn-accent:active {
+      transform: translateY(0) scale(0.97);
+      box-shadow: 0 1px 6px -1px rgba(218, 253, 160, 0.4);
+    }
+
+    .btn-accent:disabled {
+      background: #EAEAEA;
+      color: #535353;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Size variants */
+    .btn-large {
+      height: 52px;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      gap: 8px;
+    }
+
+    .btn-medium {
+      height: 40px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      gap: 6px;
+    }
+
+    .btn-small {
+      height: 32px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      gap: 4px;
+    }
+
+    /* Respect prefers-reduced-motion */
+    @media (prefers-reduced-motion: reduce) {
+      .btn-enhanced,
+      .btn-enhanced::before,
+      .btn-enhanced::after {
+        transition: none !important;
+        animation: none !important;
+      }
+      .btn-enhanced:hover,
+      .btn-enhanced:active {
+        transform: none !important;
+      }
+    }
+
+    /* Animated background */
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(2%, -2%) rotate(1deg); }
+      66% { transform: translate(-2%, 2%) rotate(-1deg); }
+    }
+
+    @keyframes badge-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .animate-float {
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .animate-badge-float {
+      animation: badge-float 3s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <div class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10">
+      <div
+        class="absolute top-0 left-0 w-[500px] h-[500px] rounded-full opacity-20 blur-[100px] animate-float"
+        style="background: #DAFDA0; animation-duration: 20s;"
+      ></div>
+      <div
+        class="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full opacity-20 blur-[120px] animate-float"
+        style="background: #FDFDA0; animation-duration: 25s; animation-delay: 5s;"
+      ></div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-8 py-16">
+      <div class="text-center space-y-4 mb-12">
+        <div class="inline-flex items-center gap-2 px-4 py-2 bg-[#090907] text-white rounded-full text-xs font-semibold uppercase tracking-wider mb-4 animate-badge-float">
+          Enhanced Edition
+        </div>
+        <h1 style="font-size: clamp(48px, 8vw, 72px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; background: linear-gradient(135deg, #090907 0%, #333333 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Buycycle Button System
+        </h1>
+        <p style="font-size: 18px; color: #535353; max-width: 600px; margin: 0 auto;">
+          Sophisticated micro-interactions, elevation effects, and spring animations for P2P marketplace
+        </p>
+      </div>
+
+      <!-- Feature Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-16">
+        <div class="bg-white/60 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <div class="text-3xl mb-2">✨</div>
+          <div class="font-semibold text-[#090907] mb-1">Shadow Elevation</div>
+          <div class="text-sm text-[#535353]">Depth on hover</div>
+        </div>
+        <div class="bg-white/60 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <div class="text-3xl mb-2">🎯</div>
+          <div class="font-semibold text-[#090907] mb-1">Spring Physics</div>
+          <div class="text-sm text-[#535353]">Natural motion</div>
+        </div>
+        <div class="bg-white/60 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <div class="text-3xl mb-2">🌈</div>
+          <div class="font-semibold text-[#090907] mb-1">Gradient Accent</div>
+          <div class="text-sm text-[#535353]">Brand identity</div>
+        </div>
+        <div class="bg-white/60 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+          <div class="text-3xl mb-2">⚡</div>
+          <div class="font-semibold text-[#090907] mb-1">Sub-300ms</div>
+          <div class="text-sm text-[#535353]">Instant feedback</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-8 py-12 space-y-16">
+
+    <!-- Primary Variant -->
+    <section class="space-y-8">
+      <div class="border-b border-[#EAEAEA] pb-4">
+        <h2 class="text-3xl font-bold text-[#090907] mb-2">Primary Variant</h2>
+        <p class="text-[#535353]">Elevated shadows, gradient overlay, -0.5px lift on hover</p>
+      </div>
+
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-lg font-semibold text-[#333333] mb-4">Large (52px)</h3>
+          <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border border-[#EAEAEA]">
+            <button class="btn-enhanced btn-primary btn-large">Buy Bike</button>
+            <button class="btn-enhanced btn-primary btn-large"><span>←</span> Previous</button>
+            <button class="btn-enhanced btn-primary btn-large">Continue <span>→</span></button>
+            <button class="btn-enhanced btn-primary btn-large" disabled>Disabled</button>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold text-[#333333] mb-4">Medium (40px)</h3>
+          <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border border-[#EAEAEA]">
+            <button class="btn-enhanced btn-primary btn-medium">Add to Cart</button>
+            <button class="btn-enhanced btn-primary btn-medium"><span>←</span> Back</button>
+            <button class="btn-enhanced btn-primary btn-medium">Next <span>→</span></button>
+            <button class="btn-enhanced btn-primary btn-medium" disabled>Disabled</button>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-semibold text-[#333333] mb-4">Small (32px)</h3>
+          <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border border-[#EAEAEA]">
+            <button class="btn-enhanced btn-primary btn-small">Apply</button>
+            <button class="btn-enhanced btn-primary btn-small"><span>←</span> Back</button>
+            <button class="btn-enhanced btn-primary btn-small">Next <span>→</span></button>
+            <button class="btn-enhanced btn-primary btn-small" disabled>Disabled</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Secondary Variant -->
+    <section class="space-y-8">
+      <div class="border-b border-[#EAEAEA] pb-4">
+        <h2 class="text-3xl font-bold text-[#090907] mb-2">Secondary Variant</h2>
+        <p class="text-[#535353]">Thicker border (1.5px), border darkens on hover</p>
+      </div>
+
+      <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border border-[#EAEAEA]">
+        <button class="btn-enhanced btn-secondary btn-large">View Details</button>
+        <button class="btn-enhanced btn-secondary btn-medium">Cancel</button>
+        <button class="btn-enhanced btn-secondary btn-small">Edit</button>
+        <button class="btn-enhanced btn-secondary btn-medium" disabled>Disabled</button>
+      </div>
+    </section>
+
+    <!-- Tertiary Variant -->
+    <section class="space-y-8">
+      <div class="border-b border-[#EAEAEA] pb-4">
+        <h2 class="text-3xl font-bold text-[#090907] mb-2">Tertiary Variant</h2>
+        <p class="text-[#535353]">Animated underline expands from center (200ms ease-out)</p>
+      </div>
+
+      <div class="flex gap-6 flex-wrap bg-white/40 p-6 rounded-2xl border border-[#EAEAEA]">
+        <button class="btn-enhanced btn-tertiary btn-large">Learn More</button>
+        <button class="btn-enhanced btn-tertiary btn-medium">View All Listings</button>
+        <button class="btn-enhanced btn-tertiary btn-small">Help</button>
+        <button class="btn-enhanced btn-tertiary btn-medium" disabled>Disabled</button>
+      </div>
+    </section>
+
+    <!-- NEW: Accent Variant -->
+    <section class="space-y-8">
+      <div class="border-b pb-4" style="border-image: linear-gradient(to right, #DAFDA0, #FDFDA0) 1;">
+        <h2 class="text-3xl font-bold mb-2" style="background: linear-gradient(135deg, #090907 0%, #2F4B02 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+          Accent Variant ✨ NEW
+        </h2>
+        <p class="text-[#535353]">Signature green-yellow gradient, enhanced shadow, perfect for promotional CTAs</p>
+      </div>
+
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-lg font-semibold text-[#333333] mb-4">Promotional Actions</h3>
+          <div class="flex gap-4 flex-wrap p-8 rounded-2xl border border-[#DAFDA0]/30" style="background: linear-gradient(135deg, rgba(218,253,160,0.1) 0%, rgba(253,253,160,0.1) 100%);">
+            <button class="btn-enhanced btn-accent btn-large">Shop Hot Deals 🔥</button>
+            <button class="btn-enhanced btn-accent btn-medium">Sell Now</button>
+            <button class="btn-enhanced btn-accent btn-small">New</button>
+            <button class="btn-enhanced btn-accent btn-medium" disabled>Disabled</button>
+          </div>
+        </div>
+
+        <!-- Use Cases -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-white rounded-2xl p-6 border border-[#EAEAEA] space-y-4">
+            <div class="text-sm font-semibold text-[#535353] uppercase tracking-wider">Hero CTA</div>
+            <h3 class="text-2xl font-bold text-[#090907]">Start Your Cycling Journey</h3>
+            <p class="text-[#535353]">Find premium bikes from trusted sellers</p>
+            <button class="btn-enhanced btn-accent btn-large">Browse Marketplace →</button>
+          </div>
+
+          <div class="bg-white rounded-2xl p-6 border border-[#EAEAEA] space-y-4">
+            <div class="text-sm font-semibold text-[#535353] uppercase tracking-wider">Limited Offer</div>
+            <div class="inline-block px-3 py-1 bg-[#FFEBEB] text-[#B91C1C] rounded-full text-xs font-bold">
+              30% OFF - 2 DAYS LEFT
+            </div>
+            <h3 class="text-2xl font-bold text-[#090907]">Canyon Aeroad CF SLX</h3>
+            <div class="flex items-center gap-3">
+              <span class="text-3xl font-bold text-[#090907]">$4,299</span>
+              <span class="text-lg text-[#A9A9A9] line-through">$5,499</span>
+            </div>
+            <button class="btn-enhanced btn-accent btn-large">Claim Deal</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enhancement Summary -->
+    <section class="bg-[#090907] text-white rounded-3xl p-12 space-y-8">
+      <div class="text-center space-y-3">
+        <h2 class="text-3xl font-bold">Enhancement Summary</h2>
+        <p class="text-white/70 max-w-2xl mx-auto">
+          Based on Emil Kowalski's animation principles for P2P marketplace interactions
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+          <h3 class="text-lg font-semibold mb-4">Shadow Elevation</h3>
+          <ul class="space-y-2 text-sm text-white/70">
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Primary: 2px → 4px on hover</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Accent: Enhanced glow effect</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>-0.5px translateY lift</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Active state compression</span></li>
+          </ul>
+        </div>
+
+        <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+          <h3 class="text-lg font-semibold mb-4">Timing & Physics</h3>
+          <ul class="space-y-2 text-sm text-white/70">
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>200ms transitions (sub-300ms)</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>ease-out default easing</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>scale(0.97) on press</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Interruptible animations</span></li>
+          </ul>
+        </div>
+
+        <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+          <h3 class="text-lg font-semibold mb-4">Visual Refinement</h3>
+          <ul class="space-y-2 text-sm text-white/70">
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Font-weight: 500 (medium)</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Larger border-radius (12/10/8px)</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Gradient overlays on hover</span></li>
+            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>prefers-reduced-motion support</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // Add click handlers
+    document.querySelectorAll('button:not([disabled])').forEach(btn => {
+      btn.addEventListener('click', () => {
+        console.log('Button clicked:', btn.textContent.trim());
+      });
+    });
+  </script>
+</body>
+</html>
