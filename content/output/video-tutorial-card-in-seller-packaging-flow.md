@@ -5,6 +5,7 @@ date: "2026-02-17"
 team: "Design"
 tags: ["Seller","Post-transaction XP"]
 prototypes:
+  - "/prototypes/packaging-preparation-chat-interface.html"
   - "/prototypes/video-tutorial-card-in-seller-packaging-flow.html"
 finalPrototypes: []
 ---
