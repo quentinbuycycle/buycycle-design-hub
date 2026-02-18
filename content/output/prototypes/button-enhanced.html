@@ -30,9 +30,51 @@
       font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
     }
 
+    /* ========================================
+       CSS CUSTOM PROPERTIES - DESIGN TOKENS
+       ======================================== */
+    :root {
+      /* Background */
+      --bc-bg-primary: #FCFCFC;
+      --bc-bg-secondary: #F3F3F3;
+      --bc-bg-tertiary: #FFFFFF;
+      --bc-bg-quartenary: #EAEAEA;
+      --bc-bg-reverse: #090907;
+      --bc-bg-alert: #FFEBEB;
+      --bc-bg-accent-green: #DAFDA0;
+      --bc-bg-accent-yellow: #FDFDA0;
+
+      /* Content */
+      --bc-content-primary: #090907;
+      --bc-content-secondary: #333333;
+      --bc-content-tertiary: #535353;
+      --bc-content-quartenary: #A9A9A9;
+      --bc-content-reverse: #FCFCFC;
+      --bc-content-alert: #B91C1C;
+
+      /* Border */
+      --bc-border-primary: #090907;
+      --bc-border-secondary: #757575;
+      --bc-border-tertiary: #EAEAEA;
+
+      /* Enhanced tokens */
+      --bc-enhanced-accent: #2F4B02;
+      --bc-enhanced-surface-elevated: rgba(255, 255, 255, 0.95);
+
+      /* Animation tokens */
+      --bc-transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+      --bc-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      --bc-transition-slow: 320ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     body {
-      background: #FCFCFC;
-      color: #090907;
+      background: var(--bc-bg-primary);
+      color: var(--bc-content-primary);
+    }
+
+    /* Default border color uses semantic token */
+    *, *::before, *::after {
+      border-color: var(--bc-border-tertiary);
     }
 
     /* Base button styles */
@@ -45,7 +87,7 @@
       font-weight: 500;
       border: none;
       cursor: pointer;
-      transition: all 200ms ease-out;
+      transition: all var(--bc-transition-normal);
       white-space: nowrap;
     }
 
@@ -55,8 +97,8 @@
 
     /* Primary variant */
     .btn-primary {
-      background: #090907;
-      color: #FCFCFC;
+      background: var(--bc-bg-reverse);
+      color: var(--bc-content-reverse);
       box-shadow: 0 2px 8px -2px rgba(9, 9, 7, 0.3);
     }
 
@@ -67,7 +109,7 @@
       background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
       border-radius: inherit;
       opacity: 0;
-      transition: opacity 200ms ease-out;
+      transition: opacity var(--bc-transition-normal);
     }
 
     .btn-primary:hover {
@@ -85,17 +127,17 @@
     }
 
     .btn-primary:disabled {
-      background: #EAEAEA;
-      color: #535353;
+      background: var(--bc-bg-quartenary);
+      color: var(--bc-content-tertiary);
       box-shadow: none;
       cursor: not-allowed;
     }
 
     /* Secondary variant */
     .btn-secondary {
-      background: white;
-      color: #090907;
-      border: 1.5px solid #757575;
+      background: var(--bc-bg-tertiary);
+      color: var(--bc-content-primary);
+      border: 1.5px solid var(--bc-border-secondary);
     }
 
     .btn-secondary::before {
@@ -105,12 +147,12 @@
       background: linear-gradient(135deg, transparent 0%, rgba(9,9,7,0.05) 100%);
       border-radius: inherit;
       opacity: 0;
-      transition: opacity 200ms ease-out;
+      transition: opacity var(--bc-transition-normal);
     }
 
     .btn-secondary:hover {
-      border-color: #090907;
-      background: #F3F3F3;
+      border-color: var(--bc-border-primary);
+      background: var(--bc-bg-secondary);
     }
 
     .btn-secondary:hover::before {
@@ -118,25 +160,25 @@
     }
 
     .btn-secondary:active {
-      background: #EAEAEA;
+      background: var(--bc-bg-quartenary);
     }
 
     .btn-secondary:disabled {
-      background: #EAEAEA;
-      color: #535353;
-      border-color: #EAEAEA;
+      background: var(--bc-bg-quartenary);
+      color: var(--bc-content-tertiary);
+      border-color: var(--bc-border-tertiary);
       cursor: not-allowed;
     }
 
     /* Tertiary variant */
     .btn-tertiary {
       background: transparent;
-      color: #535353;
-      transition: color 200ms ease-out;
+      color: var(--bc-content-tertiary);
+      transition: color var(--bc-transition-normal);
     }
 
     .btn-tertiary:hover {
-      color: #090907;
+      color: var(--bc-content-primary);
     }
 
     .btn-tertiary::after {
@@ -147,13 +189,13 @@
       width: calc(100% - 16px);
       height: 1px;
       background: rgba(9, 9, 7, 0.3);
-      transition: all 200ms ease-out;
+      transition: all var(--bc-transition-normal);
       transform: translateX(-50%);
     }
 
     .btn-tertiary:hover::after {
       height: 1.5px;
-      background: #090907;
+      background: var(--bc-content-primary);
     }
 
     .btn-tertiary:active::after {
@@ -161,8 +203,8 @@
     }
 
     .btn-tertiary:disabled {
-      background: #EAEAEA;
-      color: #535353;
+      background: var(--bc-bg-quartenary);
+      color: var(--bc-content-tertiary);
       cursor: not-allowed;
     }
 
@@ -172,8 +214,8 @@
 
     /* NEW: Accent variant */
     .btn-accent {
-      background: linear-gradient(135deg, #DAFDA0 0%, #FDFDA0 100%);
-      color: #2F4B02;
+      background: linear-gradient(135deg, var(--bc-bg-accent-green) 0%, var(--bc-bg-accent-yellow) 100%);
+      color: var(--bc-enhanced-accent);
       font-weight: 600;
       box-shadow: 0 2px 12px -2px rgba(218, 253, 160, 0.4);
     }
@@ -185,7 +227,7 @@
       background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
       border-radius: inherit;
       opacity: 0;
-      transition: opacity 200ms ease-out;
+      transition: opacity var(--bc-transition-normal);
     }
 
     .btn-accent:hover {
@@ -203,8 +245,8 @@
     }
 
     .btn-accent:disabled {
-      background: #EAEAEA;
-      color: #535353;
+      background: var(--bc-bg-quartenary);
+      color: var(--bc-content-tertiary);
       box-shadow: none;
       cursor: not-allowed;
     }
@@ -275,48 +317,48 @@
     <div class="absolute inset-0 -z-10">
       <div
         class="absolute top-0 left-0 w-[500px] h-[500px] rounded-full opacity-20 blur-[100px] animate-float"
-        style="background: #DAFDA0; animation-duration: 20s;"
+        style="background: var(--bc-bg-accent-green); animation-duration: 20s;"
       ></div>
       <div
         class="absolute bottom-0 right-0 w-[600px] h-[600px] rounded-full opacity-20 blur-[120px] animate-float"
-        style="background: #FDFDA0; animation-duration: 25s; animation-delay: 5s;"
+        style="background: var(--bc-bg-accent-yellow); animation-duration: 25s; animation-delay: 5s;"
       ></div>
     </div>
 
     <div class="max-w-6xl mx-auto px-8 py-16">
       <div class="text-center space-y-4 mb-12">
-        <div class="inline-flex items-center gap-2 px-4 py-2 bg-[#090907] text-white rounded-full text-xs font-semibold uppercase tracking-wider mb-4 animate-badge-float">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider mb-4 animate-badge-float" style="background: var(--bc-bg-reverse); color: var(--bc-content-reverse);">
           Enhanced Edition
         </div>
-        <h1 style="font-size: clamp(48px, 8vw, 72px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; background: linear-gradient(135deg, #090907 0%, #333333 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+        <h1 style="font-size: clamp(48px, 8vw, 72px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; background: linear-gradient(135deg, var(--bc-content-primary) 0%, var(--bc-content-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
           Buycycle Button System
         </h1>
-        <p style="font-size: 18px; color: #535353; max-width: 600px; margin: 0 auto;">
+        <p style="font-size: 18px; color: var(--bc-content-tertiary); max-width: 600px; margin: 0 auto;">
           Sophisticated micro-interactions, elevation effects, and spring animations for P2P marketplace
         </p>
       </div>
 
       <!-- Feature Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-16">
-        <div class="bg-white/60 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+        <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300" style="border: 1px solid var(--bc-border-tertiary);">
           <div class="text-3xl mb-2">✨</div>
-          <div class="font-semibold text-[#090907] mb-1">Shadow Elevation</div>
-          <div class="text-sm text-[#535353]">Depth on hover</div>
+          <div class="font-semibold mb-1" style="color: var(--bc-content-primary);">Shadow Elevation</div>
+          <div class="text-sm" style="color: var(--bc-content-tertiary);">Depth on hover</div>
         </div>
-        <div class="bg-white/60 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+        <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300" style="border: 1px solid var(--bc-border-tertiary);">
           <div class="text-3xl mb-2">🎯</div>
-          <div class="font-semibold text-[#090907] mb-1">Spring Physics</div>
-          <div class="text-sm text-[#535353]">Natural motion</div>
+          <div class="font-semibold mb-1" style="color: var(--bc-content-primary);">Spring Physics</div>
+          <div class="text-sm" style="color: var(--bc-content-tertiary);">Natural motion</div>
         </div>
-        <div class="bg-white/60 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+        <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300" style="border: 1px solid var(--bc-border-tertiary);">
           <div class="text-3xl mb-2">🌈</div>
-          <div class="font-semibold text-[#090907] mb-1">Gradient Accent</div>
-          <div class="text-sm text-[#535353]">Brand identity</div>
+          <div class="font-semibold mb-1" style="color: var(--bc-content-primary);">Gradient Accent</div>
+          <div class="text-sm" style="color: var(--bc-content-tertiary);">Brand identity</div>
         </div>
-        <div class="bg-white/60 backdrop-blur-sm border border-[#EAEAEA] rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+        <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300" style="border: 1px solid var(--bc-border-tertiary);">
           <div class="text-3xl mb-2">⚡</div>
-          <div class="font-semibold text-[#090907] mb-1">Sub-300ms</div>
-          <div class="text-sm text-[#535353]">Instant feedback</div>
+          <div class="font-semibold mb-1" style="color: var(--bc-content-primary);">Sub-300ms</div>
+          <div class="text-sm" style="color: var(--bc-content-tertiary);">Instant feedback</div>
         </div>
       </div>
     </div>
@@ -326,15 +368,15 @@
 
     <!-- Primary Variant -->
     <section class="space-y-8">
-      <div class="border-b border-[#EAEAEA] pb-4">
-        <h2 class="text-3xl font-bold text-[#090907] mb-2">Primary Variant</h2>
-        <p class="text-[#535353]">Elevated shadows, gradient overlay, -0.5px lift on hover</p>
+      <div class="border-b pb-4">
+        <h2 class="text-3xl font-bold text-[--bc-content-primary] mb-2">Primary Variant</h2>
+        <p class="text-[--bc-content-tertiary]">Elevated shadows, gradient overlay, -0.5px lift on hover</p>
       </div>
 
       <div class="space-y-6">
         <div>
-          <h3 class="text-lg font-semibold text-[#333333] mb-4">Large (52px)</h3>
-          <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border border-[#EAEAEA]">
+          <h3 class="text-lg font-semibold text-[--bc-content-secondary] mb-4">Large (52px)</h3>
+          <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border">
             <button class="btn-enhanced btn-primary btn-large">Buy Bike</button>
             <button class="btn-enhanced btn-primary btn-large"><span>←</span> Previous</button>
             <button class="btn-enhanced btn-primary btn-large">Continue <span>→</span></button>
@@ -343,8 +385,8 @@
         </div>
 
         <div>
-          <h3 class="text-lg font-semibold text-[#333333] mb-4">Medium (40px)</h3>
-          <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border border-[#EAEAEA]">
+          <h3 class="text-lg font-semibold text-[--bc-content-secondary] mb-4">Medium (40px)</h3>
+          <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border">
             <button class="btn-enhanced btn-primary btn-medium">Add to Cart</button>
             <button class="btn-enhanced btn-primary btn-medium"><span>←</span> Back</button>
             <button class="btn-enhanced btn-primary btn-medium">Next <span>→</span></button>
@@ -353,8 +395,8 @@
         </div>
 
         <div>
-          <h3 class="text-lg font-semibold text-[#333333] mb-4">Small (32px)</h3>
-          <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border border-[#EAEAEA]">
+          <h3 class="text-lg font-semibold text-[--bc-content-secondary] mb-4">Small (32px)</h3>
+          <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border">
             <button class="btn-enhanced btn-primary btn-small">Apply</button>
             <button class="btn-enhanced btn-primary btn-small"><span>←</span> Back</button>
             <button class="btn-enhanced btn-primary btn-small">Next <span>→</span></button>
@@ -366,12 +408,12 @@
 
     <!-- Secondary Variant -->
     <section class="space-y-8">
-      <div class="border-b border-[#EAEAEA] pb-4">
-        <h2 class="text-3xl font-bold text-[#090907] mb-2">Secondary Variant</h2>
-        <p class="text-[#535353]">Thicker border (1.5px), border darkens on hover</p>
+      <div class="border-b pb-4">
+        <h2 class="text-3xl font-bold text-[--bc-content-primary] mb-2">Secondary Variant</h2>
+        <p class="text-[--bc-content-tertiary]">Thicker border (1.5px), border darkens on hover</p>
       </div>
 
-      <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border border-[#EAEAEA]">
+      <div class="flex gap-4 flex-wrap bg-white/40 p-6 rounded-2xl border">
         <button class="btn-enhanced btn-secondary btn-large">View Details</button>
         <button class="btn-enhanced btn-secondary btn-medium">Cancel</button>
         <button class="btn-enhanced btn-secondary btn-small">Edit</button>
@@ -381,12 +423,12 @@
 
     <!-- Tertiary Variant -->
     <section class="space-y-8">
-      <div class="border-b border-[#EAEAEA] pb-4">
-        <h2 class="text-3xl font-bold text-[#090907] mb-2">Tertiary Variant</h2>
-        <p class="text-[#535353]">Subtle default underline strengthens on hover (200ms ease-out)</p>
+      <div class="border-b pb-4">
+        <h2 class="text-3xl font-bold text-[--bc-content-primary] mb-2">Tertiary Variant</h2>
+        <p class="text-[--bc-content-tertiary]">Subtle default underline strengthens on hover (200ms ease-out)</p>
       </div>
 
-      <div class="flex gap-6 flex-wrap bg-white/40 p-6 rounded-2xl border border-[#EAEAEA]">
+      <div class="flex gap-6 flex-wrap bg-white/40 p-6 rounded-2xl border">
         <button class="btn-enhanced btn-tertiary btn-large">Learn More</button>
         <button class="btn-enhanced btn-tertiary btn-medium">View All Listings</button>
         <button class="btn-enhanced btn-tertiary btn-small">Help</button>
@@ -396,17 +438,17 @@
 
     <!-- NEW: Accent Variant -->
     <section class="space-y-8">
-      <div class="border-b pb-4" style="border-image: linear-gradient(to right, #DAFDA0, #FDFDA0) 1;">
-        <h2 class="text-3xl font-bold mb-2" style="background: linear-gradient(135deg, #090907 0%, #2F4B02 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+      <div class="border-b pb-4" style="border-image: linear-gradient(to right, var(--bc-bg-accent-green), var(--bc-bg-accent-yellow)) 1;">
+        <h2 class="text-3xl font-bold mb-2" style="background: linear-gradient(135deg, var(--bc-content-primary) 0%, var(--bc-enhanced-accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
           Accent Variant ✨ NEW
         </h2>
-        <p class="text-[#535353]">Signature green-yellow gradient, enhanced shadow, perfect for promotional CTAs</p>
+        <p class="text-[--bc-content-tertiary]">Signature green-yellow gradient, enhanced shadow, perfect for promotional CTAs</p>
       </div>
 
       <div class="space-y-6">
         <div>
-          <h3 class="text-lg font-semibold text-[#333333] mb-4">Promotional Actions</h3>
-          <div class="flex gap-4 flex-wrap p-8 rounded-2xl border border-[#DAFDA0]/30" style="background: linear-gradient(135deg, rgba(218,253,160,0.1) 0%, rgba(253,253,160,0.1) 100%);">
+          <h3 class="text-lg font-semibold text-[--bc-content-secondary] mb-4">Promotional Actions</h3>
+          <div class="flex gap-4 flex-wrap p-8 rounded-2xl" style="border: 1px solid rgba(218,253,160,0.3); background: linear-gradient(135deg, rgba(218,253,160,0.1) 0%, rgba(253,253,160,0.1) 100%);">
             <button class="btn-enhanced btn-accent btn-large">Shop Hot Deals 🔥</button>
             <button class="btn-enhanced btn-accent btn-medium">Sell Now</button>
             <button class="btn-enhanced btn-accent btn-small">New</button>
@@ -416,22 +458,22 @@
 
         <!-- Use Cases -->
         <div class="grid md:grid-cols-2 gap-6">
-          <div class="bg-white rounded-2xl p-6 border border-[#EAEAEA] space-y-4">
-            <div class="text-sm font-semibold text-[#535353] uppercase tracking-wider">Hero CTA</div>
-            <h3 class="text-2xl font-bold text-[#090907]">Start Your Cycling Journey</h3>
-            <p class="text-[#535353]">Find premium bikes from trusted sellers</p>
+          <div class="bg-white rounded-2xl p-6 border space-y-4">
+            <div class="text-sm font-semibold text-[--bc-content-tertiary] uppercase tracking-wider">Hero CTA</div>
+            <h3 class="text-2xl font-bold text-[--bc-content-primary]">Start Your Cycling Journey</h3>
+            <p class="text-[--bc-content-tertiary]">Find premium bikes from trusted sellers</p>
             <button class="btn-enhanced btn-accent btn-large">Browse Marketplace →</button>
           </div>
 
-          <div class="bg-white rounded-2xl p-6 border border-[#EAEAEA] space-y-4">
-            <div class="text-sm font-semibold text-[#535353] uppercase tracking-wider">Limited Offer</div>
-            <div class="inline-block px-3 py-1 bg-[#FFEBEB] text-[#B91C1C] rounded-full text-xs font-bold">
+          <div class="bg-white rounded-2xl p-6 border space-y-4">
+            <div class="text-sm font-semibold text-[--bc-content-tertiary] uppercase tracking-wider">Limited Offer</div>
+            <div class="inline-block px-3 py-1 rounded-full text-xs font-bold" style="background: var(--bc-bg-alert); color: var(--bc-content-alert);">
               30% OFF - 2 DAYS LEFT
             </div>
-            <h3 class="text-2xl font-bold text-[#090907]">Canyon Aeroad CF SLX</h3>
+            <h3 class="text-2xl font-bold text-[--bc-content-primary]">Canyon Aeroad CF SLX</h3>
             <div class="flex items-center gap-3">
-              <span class="text-3xl font-bold text-[#090907]">$4,299</span>
-              <span class="text-lg text-[#A9A9A9] line-through">$5,499</span>
+              <span class="text-3xl font-bold text-[--bc-content-primary]">$4,299</span>
+              <span class="text-lg line-through" style="color: var(--bc-content-quartenary);">$5,499</span>
             </div>
             <button class="btn-enhanced btn-accent btn-large">Claim Deal</button>
           </div>
@@ -440,7 +482,7 @@
     </section>
 
     <!-- Enhancement Summary -->
-    <section class="bg-[#090907] text-white rounded-3xl p-12 space-y-8">
+    <section class="text-white rounded-3xl p-12 space-y-8" style="background: var(--bc-bg-reverse); color: var(--bc-content-reverse);">
       <div class="text-center space-y-3">
         <h2 class="text-3xl font-bold">Enhancement Summary</h2>
         <p class="text-white/70 max-w-2xl mx-auto">
@@ -452,30 +494,30 @@
         <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
           <h3 class="text-lg font-semibold mb-4">Shadow Elevation</h3>
           <ul class="space-y-2 text-sm text-white/70">
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Primary: 2px → 4px on hover</span></li>
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Accent: Enhanced glow effect</span></li>
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>-0.5px translateY lift</span></li>
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Active state compression</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>Primary: 2px → 4px on hover</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>Accent: Enhanced glow effect</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>-0.5px translateY lift</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>Active state compression</span></li>
           </ul>
         </div>
 
         <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
           <h3 class="text-lg font-semibold mb-4">Timing & Physics</h3>
           <ul class="space-y-2 text-sm text-white/70">
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>200ms transitions (sub-300ms)</span></li>
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>ease-out default easing</span></li>
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>scale(0.97) on press</span></li>
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Interruptible animations</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>200ms transitions (sub-300ms)</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>ease-out default easing</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>scale(0.97) on press</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>Interruptible animations</span></li>
           </ul>
         </div>
 
         <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
           <h3 class="text-lg font-semibold mb-4">Visual Refinement</h3>
           <ul class="space-y-2 text-sm text-white/70">
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Font-weight: 500 (medium)</span></li>
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Larger border-radius (12/10/8px)</span></li>
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>Gradient overlays on hover</span></li>
-            <li class="flex items-start gap-2"><span class="text-[#DAFDA0]">•</span><span>prefers-reduced-motion support</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>Font-weight: 500 (medium)</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>Larger border-radius (12/10/8px)</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>Gradient overlays on hover</span></li>
+            <li class="flex items-start gap-2"><span class="text-[--bc-bg-accent-green]">•</span><span>prefers-reduced-motion support</span></li>
           </ul>
         </div>
       </div>
