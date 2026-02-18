@@ -5,6 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TextField Enhanced - Buycycle Design System</title>
     <style>
+        /* ========================================
+           CSS CUSTOM PROPERTIES - DESIGN TOKENS
+           ======================================== */
+        :root {
+            /* Background */
+            --bc-bg-primary: #FCFCFC;
+            --bc-bg-secondary: #F3F3F3;
+            --bc-bg-tertiary: #FFFFFF;
+            --bc-bg-quartenary: #EAEAEA;
+            --bc-bg-reverse: #090907;
+            --bc-bg-alert: #FFEBEB;
+            --bc-bg-accent-green: #DAFDA0;
+            --bc-bg-accent-yellow: #FDFDA0;
+
+            /* Content */
+            --bc-content-primary: #090907;
+            --bc-content-secondary: #333333;
+            --bc-content-tertiary: #535353;
+            --bc-content-quartenary: #A9A9A9;
+            --bc-content-reverse: #FCFCFC;
+            --bc-content-alert: #B91C1C;
+
+            /* Border */
+            --bc-border-primary: #090907;
+            --bc-border-secondary: #757575;
+            --bc-border-tertiary: #EAEAEA;
+
+            /* Enhanced tokens */
+            --bc-enhanced-accent: #2F4B02;
+            --bc-enhanced-surface-elevated: rgba(255, 255, 255, 0.95);
+
+            /* Animation tokens */
+            --bc-transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+            --bc-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            --bc-transition-slow: 320ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,8 +50,8 @@
 
         body {
             font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #FCFCFC;
-            color: #090907;
+            background: var(--bc-bg-primary);
+            color: var(--bc-content-primary);
             line-height: 1.5;
             padding: 48px 24px;
         }
@@ -39,7 +76,7 @@
 
         .header p {
             font-size: 20px;
-            color: #535353;
+            color: var(--bc-content-tertiary);
             max-width: 700px;
             margin: 0 auto;
         }
@@ -50,8 +87,8 @@
             align-items: center;
             gap: 8px;
             padding: 12px 24px;
-            background: linear-gradient(135deg, #DAFDA0 0%, #FDFDA0 100%);
-            color: #2F4B02;
+            background: linear-gradient(135deg, var(--bc-bg-accent-green) 0%, var(--bc-bg-accent-yellow) 100%);
+            color: var(--bc-enhanced-accent);
             border-radius: 100px;
             font-size: 14px;
             font-weight: 600;
@@ -64,7 +101,7 @@
         }
 
         .section-header {
-            border-bottom: 2px solid #EAEAEA;
+            border-bottom: 2px solid var(--bc-border-tertiary);
             padding-bottom: 16px;
             margin-bottom: 32px;
         }
@@ -76,7 +113,7 @@
         }
 
         .section-header p {
-            color: #535353;
+            color: var(--bc-content-tertiary);
             font-size: 16px;
         }
 
@@ -95,8 +132,8 @@
 
         /* Card */
         .card {
-            background: white;
-            border: 1px solid #EAEAEA;
+            background: var(--bc-bg-tertiary);
+            border: 1px solid var(--bc-border-tertiary);
             border-radius: 16px;
             padding: 32px;
         }
@@ -104,13 +141,13 @@
         .card h3 {
             font-size: 18px;
             font-weight: 600;
-            color: #333333;
+            color: var(--bc-content-secondary);
             margin-bottom: 16px;
         }
 
         .card-note {
             font-size: 12px;
-            color: #535353;
+            color: var(--bc-content-tertiary);
             margin-top: 12px;
         }
 
@@ -125,7 +162,7 @@
         .text-field-label {
             font-size: 12px;
             font-weight: 600;
-            color: #333333;
+            color: var(--bc-content-secondary);
             letter-spacing: 0.2px;
         }
 
@@ -135,30 +172,30 @@
             align-items: center;
             height: 48px;
             padding: 0 16px;
-            background: white;
-            border: 1.5px solid #EAEAEA;
+            background: var(--bc-bg-tertiary);
+            border: 1.5px solid var(--bc-border-tertiary);
             border-radius: 12px;
-            transition: all 200ms ease-out;
+            transition: all var(--bc-transition-normal);
         }
 
         .text-field-input-wrapper:hover {
-            border-color: #A9A9A9;
+            border-color: var(--bc-content-quartenary);
         }
 
         .text-field-input-wrapper:focus-within {
             border-width: 2px;
-            border-color: #757575;
+            border-color: var(--bc-border-secondary);
             box-shadow: 0 0 0 3px rgba(9, 9, 7, 0.08);
         }
 
         .text-field-input-wrapper.error {
             border-width: 2px;
-            border-color: #B91C1C;
+            border-color: var(--bc-content-alert);
             box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.08);
         }
 
         .text-field-input-wrapper.disabled {
-            background: #F3F3F3;
+            background: var(--bc-bg-secondary);
             cursor: not-allowed;
         }
 
@@ -169,12 +206,12 @@
             background: transparent;
             font-family: inherit;
             font-size: 16px;
-            color: #090907;
-            transition: color 200ms ease-out;
+            color: var(--bc-content-primary);
+            transition: color var(--bc-transition-normal);
         }
 
         .text-field-input::placeholder {
-            color: #A9A9A9;
+            color: var(--bc-content-quartenary);
         }
 
         .text-field-input:disabled {
@@ -184,7 +221,7 @@
         .text-field-icon {
             width: 20px;
             height: 20px;
-            color: #535353;
+            color: var(--bc-content-tertiary);
             flex-shrink: 0;
         }
 
@@ -195,11 +232,11 @@
         .text-field-icon.trailing {
             margin-left: 8px;
             cursor: pointer;
-            transition: all 200ms ease-out;
+            transition: all var(--bc-transition-normal);
         }
 
         .text-field-icon.trailing:hover {
-            color: #090907;
+            color: var(--bc-content-primary);
             transform: scale(1.1);
         }
 
@@ -211,12 +248,12 @@
             display: flex;
             justify-content: space-between;
             font-size: 12px;
-            color: #535353;
+            color: var(--bc-content-tertiary);
             padding: 0 2px;
         }
 
         .text-field-hint.error {
-            color: #B91C1C;
+            color: var(--bc-content-alert);
         }
 
         /* Comparison Section */
@@ -229,16 +266,16 @@
 
         .comparison-side {
             padding: 40px;
-            background: white;
+            background: var(--bc-bg-tertiary);
             border-radius: 24px;
         }
 
         .comparison-side.before {
-            border: 2px solid #EAEAEA;
+            border: 2px solid var(--bc-border-tertiary);
         }
 
         .comparison-side.after {
-            border: 2px solid #090907;
+            border: 2px solid var(--bc-border-primary);
             box-shadow: 0 8px 32px rgba(9, 9, 7, 0.12);
         }
 
@@ -262,13 +299,13 @@
         }
 
         .comparison-badge.before {
-            background: #F3F3F3;
-            color: #535353;
+            background: var(--bc-bg-secondary);
+            color: var(--bc-content-tertiary);
         }
 
         .comparison-badge.after {
-            background: linear-gradient(135deg, #DAFDA0 0%, #FDFDA0 100%);
-            color: #2F4B02;
+            background: linear-gradient(135deg, var(--bc-bg-accent-green) 0%, var(--bc-bg-accent-yellow) 100%);
+            color: var(--bc-enhanced-accent);
         }
 
         .comparison-specs {
@@ -279,7 +316,7 @@
         }
 
         .comparison-specs.before {
-            background: #F3F3F3;
+            background: var(--bc-bg-secondary);
         }
 
         .comparison-specs.after {
@@ -298,12 +335,12 @@
         }
 
         .spec-label {
-            color: #535353;
+            color: var(--bc-content-tertiary);
         }
 
         .spec-value {
             font-family: 'Courier New', monospace;
-            color: #090907;
+            color: var(--bc-content-primary);
         }
 
         .spec-value.enhanced {
@@ -315,8 +352,8 @@
             max-width: 480px;
             margin: 0 auto;
             padding: 48px;
-            background: white;
-            border: 2px solid #090907;
+            background: var(--bc-bg-tertiary);
+            border: 2px solid var(--bc-border-primary);
             border-radius: 32px;
             box-shadow: 0 16px 64px rgba(9, 9, 7, 0.15);
         }
@@ -329,7 +366,7 @@
 
         .form-example .subtitle {
             font-size: 14px;
-            color: #535353;
+            color: var(--bc-content-tertiary);
             margin-bottom: 32px;
         }
 
@@ -343,20 +380,20 @@
         .submit-button {
             width: 100%;
             height: 52px;
-            background: #090907;
-            color: white;
+            background: var(--bc-bg-reverse);
+            color: var(--bc-content-reverse);
             border: none;
             border-radius: 12px;
             font-family: inherit;
             font-size: 16px;
             font-weight: 500;
             cursor: pointer;
-            transition: all 200ms ease-out;
+            transition: all var(--bc-transition-normal);
             box-shadow: 0 2px 8px rgba(9, 9, 7, 0.2);
         }
 
         .submit-button:hover {
-            background: #333333;
+            background: var(--bc-content-secondary);
             box-shadow: 0 4px 16px rgba(9, 9, 7, 0.3);
         }
 
@@ -370,9 +407,9 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 32px;
             padding: 48px;
-            background: linear-gradient(135deg, #090907 0%, #333333 100%);
+            background: linear-gradient(135deg, var(--bc-bg-reverse) 0%, var(--bc-content-secondary) 100%);
             border-radius: 24px;
-            color: white;
+            color: var(--bc-content-reverse);
             margin-bottom: 80px;
         }
 
@@ -383,7 +420,7 @@
         .feature-value {
             font-size: 48px;
             font-weight: 700;
-            color: #DAFDA0;
+            color: var(--bc-bg-accent-green);
             margin-bottom: 8px;
         }
 
@@ -528,7 +565,7 @@
                             <input type="text" class="text-field-input" placeholder="Enter text...">
                         </div>
                     </div>
-                    <p class="card-note">Border: 1.5px #EAEAEA</p>
+                    <p class="card-note">Border: 1.5px var(--bc-border-tertiary)</p>
                 </div>
 
                 <!-- Hover -->
@@ -543,7 +580,7 @@
                             <span>Hover over the input</span>
                         </div>
                     </div>
-                    <p class="card-note">Border: 1.5px #A9A9A9</p>
+                    <p class="card-note">Border: 1.5px var(--bc-content-quartenary)</p>
                 </div>
 
                 <!-- Focused -->
@@ -558,7 +595,7 @@
                             <span>Focus ring appears</span>
                         </div>
                     </div>
-                    <p class="card-note">Border: 2px #757575 + focus ring</p>
+                    <p class="card-note">Border: 2px var(--bc-border-secondary) + focus ring</p>
                 </div>
 
                 <!-- Activated -->
@@ -573,7 +610,7 @@
                             <span>Has text and is focused</span>
                         </div>
                     </div>
-                    <p class="card-note">Border: 2px #757575 + focus ring</p>
+                    <p class="card-note">Border: 2px var(--bc-border-secondary) + focus ring</p>
                 </div>
 
                 <!-- Resting -->
@@ -588,7 +625,7 @@
                             <span>Has text, not focused</span>
                         </div>
                     </div>
-                    <p class="card-note">Border: 1.5px #EAEAEA (subtle)</p>
+                    <p class="card-note">Border: 1.5px var(--bc-border-tertiary) (subtle)</p>
                 </div>
 
                 <!-- Disabled -->
@@ -603,14 +640,14 @@
                             <span>Input is disabled</span>
                         </div>
                     </div>
-                    <p class="card-note">Background: #F3F3F3</p>
+                    <p class="card-note">Background: var(--bc-bg-secondary)</p>
                 </div>
 
                 <!-- Error -->
                 <div class="card">
                     <h3>7. Error</h3>
                     <div class="text-field">
-                        <label class="text-field-label" style="color: #B91C1C;">Error State</label>
+                        <label class="text-field-label" style="color: var(--bc-content-alert);">Error State</label>
                         <div class="text-field-input-wrapper error">
                             <input type="text" class="text-field-input" value="invalid-email">
                         </div>
@@ -618,7 +655,7 @@
                             <span>Please enter a valid email</span>
                         </div>
                     </div>
-                    <p class="card-note">Border: 2px #B91C1C + error ring</p>
+                    <p class="card-note">Border: 2px var(--bc-content-alert) + error ring</p>
                 </div>
             </div>
         </section>
