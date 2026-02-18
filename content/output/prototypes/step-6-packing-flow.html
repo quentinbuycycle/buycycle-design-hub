@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step 6: Pack the Order - buycycle Seller Flow</title>
+  <style>
+    /* buycycle Design System Tokens */
+    :root {
+      --bg-primary: #FCFCFC;
+      --bg-secondary: #F3F3F3;
+      --bg-tertiary: #FFFFFF;
+      --bg-quartenary: #EAEAEA;
+      --content-primary: #090907;
+      --content-secondary: #333333;
+      --content-tertiary: #535353;
+      --content-quartenary: #A9A9A9;
+      --content-primary-reverse: #FCFCFC;
+      --border-secondary: #757575;
+      --border-tertiary: #EAEAEA;
+      --font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      background: #f0f0f0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px;
+      color: var(--content-primary);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-tertiary);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .header svg { flex-shrink: 0; color: var(--content-primary); }
+    .header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+
+    .content {
+      padding: 20px;
+      padding-bottom: 100px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    /* Protection Callout */
+    .callout-protect {
+      background: linear-gradient(135deg, #e8ff7a 0%, #f5ffcc 100%);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .callout-protect .callout-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .callout-protect .callout-header svg { flex-shrink: 0; }
+
+    .callout-protect .callout-header span {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 21px;
+      color: var(--content-primary);
+    }
+
+    .callout-protect p {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--content-secondary);
+      margin-bottom: 8px;
+    }
+
+    .callout-protect .policy-link {
+      font-size: 13px;
+      color: var(--content-primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: opacity 200ms ease-out;
+    }
+
+    .callout-protect .policy-link:hover { opacity: 0.8; }
+
+    .callout-protect .policy-link svg { transition: transform 200ms ease-out; }
+    .callout-protect .policy-link:hover svg { transform: translateX(2px); }
+
+    /* Video Card - Elevated Design */
+    .video-card {
+      border: 1.5px solid var(--border-tertiary);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color 200ms ease-out, box-shadow 200ms ease-out, background 150ms ease-out;
+      background: var(--bg-tertiary);
+      text-decoration: none;
+    }
+
+    .video-card:hover {
+      border-color: var(--border-secondary);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      background: var(--bg-primary);
+    }
+
+    .video-card:active {
+      transform: scale(0.99);
+      border-color: var(--content-primary);
+    }
+
+    .video-card:focus {
+      outline: none;
+      border-color: var(--content-primary);
+    }
+
+    .play-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--content-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: transform 200ms ease-out;
+    }
+
+    .video-card:hover .play-circle { transform: scale(1.05); }
+
+    .play-circle svg {
+      color: var(--content-primary-reverse);
+      margin-left: 2px;
+    }
+
+    .video-card-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .video-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+      line-height: 21px;
+      color: var(--content-primary);
+      margin-bottom: 4px;
+    }
+
+    .video-card-meta {
+      font-size: 12px;
+      line-height: 18px;
+      color: var(--content-tertiary);
+    }
+
+    .video-card-arrow {
+      flex-shrink: 0;
+      color: var(--content-quartenary);
+      transition: transform 200ms ease-out, color 200ms ease-out;
+    }
+
+    .video-card:hover .video-card-arrow {
+      color: var(--content-tertiary);
+      transform: translateX(2px);
+    }
+
+    /* Step Instructions */
+    .step {
+      margin-bottom: 24px;
+    }
+
+    .step-label {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      color: var(--content-secondary);
+    }
+
+    .step-label strong {
+      font-weight: 600;
+    }
+
+    .add-photos-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: 1.5px solid var(--border-tertiary);
+      border-radius: 10px;
+      background: var(--bg-tertiary);
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--content-primary);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.15s;
+      margin-bottom: 14px;
+    }
+
+    .add-photos-btn:hover {
+      border-color: #c0c0c0;
+      background: var(--bg-primary);
+    }
+
+    .photo-grid {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .photo-placeholder {
+      width: 88px;
+      height: 88px;
+      border: 1.5px dashed #ddd;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ccc;
+    }
+
+    .step-note {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--content-tertiary);
+    }
+
+    /* Bottom CTA */
+    .bottom-cta {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 420px;
+      padding: 16px 20px 24px;
+      background: linear-gradient(to top, var(--bg-tertiary) 80%, transparent);
+    }
+
+    .next-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--content-primary);
+      color: var(--content-primary-reverse);
+      border: none;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: -0.01em;
+      transition: background 0.15s;
+    }
+
+    .next-btn:hover { background: var(--content-secondary); }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      .video-card { padding: 20px; }
+      .video-card-title { font-size: 14px; line-height: 21px; }
+      .video-card-meta { font-size: 12px; line-height: 18px; }
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .video-card:active { transform: none; }
+      .play-circle,
+      .video-card-arrow,
+      .callout-protect .policy-link svg { transition: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="phone-frame">
+  <div class="header">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h1>Pack the order</h1>
+  </div>
+
+  <div class="content">
+    <!-- Protection Callout -->
+    <div class="callout-protect">
+      <div class="callout-header">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 1.667L3.333 5v4.167c0 4.583 2.85 8.867 6.667 10 3.817-1.133 6.667-5.417 6.667-10V5L10 1.667z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7.5 10l1.667 1.667L12.5 8.333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Protect it!</span>
+      </div>
+      <p>The more you protect your order, the better we can ensure it is fully covered against shipping damages.</p>
+      <a href="#" class="policy-link">
+        Read our send liability policy
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M5.25 3.5L8.75 7L5.25 10.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Video Card - Elevated Design -->
+    <a href="#" class="video-card" role="button" tabindex="0">
+      <div class="play-circle">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M5 3.5L14 9L5 14.5V3.5Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="video-card-text">
+        <div class="video-card-title">How to pack your bike: video tutorial</div>
+        <div class="video-card-meta">2 min watch</div>
+      </div>
+      <svg class="video-card-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M6.75 4.5L11.25 9L6.75 13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+
+    <!-- Step 1 -->
+    <div class="step">
+      <div class="step-label"><strong>1.</strong> Upload at least 3 photos of the order next to the packaging material.</div>
+      <button class="add-photos-btn">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <rect x="2" y="3" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/>
+          <circle cx="6.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.1"/>
+          <path d="M2 12.5l3.5-3.5 2.5 2.5 3-3.5 4.5 5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Add photos
+      </button>
+      <div class="photo-grid">
+        <div class="photo-placeholder">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="16" rx="2" stroke="#ccc" stroke-width="1.2"/>
+            <path d="M3 16l5-5 3.5 3.5L15 11l6 7" stroke="#ccc" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="photo-placeholder">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="16" rx="2" stroke="#ccc" stroke-width="1.2"/>
+            <path d="M3 16l5-5 3.5 3.5L15 11l6 7" stroke="#ccc" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="photo-placeholder">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="16" rx="2" stroke="#ccc" stroke-width="1.2"/>
+            <path d="M3 16l5-5 3.5 3.5L15 11l6 7" stroke="#ccc" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+      <div class="step-label"><strong>2.</strong> Upload 4 pictures of the wrapped order inside the packaging, and of the sealed packaging.</div>
+      <div class="step-note">Those pictures will be available to buyer.</div>
+    </div>
+  </div>
+
+  <div class="bottom-cta">
+    <button class="next-btn">Next</button>
+  </div>
+</div>
+</body>
+</html>
