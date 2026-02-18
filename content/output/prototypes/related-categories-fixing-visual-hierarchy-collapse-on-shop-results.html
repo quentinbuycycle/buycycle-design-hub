@@ -1,0 +1,205 @@
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Related Categories – Prominence Exploration</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif; }
+    button { font-family: inherit; }
+    button:focus-visible {
+      outline: 2px solid #090907;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    const CATEGORIES = ["Road", "Gravel", "Triathlon", "Vintage", "Specialized", "Trek", "Giant"];
+    const FILTERS = ["Sort By", "Size", "Price", "Brands", "Frame material", "Brake type", "Year", "E-Bike"];
+    const FILTERS_ROW2 = ["Condition", "Shifting", "Frameset", "Component group", "Colors", "Seller Type", "In Demand"];
+
+    /* ── Design System: filters/shop-filters chevron (21×21) ── */
+    const ChevronDown = () => (
+      <svg width="21" height="21" viewBox="0 0 21 21" fill="none" style={{ marginLeft: 8 }}>
+        <path d="M6 8.5L10.5 13L15 8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    );
+
+    /* ── Design System: filters/shop-filters ── */
+    const ShopFilter = ({ label }) => {
+      const [hovered, setHovered] = useState(false);
+      return (
+        <button
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+          style={{
+            padding: "8px 16px",
+            borderRadius: 6,
+            border: hovered ? "1px solid #757575" : "1px solid #D0D0D0",
+            background: "#FCFCFC",
+            fontSize: 14,
+            lineHeight: "21px",
+            fontWeight: 400,
+            color: "#090907",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            transition: "border-color 0.15s ease",
+          }}
+        >
+          {label}<ChevronDown />
+        </button>
+      );
+    };
+
+    const FilterRow = ({ items }) => (
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+        {items.map(label => (
+          <ShopFilter key={label} label={label} />
+        ))}
+      </div>
+    );
+
+    /* ── Design System: filters/chips (gray variant, medium 40px) ── */
+    const CategoryChip = ({ label, variant = "gray" }) => {
+      const isWhite = variant === "white";
+      const defaultBg = "#FCFCFC";
+      const defaultBorder = isWhite ? "1px solid #EAEAEA" : "none";
+      const fs = isWhite ? 14 : 16;
+      const lh = isWhite ? "21px" : "24px";
+      return (
+        <button style={{
+          height: 40,
+          padding: "2px 12px",
+          borderRadius: 24,
+          border: defaultBorder,
+          background: defaultBg,
+          fontSize: fs,
+          lineHeight: lh,
+          fontWeight: 400,
+          color: "#090907",
+          cursor: "pointer",
+          transition: "background 0.15s ease, color 0.15s ease, border-color 0.15s ease",
+        }}
+        onMouseEnter={e => { e.target.style.background = "#090907"; e.target.style.color = "#FCFCFC"; e.target.style.borderColor = "#090907"; }}
+        onMouseLeave={e => { e.target.style.background = defaultBg; e.target.style.color = "#090907"; e.target.style.borderColor = isWhite ? "#EAEAEA" : "#FCFCFC"; }}
+        >{label}</button>
+      );
+    };
+
+    /* ── Variant: Current (hierarchy collapse demo) ── */
+    const VariantCurrent = () => (
+      <div>
+        <h2 style={{ fontSize: 20, fontWeight: 500, lineHeight: "28px", margin: "0 0 16px 0", color: "#090907" }}>
+          Used Road &amp; Gravel for sale
+        </h2>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 24 }}>
+          {CATEGORIES.map(c => (
+            <CategoryChip key={c} label={c} />
+          ))}
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {[...FILTERS, ...FILTERS_ROW2].map(label => (
+            <ShopFilter key={label} label={label} />
+          ))}
+        </div>
+      </div>
+    );
+
+    /* ── Variant A: Contained browse section ── */
+    const VariantA = () => (
+      <div>
+        <h2 style={{ fontSize: 20, fontWeight: 500, lineHeight: "28px", margin: "0 0 16px 0", color: "#090907" }}>
+          Used Road &amp; Gravel for sale
+        </h2>
+        <div style={{
+          background: "#F3F3F3", borderRadius: 8, padding: "12px 16px",
+          marginBottom: 24, display: "flex", alignItems: "center", gap: 12,
+        }}>
+          <span style={{
+            fontSize: 12, fontWeight: 500, color: "#535353", textTransform: "uppercase",
+            letterSpacing: "0.04em", whiteSpace: "nowrap", paddingRight: 12,
+            borderRight: "1px solid #EAEAEA", marginRight: 4,
+            lineHeight: "18px",
+          }}>Browse</span>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {CATEGORIES.map(c => (
+              <CategoryChip key={c} label={c} variant="white" />
+            ))}
+          </div>
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {[...FILTERS, ...FILTERS_ROW2].map(label => (
+            <ShopFilter key={label} label={label} />
+          ))}
+        </div>
+      </div>
+    );
+
+    const VARIANTS = [
+      { id: "current", label: "Current", component: VariantCurrent, note: "Categories and filters share identical visual treatment — hierarchy collapse." },
+      { id: "a", label: "Option A", component: VariantA, note: "Contained section with label, elevated chips, and distinct shape language." },
+    ];
+
+    function App() {
+      const [activeVariant, setActiveVariant] = useState("current");
+      const current = VARIANTS.find(v => v.id === activeVariant);
+      const Component = current.component;
+
+      return (
+        <div style={{ minHeight: "100vh", background: "#FCFCFC" }}>
+          <div style={{ background: "#090907", padding: "24px 32px", color: "#FCFCFC" }}>
+            <div style={{ fontSize: 12, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", color: "#535353", marginBottom: 8, lineHeight: "18px" }}>
+              Related categories
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 500, lineHeight: "27px" }}>Prominence exploration</div>
+          </div>
+
+          <div style={{
+            padding: "16px 32px", borderBottom: "1px solid #EAEAEA",
+            background: "#FFFFFF", display: "flex", gap: 4,
+          }}>
+            {VARIANTS.map(v => (
+              <button key={v.id} onClick={() => setActiveVariant(v.id)} style={{
+                padding: "8px 16px", borderRadius: 6, border: "none",
+                background: activeVariant === v.id ? "#090907" : "transparent",
+                color: activeVariant === v.id ? "#FCFCFC" : "#535353",
+                fontSize: 14, fontWeight: activeVariant === v.id ? 500 : 400,
+                lineHeight: "21px",
+                cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.15s ease",
+              }}>{v.label}</button>
+            ))}
+          </div>
+
+          <div style={{
+            padding: "12px 32px", background: activeVariant === "current" ? "#FFF7ED" : "#E8F8F0",
+            borderBottom: "1px solid #EAEAEA", fontSize: 14, color: "#333333", lineHeight: "21px",
+          }}>
+            {activeVariant === "current" ? "⚠️" : "✓"} {current.note}
+          </div>
+
+          <div style={{ padding: 32, maxWidth: 960 }}>
+            <div style={{
+              background: "#FFFFFF", borderRadius: 8, border: "1px solid #EAEAEA",
+              padding: 24, boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+            }}>
+              <Component />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
