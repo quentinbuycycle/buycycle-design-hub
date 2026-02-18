@@ -6,7 +6,8 @@ team: "Design"
 tags: ["Buyer","Pre-transactional XP"]
 prototypes:
   - "/prototypes/related-categories-fixing-visual-hierarchy-collapse-on-shop-results.html"
-finalPrototypes: []
+finalPrototypes:
+  - "/prototypes/related-categories-exploration.html"
 ---
 
 ## Problem
