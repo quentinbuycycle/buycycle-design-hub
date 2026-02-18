@@ -7,7 +7,8 @@ tags: ["Seller","Post-transaction XP"]
 prototypes:
   - "/prototypes/packaging-preparation-chat-interface.html"
   - "/prototypes/video-tutorial-card-in-seller-packaging-flow.html"
-finalPrototypes: []
+finalPrototypes:
+  - "/prototypes/step-6-packing-flow.html"
 ---
 
 ## Problem
