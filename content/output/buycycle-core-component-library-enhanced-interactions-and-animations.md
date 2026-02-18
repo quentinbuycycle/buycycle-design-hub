@@ -8,7 +8,8 @@ prototypes:
   - "/prototypes/controls-enhanced.html"
   - "/prototypes/textfields-enhanced.html"
   - "/prototypes/buycycle-core-component-library-enhanced-interactions-and-animations.html"
-finalPrototypes: []
+finalPrototypes:
+  - "/prototypes/index-enhanced.html"
 ---
 
 ## Problem
