@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Show Related Items — Prototype</title>
+  <style>
+    /* ── Design System Tokens ── */
+    :root {
+      /* Font */
+      --font-primary: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-regular: 400;
+      --font-medium: 500;
+      --font-bold: 700;
+
+      /* Sizes */
+      --text-xs: 12px;
+      --text-sm: 14px;
+      --text-base: 16px;
+      --text-lg: 18px;
+      --text-xl: 20px;
+      --text-2xl: 24px;
+
+      /* Line Heights */
+      --leading-xs: 18px;
+      --leading-sm: 21px;
+      --leading-base: 24px;
+      --leading-lg: 27px;
+      --leading-xl: 28px;
+
+      /* Background */
+      --bg-primary: #FCFCFC;
+      --bg-secondary: #F3F3F3;
+      --bg-tertiary: #FFFFFF;
+      --bg-quartenary: #EAEAEA;
+
+      /* Content */
+      --content-primary: #090907;
+      --content-secondary: #333333;
+      --content-tertiary: #535353;
+      --content-quartenary: #A9A9A9;
+      --content-primary-reverse: #FCFCFC;
+
+      /* Border */
+      --border-primary: #090907;
+      --border-secondary: #757575;
+      --border-tertiary: #EAEAEA;
+      --border-quartenary: #D0D0D0;
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-primary);
+      background: var(--bg-primary);
+      color: var(--content-primary);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      border-bottom: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+    }
+
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 80px;
+      display: flex;
+      align-items: center;
+      height: 64px;
+      gap: var(--space-8);
+    }
+
+    .logo {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-bold);
+      color: var(--content-primary);
+      text-decoration: none;
+      flex-shrink: 0;
+      letter-spacing: -0.5px;
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      flex: 1;
+      overflow-x: auto;
+    }
+
+    .main-nav a {
+      font-size: var(--text-sm);
+      color: var(--content-primary);
+      text-decoration: none;
+      white-space: nowrap;
+      font-weight: var(--font-regular);
+      transition: color 150ms ease;
+    }
+
+    .main-nav a:hover {
+      color: var(--content-tertiary);
+    }
+
+    .nav-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .badge-new {
+      background: #FEE2E2;
+      color: #DC2626;
+      font-size: 10px;
+      font-weight: var(--font-bold);
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      flex-shrink: 0;
+    }
+
+    .header-actions svg {
+      width: 24px;
+      height: 24px;
+      color: var(--content-primary);
+      cursor: pointer;
+    }
+
+    .header-actions .sell-btn {
+      background: var(--content-primary);
+      color: var(--content-primary-reverse);
+      border: none;
+      border-radius: 24px;
+      padding: 8px 20px;
+      font-size: var(--text-sm);
+      font-weight: var(--font-medium);
+      font-family: var(--font-primary);
+      cursor: pointer;
+    }
+
+    /* ── Search Bar ── */
+    .search-bar-container {
+      border-bottom: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+      padding: var(--space-3) 0;
+    }
+
+    .search-bar-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 80px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-input-wrapper {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border-quartenary);
+      border-radius: 6px;
+      padding: 10px var(--space-4);
+      background: var(--bg-tertiary);
+      gap: var(--space-2);
+      height: 44px;
+      width: 600px;
+      max-width: 100%;
+    }
+
+    .search-input-wrapper:focus-within {
+      border-color: var(--border-secondary);
+      border-width: 2px;
+      padding: 9px 15px;
+    }
+
+    .search-icon svg {
+      width: 20px;
+      height: 20px;
+      color: var(--content-tertiary);
+      flex-shrink: 0;
+    }
+
+    .search-text {
+      flex: 1;
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      color: var(--content-primary);
+      font-weight: var(--font-regular);
+    }
+
+    .search-clear {
+      flex-shrink: 0;
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+    }
+
+    .search-clear svg {
+      width: 20px;
+      height: 20px;
+      color: var(--content-tertiary);
+    }
+
+    /* ── Page Title + Category Chips ── */
+    .page-title-section {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: var(--space-6) 80px var(--space-4);
+    }
+
+    .page-title-section h1 {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-bold);
+      color: var(--content-primary);
+      margin-bottom: var(--space-4);
+    }
+
+    .category-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .category-chip {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 24px;
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--text-sm);
+      line-height: var(--leading-sm);
+      color: var(--content-primary);
+      font-weight: var(--font-regular);
+      font-family: var(--font-primary);
+      cursor: pointer;
+      transition: all 150ms ease;
+      white-space: nowrap;
+    }
+
+    .category-chip:hover {
+      background: var(--bg-secondary);
+    }
+
+    /* ── Filter Bar ── */
+    .filter-bar {
+      border-bottom: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .filter-bar-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: var(--space-3) 80px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .filter-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 24px;
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--text-sm);
+      line-height: var(--leading-sm);
+      color: var(--content-primary);
+      font-weight: var(--font-regular);
+      font-family: var(--font-primary);
+      cursor: pointer;
+      transition: all 150ms ease;
+      white-space: nowrap;
+    }
+
+    .filter-btn:hover {
+      background: var(--bg-secondary);
+    }
+
+    .filter-btn svg {
+      width: 16px;
+      height: 16px;
+      color: var(--content-tertiary);
+    }
+
+    .filter-btn.active {
+      border-color: var(--border-primary);
+    }
+
+    .filter-btn .filter-count {
+      background: var(--content-primary);
+      color: var(--content-primary-reverse);
+      font-size: 11px;
+      font-weight: var(--font-bold);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .filter-spacer {
+      flex: 1;
+    }
+
+    .results-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-shrink: 0;
+    }
+
+    .results-count {
+      font-size: var(--text-sm);
+      color: var(--content-primary);
+      font-weight: var(--font-regular);
+    }
+
+    .clear-filters {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--text-sm);
+      color: var(--content-secondary);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: var(--font-primary);
+    }
+
+    .clear-filters svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ── Main Content Layout ── */
+    .main-content {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: var(--space-6) 80px var(--space-12);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: var(--space-8);
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      padding-top: var(--space-1);
+    }
+
+    .sidebar-section {
+      margin-bottom: var(--space-6);
+    }
+
+    .sidebar-heading {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-sm);
+      font-weight: var(--font-bold);
+      color: var(--content-primary);
+      margin-bottom: var(--space-3);
+      cursor: pointer;
+    }
+
+    .sidebar-heading svg {
+      width: 18px;
+      height: 18px;
+      color: var(--content-tertiary);
+    }
+
+    .sidebar-list {
+      list-style: none;
+      padding-left: var(--space-6);
+    }
+
+    .sidebar-list li {
+      margin-bottom: var(--space-2);
+    }
+
+    .sidebar-list a {
+      font-size: var(--text-sm);
+      color: var(--content-secondary);
+      text-decoration: none;
+      transition: color 150ms ease;
+    }
+
+    .sidebar-list a:hover {
+      color: var(--content-primary);
+    }
+
+    .sidebar-list .active-category {
+      font-weight: var(--font-bold);
+      color: var(--content-primary);
+    }
+
+    .sidebar-sub-list {
+      list-style: none;
+      padding-left: var(--space-4);
+      margin-top: var(--space-2);
+    }
+
+    .sidebar-sub-list li {
+      margin-bottom: var(--space-2);
+    }
+
+    .sidebar-sub-list a {
+      font-size: var(--text-sm);
+      color: var(--content-secondary);
+      text-decoration: none;
+    }
+
+    /* ── Product Grid ── */
+    .product-area {
+      min-width: 0;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+    }
+
+    /* ── Product Card ── */
+    .product-card {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 150ms ease;
+      border: 1px solid var(--border-tertiary);
+    }
+
+    .product-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .product-card-image {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: var(--bg-secondary);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-card-image svg.placeholder-icon {
+      width: 48px;
+      height: 48px;
+      color: var(--content-quartenary);
+      opacity: 0.5;
+    }
+
+    .product-card-favorite {
+      position: absolute;
+      bottom: var(--space-2);
+      right: var(--space-2);
+      width: 32px;
+      height: 32px;
+      background: var(--bg-tertiary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      border: none;
+      transition: transform 150ms ease;
+    }
+
+    .product-card-favorite:hover {
+      transform: scale(1.1);
+    }
+
+    .product-card-favorite svg {
+      width: 18px;
+      height: 18px;
+      color: var(--content-tertiary);
+    }
+
+    .product-card-favorite.favorited svg {
+      color: var(--content-primary);
+      fill: var(--content-primary);
+    }
+
+    .product-card-info {
+      padding: var(--space-3);
+    }
+
+    .product-card-brand {
+      font-size: var(--text-xs);
+      color: var(--content-tertiary);
+      font-weight: var(--font-regular);
+      margin-bottom: 2px;
+    }
+
+    .product-card-name {
+      font-size: var(--text-sm);
+      font-weight: var(--font-medium);
+      color: var(--content-primary);
+      margin-bottom: var(--space-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .product-card-meta {
+      font-size: var(--text-xs);
+      color: var(--content-quartenary);
+      margin-bottom: var(--space-2);
+    }
+
+    .product-card-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: var(--space-2);
+    }
+
+    .product-card-price {
+      font-size: var(--text-base);
+      font-weight: var(--font-bold);
+      color: var(--content-primary);
+    }
+
+    .product-card-shipping {
+      font-size: var(--text-xs);
+      color: var(--content-tertiary);
+    }
+
+    .product-card-msrp {
+      font-size: var(--text-xs);
+      color: var(--content-quartenary);
+      text-decoration: line-through;
+      margin-left: auto;
+    }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      margin-top: var(--space-8);
+    }
+
+    .pagination-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      background: none;
+      border-radius: 6px;
+      font-size: var(--text-sm);
+      color: var(--content-tertiary);
+      cursor: pointer;
+      font-family: var(--font-primary);
+    }
+
+    .pagination-btn.active {
+      background: var(--content-primary);
+      color: var(--content-primary-reverse);
+      font-weight: var(--font-medium);
+    }
+
+    .pagination-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ============================================ */
+    /* ═══ NEW: RELATED ITEMS DISCOVERY SECTION ═══ */
+    /* ============================================ */
+
+    /* ── Visual Separator ── */
+    .discovery-separator {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin: var(--space-12) 0 var(--space-8);
+    }
+
+    .discovery-separator hr {
+      flex: 1;
+      border: none;
+      border-top: 1px solid var(--border-tertiary);
+    }
+
+    .separator-label {
+      font-size: var(--text-sm);
+      color: var(--content-quartenary);
+      white-space: nowrap;
+    }
+
+    /* ── Related Categories Browse ── */
+    .related-categories-browse {
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-8);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .browse-label {
+      font-size: var(--text-xs);
+      font-weight: var(--font-medium);
+      color: var(--content-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      padding-right: var(--space-3);
+      border-right: 1px solid var(--border-tertiary);
+      margin-right: var(--space-1);
+      line-height: var(--leading-xs);
+    }
+
+    .browse-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .browse-chip {
+      height: 40px;
+      padding: 2px var(--space-3);
+      border-radius: 24px;
+      border: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+      font-size: var(--text-sm);
+      line-height: var(--leading-sm);
+      font-weight: var(--font-regular);
+      font-family: var(--font-primary);
+      color: var(--content-primary);
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .browse-chip:hover {
+      border-color: var(--border-secondary);
+      background: var(--bg-secondary);
+    }
+
+    /* ── Shipping icon ── */
+    .shipping-icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      vertical-align: -2px;
+      margin-left: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#" class="logo">buycycle.</a>
+      <nav class="main-nav">
+        <a href="#">Cycling</a>
+        <a href="#">Popular Brands</a>
+        <a href="#">Road & Gravel</a>
+        <a href="#">MTB</a>
+        <a href="#">Cycling Gear</a>
+        <a href="#">Cycling Accessories</a>
+        <a href="#">Clothing & Shoes</a>
+        <a href="#" class="nav-badge">Wintersport <span class="badge-new">New!</span></a>
+        <a href="#" class="nav-badge">Running <span class="badge-new">New!</span></a>
+        <a href="#">Other</a>
+      </nav>
+      <div class="header-actions">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <button class="sell-btn">Sell</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ SEARCH BAR ═══ -->
+  <div class="search-bar-container">
+    <div class="search-bar-inner">
+      <div class="search-input-wrapper">
+        <div class="search-icon">
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M14 14L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="search-text">Search 100k+ cycling & other sport items...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PAGE TITLE + CATEGORY CHIPS ═══ -->
+  <div class="page-title-section">
+    <h1>Used Accessories Garmin for sale</h1>
+    <div class="category-chips-row">
+      <button class="category-chip">Computers</button>
+      <button class="category-chip">On-Bike Bags</button>
+      <button class="category-chip">Locks</button>
+      <button class="category-chip">Lights</button>
+      <button class="category-chip">Glasses</button>
+      <button class="category-chip">Helmets</button>
+      <button class="category-chip">Trainers</button>
+      <button class="category-chip">Tools & Pumps</button>
+      <button class="category-chip">Bottle cages</button>
+      <button class="category-chip">Fenders</button>
+    </div>
+  </div>
+
+  <!-- ═══ FILTER BAR ═══ -->
+  <div class="filter-bar">
+    <div class="filter-bar-inner">
+      <button class="filter-btn">Sort By <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="4 6 8 10 12 6"/></svg></button>
+      <button class="filter-btn">Price <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="4 6 8 10 12 6"/></svg></button>
+      <button class="filter-btn active">Brands <span class="filter-count">1</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="4 6 8 10 12 6"/></svg></button>
+      <button class="filter-btn">Year <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="4 6 8 10 12 6"/></svg></button>
+      <button class="filter-btn">Condition <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="4 6 8 10 12 6"/></svg></button>
+      <button class="filter-btn">Seller Type <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="4 6 8 10 12 6"/></svg></button>
+      <button class="filter-btn">Location <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="4 6 8 10 12 6"/></svg></button>
+
+      <div class="filter-spacer"></div>
+
+      <div class="results-info">
+        <span class="results-count">7 Results</span>
+        <button class="clear-filters">Clear filters <svg viewBox="0 0 16 16" fill="none"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <div class="main-content">
+
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-heading">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7l6-4 6 4v7a1 1 0 01-1 1H4a1 1 0 01-1-1V7z"/></svg>
+          Bikes
+        </div>
+        <ul class="sidebar-list">
+          <li><a href="#">Saddles & Seatposts</a></li>
+          <li><a href="#">Cockpit</a></li>
+          <li><a href="#">Wheels</a></li>
+          <li><a href="#">Tyres & Tubes</a></li>
+          <li><a href="#">Brakes</a></li>
+          <li><a href="#">Groupset</a></li>
+          <li><a href="#">Rear Suspension</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-heading">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l3 2"/></svg>
+          Cycling Gear
+        </div>
+        <ul class="sidebar-list">
+          <li><a href="#">Cycling Shoes</a></li>
+          <li><a href="#">Cycling Apparel</a></li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-heading active-category">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="14" height="14" rx="2"/><path d="M6 6h6M6 9h6M6 12h4"/></svg>
+          Cycling Accessories
+        </div>
+        <ul class="sidebar-list">
+          <li><a href="#">Computers</a></li>
+          <li><a href="#">On-Bike Bags</a></li>
+          <li><a href="#">Locks</a></li>
+          <li><a href="#">Lights</a></li>
+          <li><a href="#">Glasses</a></li>
+          <li><a href="#">Helmets</a></li>
+          <li><a href="#">Trainers</a></li>
+          <li><a href="#">Tools & Pumps</a></li>
+          <li><a href="#">Bottle cages</a></li>
+          <li><a href="#">Fenders</a></li>
+          <li><a href="#">Maintenance & Cleaning</a></li>
+          <li><a href="#">Bike Cases</a></li>
+          <li><a href="#">Car Racks</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- ── Product Area ── -->
+    <div class="product-area">
+
+      <!-- Product Grid (7 Garmin items) -->
+      <div class="product-grid" id="productGrid">
+        <!-- Cards rendered by JS -->
+      </div>
+
+      <!-- ════════════════════════════════════════ -->
+      <!-- ═══ NEW: RELATED ITEMS DISCOVERY ═══════ -->
+      <!-- ════════════════════════════════════════ -->
+
+      <!-- Visual Separator -->
+      <div class="discovery-separator">
+        <hr>
+        <span class="separator-label">End of filtered results</span>
+        <hr>
+      </div>
+
+      <!-- Related Categories Browse -->
+      <div class="related-categories-browse">
+        <span class="browse-label">Browse</span>
+        <div class="browse-chips">
+          <button class="browse-chip">Road</button>
+          <button class="browse-chip">Gravel</button>
+          <button class="browse-chip">Triathlon</button>
+          <button class="browse-chip">Vintage</button>
+          <button class="browse-chip">Specialized</button>
+          <button class="browse-chip">Trek</button>
+          <button class="browse-chip">Giant</button>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button class="pagination-btn"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="11 4 6 9 11 14"/></svg></button>
+        <button class="pagination-btn active">1</button>
+        <button class="pagination-btn"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="7 4 12 9 7 14"/></svg></button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── Mock Data ──
+
+    const mainProducts = [
+      { brand: "Garmin", name: "Bike Cadence Sensor 2", category: "Computers", price: 23, msrp: null, shipping: true, favorited: false },
+      { brand: "Garmin", name: "Varia UT800 Smart Headlight", category: "Lights", price: 65, msrp: null, shipping: true, favorited: false },
+      { brand: "Garmin", name: "Tacx NEO 3M Smart Trainer", category: "Trainers", year: 2025, price: 1591, msrp: 1800, shipping: true, favorited: false },
+      { brand: "Garmin", name: "Edge 520 GPS Bike Computer", category: "Computers", year: 2015, price: 65, msrp: 250, shipping: true, favorited: false, multiImg: 2 },
+      { brand: "Garmin", name: "Edge 1040 Solar GPS Bike...", category: "Computers", year: 2024, price: 717, msrp: 800, shipping: true, favorited: false, multiImg: 2 },
+      { brand: "Garmin", name: "Garmin Varia RTL515 Rearview...", category: "Lights", price: 160, msrp: null, shipping: true, favorited: false, multiImg: 1 },
+      { brand: "Garmin", name: "Varia UT 800 Headlight", category: "Lights", year: 2017, price: 150, msrp: null, shipping: true, favorited: false, multiImg: 1 },
+    ];
+
+
+    // ── Icons ──
+
+    const placeholderIcons = {
+      Computers: '<svg class="placeholder-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="8" width="32" height="24" rx="3"/><path d="M16 36h16M24 32v4"/></svg>',
+      Lights: '<svg class="placeholder-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="24" cy="20" r="10"/><path d="M18 30h12v4H18z"/><path d="M20 34h8v2H20z"/><path d="M24 4v4M38 20h4M4 20h4M34 10l3-3M14 10l-3-3"/></svg>',
+      Trainers: '<svg class="placeholder-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="24" cy="28" r="14"/><circle cx="24" cy="28" r="6"/><path d="M24 14v-6M12 16l-3-3M36 16l3-3"/></svg>',
+      Accessories: '<svg class="placeholder-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="24" cy="24" r="16"/><path d="M24 12v12l8 5"/></svg>',
+      Watches: '<svg class="placeholder-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="24" cy="24" r="12"/><path d="M24 16v8l5 3"/><path d="M24 6v6M24 36v6"/></svg>',
+      Pedals: '<svg class="placeholder-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="10" y="18" width="28" height="12" rx="3"/><circle cx="24" cy="24" r="3"/><path d="M24 12v6M24 30v6"/></svg>',
+      Fitness: '<svg class="placeholder-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="24" cy="24" r="14"/><path d="M16 24h16M24 16v16"/></svg>',
+    };
+
+    function getPlaceholderIcon(category) {
+      return placeholderIcons[category] || placeholderIcons['Accessories'];
+    }
+
+    const heartOutline = '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.63 3.46a4.13 4.13 0 00-5.84 0L9 4.25l-.79-.79a4.13 4.13 0 00-5.84 5.84l.79.79L9 15.93l5.84-5.84.79-.79a4.13 4.13 0 000-5.84z"/></svg>';
+
+    const shippingIcon = '<svg class="shipping-icon" viewBox="0 0 14 14" fill="currentColor" opacity="0.4"><circle cx="7" cy="7" r="6"/></svg>';
+
+    // ── Render Functions ──
+
+    function formatPrice(price) {
+      return '$ ' + price.toLocaleString('en-US');
+    }
+
+    function createProductCard(product, index) {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+
+      const meta = [];
+      if (product.year) meta.push(product.year);
+      if (product.category) meta.push(product.category);
+      const metaText = meta.join(' \u00B7 ');
+
+      const multiImgLabel = product.multiImg ? `<span style="display:inline-flex;align-items:center;gap:2px;position:absolute;bottom:8px;left:8px;background:var(--bg-tertiary);border-radius:12px;padding:4px 8px;font-size:11px;color:var(--content-tertiary);box-shadow:0 1px 4px rgba(0,0,0,0.1);"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/></svg> ${product.multiImg}</span>` : '';
+
+      card.innerHTML = `
+        <div class="product-card-image">
+          ${getPlaceholderIcon(product.category)}
+          <button class="product-card-favorite ${product.favorited ? 'favorited' : ''}" data-index="${index}">
+            ${heartOutline}
+          </button>
+          ${multiImgLabel}
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-brand">${product.brand}</div>
+          <div class="product-card-name">${product.name}</div>
+          ${metaText ? `<div class="product-card-meta">${metaText}</div>` : ''}
+          <div class="product-card-price-row">
+            <span class="product-card-price">${formatPrice(product.price)}</span>
+            <span class="product-card-shipping">incl.${shippingIcon}</span>
+            ${product.msrp ? `<span class="product-card-msrp">$ ${product.msrp.toLocaleString('en-US')} MSRP</span>` : ''}
+          </div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    // ── Render Product Grids ──
+
+    const productGrid = document.getElementById('productGrid');
+    mainProducts.forEach((product, i) => {
+      productGrid.appendChild(createProductCard(product, i));
+    });
+
+
+    // ── Favorite Toggle ──
+
+    document.addEventListener('click', (e) => {
+      const favBtn = e.target.closest('.product-card-favorite');
+      if (favBtn) {
+        e.stopPropagation();
+        favBtn.classList.toggle('favorited');
+      }
+    });
+
+  </script>
+</body>
+</html>
