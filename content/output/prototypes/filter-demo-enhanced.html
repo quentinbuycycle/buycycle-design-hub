@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filters Enhanced - Buycycle Design System</title>
+    <style>
+        /* ========================================
+           CSS CUSTOM PROPERTIES - DESIGN TOKENS
+           ======================================== */
+        :root {
+            /* Background */
+            --bc-bg-primary: #FCFCFC;
+            --bc-bg-secondary: #F3F3F3;
+            --bc-bg-tertiary: #FFFFFF;
+            --bc-bg-quartenary: #EAEAEA;
+            --bc-bg-reverse: #090907;
+            --bc-bg-accent-green: #DAFDA0;
+            --bc-bg-accent-yellow: #FDFDA0;
+
+            /* Content */
+            --bc-content-primary: #090907;
+            --bc-content-secondary: #333333;
+            --bc-content-tertiary: #535353;
+            --bc-content-quartenary: #A9A9A9;
+            --bc-content-reverse: #FCFCFC;
+            --bc-content-alert: #B91C1C;
+
+            /* Border */
+            --bc-border-primary: #090907;
+            --bc-border-secondary: #757575;
+            --bc-border-tertiary: #EAEAEA;
+            --bc-border-quartenary: #D0D0D0;
+
+            /* Enhanced tokens */
+            --bc-enhanced-accent: #2F4B02;
+
+            /* Animation tokens */
+            --bc-transition-fast: 100ms cubic-bezier(0.4, 0, 0.2, 1);
+            --bc-transition-normal: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --bc-transition-slow: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+            /* Filter-specific shadows */
+            --bc-shadow-filter-hover: 0 1px 4px -1px rgba(9, 9, 7, 0.06);
+            --bc-shadow-dropdown: 0 4px 20px -4px rgba(9, 9, 7, 0.10);
+            --bc-shadow-focus-ring: 0 0 0 3px rgba(9, 9, 7, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bc-bg-primary);
+            color: var(--bc-content-primary);
+            line-height: 1.5;
+            padding: 48px 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .header h1 {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 20px;
+            color: var(--bc-content-tertiary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .enhancement-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--bc-bg-accent-green) 0%, var(--bc-bg-accent-yellow) 100%);
+            color: var(--bc-enhanced-accent);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 80px;
+        }
+
+        .section-header {
+            border-bottom: 2px solid var(--bc-border-tertiary);
+            padding-bottom: 16px;
+            margin-bottom: 32px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            color: var(--bc-content-tertiary);
+            font-size: 16px;
+        }
+
+        /* ========================================
+           BROWSE CHIPS - Category Toggles
+           ======================================== */
+        .browse-strip {
+            background: var(--bc-bg-secondary);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+
+        .browse-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--bc-content-tertiary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+
+        .browse-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            padding: 0 14px;
+            border-radius: 24px;
+            border: none;
+            background: var(--bc-bg-quartenary);
+            color: var(--bc-content-primary);
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+            cursor: pointer;
+            flex-shrink: 0;
+            white-space: nowrap;
+            transition: background var(--bc-transition-normal),
+                        color var(--bc-transition-normal),
+                        font-weight var(--bc-transition-normal),
+                        box-shadow var(--bc-transition-normal),
+                        transform var(--bc-transition-fast);
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .browse-chip:hover:not(.selected) {
+            box-shadow: inset 0 0 0 1px var(--bc-border-quartenary);
+        }
+
+        .browse-chip:active {
+            transform: scale(0.97);
+        }
+
+        .browse-chip.selected {
+            background: var(--bc-bg-reverse);
+            color: var(--bc-content-reverse);
+            font-weight: 500;
+        }
+
+        .browse-chip.selected:hover {
+            box-shadow: 0 2px 8px -2px rgba(9, 9, 7, 0.2);
+        }
+
+        .browse-chip:focus-visible {
+            outline: none;
+            box-shadow: var(--bc-shadow-focus-ring);
+        }
+
+        /* ========================================
+           SHOP FILTERS - Dropdown Triggers
+           ======================================== */
+        .filters-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .shop-filter {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            height: 40px;
+            padding: 0 16px;
+            background: var(--bc-bg-tertiary);
+            border: 1.5px solid var(--bc-border-tertiary);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 21px;
+            color: var(--bc-content-primary);
+            cursor: pointer;
+            white-space: nowrap;
+            position: relative;
+            transition: border-color var(--bc-transition-normal),
+                        border-width var(--bc-transition-normal),
+                        box-shadow var(--bc-transition-normal),
+                        font-weight var(--bc-transition-normal),
+                        transform var(--bc-transition-fast);
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .shop-filter:hover {
+            border-color: var(--bc-border-secondary);
+            box-shadow: var(--bc-shadow-filter-hover);
+        }
+
+        .shop-filter:active {
+            transform: scale(0.98);
+            box-shadow: none;
+        }
+
+        .shop-filter.open {
+            border-width: 2px;
+            border-color: var(--bc-border-primary);
+            padding: 0 15.5px; /* compensate for 2px border */
+        }
+
+        .shop-filter.active {
+            border-color: var(--bc-border-secondary);
+            font-weight: 500;
+        }
+
+        .shop-filter:focus-visible {
+            outline: none;
+            box-shadow: var(--bc-shadow-focus-ring);
+        }
+
+        /* Chevron */
+        .shop-filter-chevron {
+            width: 20px;
+            height: 20px;
+            color: var(--bc-content-tertiary);
+            flex-shrink: 0;
+            transition: transform var(--bc-transition-normal),
+                        color var(--bc-transition-normal);
+        }
+
+        .shop-filter:hover .shop-filter-chevron {
+            color: var(--bc-content-primary);
+        }
+
+        .shop-filter.open .shop-filter-chevron {
+            transform: rotate(180deg);
+            color: var(--bc-content-primary);
+        }
+
+        /* Badge */
+        .shop-filter-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            background: var(--bc-bg-reverse);
+            color: var(--bc-content-reverse);
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            border-radius: 24px;
+            flex-shrink: 0;
+            animation: badge-pop 150ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes badge-pop {
+            0% { transform: scale(0.85); opacity: 0.6; }
+            60% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shop-filter-badge.pulse {
+            animation: badge-pulse 120ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes badge-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        /* ========================================
+           MULTI-SELECT DROPDOWN
+           ======================================== */
+        .dropdown-container {
+            position: relative;
+            display: inline-flex;
+        }
+
+        .dropdown-panel {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            min-width: 220px;
+            background: var(--bc-bg-tertiary);
+            border: 1px solid var(--bc-border-tertiary);
+            border-radius: 10px;
+            box-shadow: var(--bc-shadow-dropdown);
+            padding: 8px;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(-4px);
+            pointer-events: none;
+            transition: opacity var(--bc-transition-slow),
+                        transform var(--bc-transition-slow);
+        }
+
+        .dropdown-panel.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .dropdown-panel.closing {
+            opacity: 0;
+            transform: translateY(-4px);
+            transition-duration: 120ms;
+            transition-timing-function: ease-in;
+            pointer-events: none;
+        }
+
+        /* Dropdown option row */
+        .dropdown-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 40px;
+            padding: 0 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--bc-content-primary);
+            transition: background var(--bc-transition-fast);
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .dropdown-option:hover {
+            background: rgba(9, 9, 7, 0.03);
+        }
+
+        .dropdown-option:active {
+            background: rgba(9, 9, 7, 0.06);
+        }
+
+        /* Checkbox inside dropdown */
+        .dropdown-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 1.5px solid var(--bc-border-secondary);
+            background: var(--bc-bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background var(--bc-transition-fast),
+                        border-color var(--bc-transition-fast);
+        }
+
+        .dropdown-checkbox.checked {
+            background: var(--bc-bg-reverse);
+            border-color: var(--bc-bg-reverse);
+        }
+
+        .dropdown-checkbox svg {
+            width: 14px;
+            height: 14px;
+            color: var(--bc-content-reverse);
+            opacity: 0;
+            transition: opacity var(--bc-transition-fast);
+        }
+
+        .dropdown-checkbox.checked svg {
+            opacity: 1;
+        }
+
+        /* ========================================
+           COMPARISON SECTION
+           ======================================== */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 80px;
+        }
+
+        .comparison-side {
+            padding: 40px;
+            background: var(--bc-bg-tertiary);
+            border-radius: 24px;
+        }
+
+        .comparison-side.before {
+            border: 2px solid var(--bc-border-tertiary);
+        }
+
+        .comparison-side.after {
+            border: 2px solid var(--bc-border-primary);
+            box-shadow: 0 8px 32px rgba(9, 9, 7, 0.12);
+        }
+
+        .comparison-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .comparison-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .comparison-badge {
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .comparison-badge.before {
+            background: var(--bc-bg-secondary);
+            color: var(--bc-content-tertiary);
+        }
+
+        .comparison-badge.after {
+            background: linear-gradient(135deg, var(--bc-bg-accent-green) 0%, var(--bc-bg-accent-yellow) 100%);
+            color: var(--bc-enhanced-accent);
+        }
+
+        .comparison-specs {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .comparison-specs.before {
+            background: var(--bc-bg-secondary);
+        }
+
+        .comparison-specs.after {
+            background: linear-gradient(135deg, rgba(218, 253, 160, 0.2) 0%, rgba(253, 253, 160, 0.2) 100%);
+            border: 1px solid rgba(218, 253, 160, 0.3);
+        }
+
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .spec-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .spec-label {
+            color: var(--bc-content-tertiary);
+        }
+
+        .spec-value {
+            font-family: 'Courier New', monospace;
+            color: var(--bc-content-primary);
+        }
+
+        .spec-value.enhanced {
+            font-weight: 600;
+        }
+
+        /* ========================================
+           CARD
+           ======================================== */
+        .card {
+            background: var(--bc-bg-tertiary);
+            border: 1px solid var(--bc-border-tertiary);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--bc-content-secondary);
+            margin-bottom: 16px;
+        }
+
+        .card-note {
+            font-size: 12px;
+            color: var(--bc-content-tertiary);
+            margin-top: 12px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        /* ========================================
+           FEATURES GRID
+           ======================================== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            padding: 48px;
+            background: linear-gradient(135deg, var(--bc-bg-reverse) 0%, var(--bc-content-secondary) 100%);
+            border-radius: 24px;
+            color: var(--bc-content-reverse);
+            margin-bottom: 80px;
+        }
+
+        .feature {
+            text-align: center;
+        }
+
+        .feature-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--bc-bg-accent-green);
+            margin-bottom: 8px;
+        }
+
+        .feature-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* ========================================
+           CONTEXT DEMO - Simulated Shop View
+           ======================================== */
+        .shop-demo {
+            background: var(--bc-bg-primary);
+            border: 2px solid var(--bc-border-primary);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(9, 9, 7, 0.08);
+        }
+
+        .shop-demo-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .shop-demo .results-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: var(--bc-content-tertiary);
+        }
+
+        .clear-filters {
+            font-size: 14px;
+            color: var(--bc-content-tertiary);
+            text-decoration: underline;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: inherit;
+            transition: color var(--bc-transition-normal);
+        }
+
+        .clear-filters:hover {
+            color: var(--bc-content-primary);
+        }
+
+        .product-grid-placeholder {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .product-placeholder {
+            aspect-ratio: 3/4;
+            background: var(--bc-bg-secondary);
+            border-radius: 12px;
+        }
+
+        /* ========================================
+           REDUCED MOTION
+           ======================================== */
+        @media (prefers-reduced-motion: reduce) {
+            .browse-chip,
+            .shop-filter,
+            .shop-filter-chevron,
+            .shop-filter-badge,
+            .dropdown-panel,
+            .dropdown-option,
+            .dropdown-checkbox,
+            .dropdown-checkbox svg {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+
+            .browse-chip:active,
+            .shop-filter:active {
+                transform: none !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 36px;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .product-grid-placeholder {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="enhancement-badge">
+                ✨ Enhanced Version
+            </div>
+            <h1>Filters Enhanced</h1>
+            <p>Refined hierarchy, tactile feedback, and smooth 150ms transitions tuned for high-frequency filter interactions</p>
+        </div>
+
+        <!-- Key Features -->
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-value">150ms</div>
+                <div class="feature-label">Transition duration (vs none)</div>
+            </div>
+            <div class="feature">
+                <div class="feature-value">10px</div>
+                <div class="feature-label">Filter radius (vs 6px)</div>
+            </div>
+            <div class="feature">
+                <div class="feature-value">1.5px</div>
+                <div class="feature-label">Border width (vs 1px)</div>
+            </div>
+            <div class="feature">
+                <div class="feature-value">2</div>
+                <div class="feature-label">Distinct visual layers</div>
+            </div>
+        </div>
+
+        <!-- Before & After Comparison -->
+        <div class="comparison">
+            <!-- Before -->
+            <div class="comparison-side before">
+                <div class="comparison-header">
+                    <h3>Before</h3>
+                    <span class="comparison-badge before">Original</span>
+                </div>
+
+                <!-- Before browse strip -->
+                <div style="background: var(--bc-bg-secondary); border-radius: 12px; padding: 12px 16px; display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto;">
+                    <span style="font-size: 12px; font-weight: 700; color: var(--bc-content-tertiary); align-self: center; flex-shrink: 0;">BROWSE</span>
+                    <button style="height: 36px; padding: 0 12px; border-radius: 24px; border: none; background: var(--bc-bg-quartenary); color: var(--bc-content-primary); font-family: inherit; font-size: 14px; cursor: pointer; white-space: nowrap;">Road</button>
+                    <button style="height: 36px; padding: 0 12px; border-radius: 24px; border: none; background: var(--bc-bg-quartenary); color: var(--bc-content-primary); font-family: inherit; font-size: 14px; cursor: pointer; white-space: nowrap;">Gravel</button>
+                    <button style="height: 36px; padding: 0 12px; border-radius: 24px; border: none; background: var(--bc-bg-quartenary); color: var(--bc-content-primary); font-family: inherit; font-size: 14px; cursor: pointer; white-space: nowrap;">MTB</button>
+                </div>
+
+                <!-- Before filters -->
+                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <button style="height: 36px; padding: 0 16px; border-radius: 6px; border: 1px solid var(--bc-border-quartenary); background: var(--bc-bg-primary); font-family: inherit; font-size: 14px; color: var(--bc-content-primary); cursor: pointer; display: flex; align-items: center; gap: 6px;">Sort By <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color: var(--bc-content-tertiary);"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                    <button style="height: 36px; padding: 0 16px; border-radius: 6px; border: 1px solid var(--bc-border-quartenary); background: var(--bc-bg-primary); font-family: inherit; font-size: 14px; color: var(--bc-content-primary); cursor: pointer; display: flex; align-items: center; gap: 6px;">Size <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color: var(--bc-content-tertiary);"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                    <button style="height: 36px; padding: 0 16px; border-radius: 6px; border: 1px solid var(--bc-border-secondary); background: var(--bc-bg-primary); font-family: inherit; font-size: 14px; color: var(--bc-content-primary); cursor: pointer; display: flex; align-items: center; gap: 6px;">Brands <span style="display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; background: var(--bc-bg-reverse); color: var(--bc-content-reverse); font-size: 11px; font-weight: 600; border-radius: 24px;">3</span> <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="color: var(--bc-content-tertiary);"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                </div>
+
+                <div class="comparison-specs before">
+                    <div class="spec-row">
+                        <span class="spec-label">Filter Radius:</span>
+                        <span class="spec-value">6px</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Border Width:</span>
+                        <span class="spec-value">1px</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Transitions:</span>
+                        <span class="spec-value">None</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Hierarchy:</span>
+                        <span class="spec-value">Flat (chips = filters)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- After -->
+            <div class="comparison-side after">
+                <div class="comparison-header">
+                    <h3>After</h3>
+                    <span class="comparison-badge after">Enhanced</span>
+                </div>
+
+                <!-- After browse strip -->
+                <div class="browse-strip" style="margin-bottom: 16px;">
+                    <span class="browse-label">Browse</span>
+                    <button class="browse-chip selected" onclick="toggleChip(this)">Road</button>
+                    <button class="browse-chip selected" onclick="toggleChip(this)">Gravel</button>
+                    <button class="browse-chip" onclick="toggleChip(this)">MTB</button>
+                </div>
+
+                <!-- After filters -->
+                <div class="filters-row">
+                    <div class="dropdown-container">
+                        <button class="shop-filter" onclick="toggleFilter(this)">
+                            Sort By
+                            <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                        </button>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="shop-filter" onclick="toggleFilter(this)">
+                            Size
+                            <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                        </button>
+                    </div>
+                    <div class="dropdown-container" id="brands-filter">
+                        <button class="shop-filter active" onclick="toggleFilter(this)">
+                            Brands
+                            <span class="shop-filter-badge">3</span>
+                            <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="comparison-specs after">
+                    <div class="spec-row">
+                        <span class="spec-label">Filter Radius:</span>
+                        <span class="spec-value enhanced">10px ✨</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Border Width:</span>
+                        <span class="spec-value enhanced">1.5px / 2px ✨</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Transitions:</span>
+                        <span class="spec-value enhanced">150ms ease-out ✨</span>
+                    </div>
+                    <div class="spec-row">
+                        <span class="spec-label">Hierarchy:</span>
+                        <span class="spec-value enhanced">Filled vs Outlined ✨</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Browse Chips States -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Browse Chips</h2>
+                <p>Category toggles — filled pills that show "what you're browsing"</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Default (Unselected)</h3>
+                    <div class="browse-strip">
+                        <span class="browse-label">Browse</span>
+                        <button class="browse-chip" onclick="toggleChip(this)">Road</button>
+                        <button class="browse-chip" onclick="toggleChip(this)">Gravel</button>
+                        <button class="browse-chip" onclick="toggleChip(this)">Triathlon</button>
+                        <button class="browse-chip" onclick="toggleChip(this)">Vintage</button>
+                    </div>
+                    <p class="card-note">bg: var(--bc-bg-quartenary), radius: 24px pill, weight: 400</p>
+                </div>
+
+                <div class="card">
+                    <h3>Mixed Selection</h3>
+                    <div class="browse-strip">
+                        <span class="browse-label">Browse</span>
+                        <button class="browse-chip selected" onclick="toggleChip(this)">Road</button>
+                        <button class="browse-chip selected" onclick="toggleChip(this)">Gravel</button>
+                        <button class="browse-chip" onclick="toggleChip(this)">Triathlon</button>
+                        <button class="browse-chip" onclick="toggleChip(this)">Vintage</button>
+                    </div>
+                    <p class="card-note">Selected: bg var(--bc-bg-reverse), text var(--bc-content-reverse), weight: 500</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Shop Filters States -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Shop Filters</h2>
+                <p>Dropdown triggers — outlined controls that show "how you filter"</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <h3>1. Default</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="shop-filter" onclick="toggleFilter(this)">
+                            Size
+                            <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                        </button>
+                    </div>
+                    <p class="card-note">Border: 1.5px var(--bc-border-tertiary), radius: 10px</p>
+                </div>
+
+                <div class="card">
+                    <h3>2. Open (Selected)</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="shop-filter open">
+                            Size
+                            <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                        </button>
+                    </div>
+                    <p class="card-note">Border: 2px var(--bc-border-primary), chevron rotated 180deg</p>
+                </div>
+
+                <div class="card">
+                    <h3>3. Active (Has Selections)</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="shop-filter active" onclick="toggleFilter(this)">
+                            Brands
+                            <span class="shop-filter-badge">3</span>
+                            <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                        </button>
+                    </div>
+                    <p class="card-note">Border: var(--bc-border-secondary), weight: 500, badge visible</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Multi-Select Dropdown -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Multi-Select Dropdown</h2>
+                <p>Filter dropdown with checkbox options, animated enter/exit</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Interactive Demo</h3>
+                    <p style="font-size: 14px; color: var(--bc-content-tertiary); margin-bottom: 16px;">Click the filter to open the dropdown. Select options to see the badge update.</p>
+                    <div class="dropdown-container" id="demo-dropdown">
+                        <button class="shop-filter" id="demo-trigger" onclick="toggleDemoDropdown()">
+                            Brands
+                            <span class="shop-filter-badge" id="demo-badge" style="display: none;">0</span>
+                            <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                        </button>
+                        <div class="dropdown-panel" id="demo-panel">
+                            <div class="dropdown-option" onclick="toggleOption(this, 'specialized')">
+                                <div class="dropdown-checkbox" id="cb-specialized">
+                                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 4 5.5 9.5 3 7"/></svg>
+                                </div>
+                                <span>Specialized</span>
+                            </div>
+                            <div class="dropdown-option" onclick="toggleOption(this, 'trek')">
+                                <div class="dropdown-checkbox" id="cb-trek">
+                                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 4 5.5 9.5 3 7"/></svg>
+                                </div>
+                                <span>Trek</span>
+                            </div>
+                            <div class="dropdown-option" onclick="toggleOption(this, 'giant')">
+                                <div class="dropdown-checkbox" id="cb-giant">
+                                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 4 5.5 9.5 3 7"/></svg>
+                                </div>
+                                <span>Giant</span>
+                            </div>
+                            <div class="dropdown-option" onclick="toggleOption(this, 'canyon')">
+                                <div class="dropdown-checkbox" id="cb-canyon">
+                                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 4 5.5 9.5 3 7"/></svg>
+                                </div>
+                                <span>Canyon</span>
+                            </div>
+                            <div class="dropdown-option" onclick="toggleOption(this, 'cervelo')">
+                                <div class="dropdown-checkbox" id="cb-cervelo">
+                                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 4 5.5 9.5 3 7"/></svg>
+                                </div>
+                                <span>Cervelo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Animation Specs</h3>
+                    <div class="comparison-specs after" style="margin-top: 0;">
+                        <div class="spec-row">
+                            <span class="spec-label">Enter:</span>
+                            <span class="spec-value enhanced">200ms ease-out</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Exit:</span>
+                            <span class="spec-value enhanced">120ms ease-in</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Transform:</span>
+                            <span class="spec-value enhanced">translateY(-4px → 0)</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Dropdown radius:</span>
+                            <span class="spec-value enhanced">10px</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Shadow:</span>
+                            <span class="spec-value enhanced">var(--bc-shadow-dropdown)</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Gap to trigger:</span>
+                            <span class="spec-value enhanced">6px</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Checkbox radius:</span>
+                            <span class="spec-value enhanced">6px</span>
+                        </div>
+                        <div class="spec-row">
+                            <span class="spec-label">Check appear:</span>
+                            <span class="spec-value enhanced">opacity 100ms</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Full Context Demo -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Full Context</h2>
+                <p>Simulated shop view showing both layers in context</p>
+            </div>
+
+            <div class="shop-demo">
+                <div class="shop-demo-title">Used Road & Gravel for sale</div>
+
+                <!-- Browse strip -->
+                <div class="browse-strip">
+                    <span class="browse-label">Browse</span>
+                    <button class="browse-chip selected" onclick="toggleChip(this)">Road</button>
+                    <button class="browse-chip selected" onclick="toggleChip(this)">Gravel</button>
+                    <button class="browse-chip" onclick="toggleChip(this)">Triathlon</button>
+                    <button class="browse-chip" onclick="toggleChip(this)">Vintage</button>
+                    <button class="browse-chip" onclick="toggleChip(this)">Specialized</button>
+                    <button class="browse-chip" onclick="toggleChip(this)">Trek</button>
+                    <button class="browse-chip" onclick="toggleChip(this)">Giant</button>
+                </div>
+
+                <!-- Shop filters -->
+                <div class="filters-row">
+                    <div class="dropdown-container">
+                        <button class="shop-filter" onclick="toggleFilter(this)">Sort By <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="shop-filter" onclick="toggleFilter(this)">Size <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="shop-filter" onclick="toggleFilter(this)">Price <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="shop-filter active" onclick="toggleFilter(this)">Brands <span class="shop-filter-badge">3</span> <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="shop-filter" onclick="toggleFilter(this)">Frame material <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="shop-filter" onclick="toggleFilter(this)">Brake type <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="shop-filter" onclick="toggleFilter(this)">Year <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                    </div>
+                    <div class="dropdown-container">
+                        <button class="shop-filter active" onclick="toggleFilter(this)">Condition <span class="shop-filter-badge">2</span> <svg class="shop-filter-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="results-info">
+                    <span>1,583 Results</span>
+                    <button class="clear-filters">Clear filters ✕</button>
+                </div>
+
+                <!-- Product placeholders -->
+                <div class="product-grid-placeholder">
+                    <div class="product-placeholder"></div>
+                    <div class="product-placeholder"></div>
+                    <div class="product-placeholder"></div>
+                    <div class="product-placeholder"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Browse chip toggle
+        function toggleChip(chip) {
+            chip.classList.toggle('selected');
+        }
+
+        // Shop filter open/close toggle (simple demo)
+        function toggleFilter(btn) {
+            const wasOpen = btn.classList.contains('open');
+            // Close all open filters first
+            document.querySelectorAll('.shop-filter.open').forEach(f => {
+                f.classList.remove('open');
+            });
+            if (!wasOpen) {
+                btn.classList.add('open');
+            }
+        }
+
+        // Demo dropdown state
+        const demoSelections = new Set();
+
+        function toggleDemoDropdown() {
+            const trigger = document.getElementById('demo-trigger');
+            const panel = document.getElementById('demo-panel');
+            const isOpen = trigger.classList.contains('open');
+
+            if (isOpen) {
+                // Close with exit animation
+                panel.classList.remove('visible');
+                panel.classList.add('closing');
+                trigger.classList.remove('open');
+                setTimeout(() => {
+                    panel.classList.remove('closing');
+                }, 120);
+            } else {
+                // Close any other open filters
+                document.querySelectorAll('.shop-filter.open').forEach(f => {
+                    f.classList.remove('open');
+                });
+                // Open with enter animation
+                trigger.classList.add('open');
+                panel.classList.remove('closing');
+                // Force reflow so transition plays
+                panel.offsetHeight;
+                panel.classList.add('visible');
+            }
+        }
+
+        function toggleOption(optionEl, id) {
+            const checkbox = optionEl.querySelector('.dropdown-checkbox');
+            const isChecked = checkbox.classList.contains('checked');
+
+            if (isChecked) {
+                checkbox.classList.remove('checked');
+                demoSelections.delete(id);
+            } else {
+                checkbox.classList.add('checked');
+                demoSelections.add(id);
+            }
+
+            updateDemoBadge();
+        }
+
+        function updateDemoBadge() {
+            const badge = document.getElementById('demo-badge');
+            const trigger = document.getElementById('demo-trigger');
+            const count = demoSelections.size;
+
+            if (count > 0) {
+                badge.style.display = 'inline-flex';
+                badge.textContent = count;
+                trigger.classList.add('active');
+
+                // Pulse animation on count change
+                badge.classList.remove('pulse');
+                badge.offsetHeight; // force reflow
+                badge.classList.add('pulse');
+            } else {
+                badge.style.display = 'none';
+                trigger.classList.remove('active');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('demo-dropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                const panel = document.getElementById('demo-panel');
+                const trigger = document.getElementById('demo-trigger');
+                if (panel.classList.contains('visible')) {
+                    panel.classList.remove('visible');
+                    panel.classList.add('closing');
+                    trigger.classList.remove('open');
+                    setTimeout(() => {
+                        panel.classList.remove('closing');
+                    }, 120);
+                }
+            }
+        });
+
+        // Keyboard support for dropdown
+        document.getElementById('demo-trigger')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const panel = document.getElementById('demo-panel');
+                const trigger = document.getElementById('demo-trigger');
+                if (panel.classList.contains('visible')) {
+                    panel.classList.remove('visible');
+                    panel.classList.add('closing');
+                    trigger.classList.remove('open');
+                    trigger.focus();
+                    setTimeout(() => {
+                        panel.classList.remove('closing');
+                    }, 120);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
