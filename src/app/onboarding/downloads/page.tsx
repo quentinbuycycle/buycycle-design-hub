@@ -3,17 +3,31 @@ import styles from "./page.module.css";
 import Link from "next/link";
 
 // Version configuration
-const DESIGN_SYSTEM_VERSION = "v1.0.0";
+const DESIGN_SYSTEM_VERSION = "v1.1.0";
 const COMMANDS_VERSION = "v1.1.0";
-const DESIGN_SYSTEM_DOWNLOAD_URL = "https://github.com/quentinbuycycle/buycycle-design-system/releases/download/v1.0.0/design-system-v1.0.0.zip";
+const DESIGN_SYSTEM_DOWNLOAD_URL = "https://github.com/quentinbuycycle/buycycle-design-hub/releases/download/v1.1.0/buycycle-v1.1.0.zip";
 const COMMANDS_DOWNLOAD_URL = "https://github.com/quentinbuycycle/buycycle-design-hub/releases/download/commands-v1.1.0/commands-v1.1.0.zip";
 
 const designSystemVersions = [
   {
     version: DESIGN_SYSTEM_VERSION,
-    date: "February 2026",
+    date: "February 20, 2026",
     isCurrent: true,
     downloadUrl: DESIGN_SYSTEM_DOWNLOAD_URL,
+    summary: "Motion system, enhanced button & input interactions (26Q1).",
+    releaseNotes: [
+      { type: "added" as const, text: "Motion system — 3 CSS timing tokens, scale values, shared keyframes, and prefers-reduced-motion support" },
+      { type: "changed" as const, text: "Buttons — Enhanced Interactions (26Q1): size/radius overrides, Primary shadow system, Secondary/Tertiary behavior deltas" },
+      { type: "changed" as const, text: "Inputs — Enhanced Interactions (26Q1): dimension overrides, focus/error rings, trailing icon feedback" },
+      { type: "changed" as const, text: "CLAUDE.md index updated with motion.md" },
+    ],
+  },
+  {
+    version: "v1.0.0",
+    date: "February 2026",
+    isCurrent: false,
+    downloadUrl: "",
+    supersededBy: "v1.1.0",
     summary: "Initial release of the buycycle design system for Claude Code.",
     releaseNotes: [
       { type: "added" as const, text: "CLAUDE.md configuration file" },
