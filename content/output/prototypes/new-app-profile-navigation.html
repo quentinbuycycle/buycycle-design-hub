@@ -1,0 +1,1429 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>buycycle Profile Redesign V2 — Interactive Prototype</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #1a1a1a; }
+    #root { display: flex; justify-content: center; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+const { useState } = React;
+
+// Design System Color Tokens
+const colors = {
+  backgroundPrimary: '#FCFCFC',
+  backgroundSecondary: '#F3F3F3',
+  backgroundTertiary: '#FFFFFF',
+  backgroundQuartenary: '#EAEAEA',
+  backgroundAccentGreen: '#DAFDA0',
+  backgroundAlert: '#FFEBEB',
+  contentPrimary: '#090907',
+  contentSecondary: '#333333',
+  contentTertiary: '#535353',
+  contentQuartenary: '#A9A9A9',
+  contentAlert: '#B91C1C',
+  contentPositive: '#146C43',
+  borderPrimary: '#090907',
+  borderSecondary: '#757575',
+  borderTertiary: '#EAEAEA',
+};
+
+// Icon Components (using design system specs: 24x24, 1.5px stroke, currentColor)
+const IconHome = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <polyline points="9,22 9,12 15,12 15,22" />
+  </svg>
+);
+
+const IconSearch = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+);
+
+const IconPlus = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="16" />
+    <line x1="8" y1="12" x2="16" y2="12" />
+  </svg>
+);
+
+const IconInbox = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+  </svg>
+);
+
+const IconProfile = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const IconChevronRight = ({ size = 20, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polyline points="9,18 15,12 9,6" />
+  </svg>
+);
+
+const IconChevronLeft = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polyline points="15,18 9,12 15,6" />
+  </svg>
+);
+
+const IconPackage = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+    <polyline points="3.27,6.96 12,12.01 20.73,6.96" />
+    <line x1="12" y1="22.08" x2="12" y2="12" />
+  </svg>
+);
+
+const IconShoppingBag = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <path d="M16 10a4 4 0 0 1-8 0" />
+  </svg>
+);
+
+const IconTag = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+    <line x1="7" y1="7" x2="7.01" y2="7" />
+  </svg>
+);
+
+const IconHeart = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+  </svg>
+);
+
+const IconWallet = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <rect x="1" y="5" width="22" height="16" rx="2" ry="2" />
+    <line x1="1" y1="10" x2="23" y2="10" />
+  </svg>
+);
+
+const IconBell = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+  </svg>
+);
+
+const IconGlobe = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
+const IconMapPin = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+    <circle cx="12" cy="10" r="3" />
+  </svg>
+);
+
+const IconUser = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
+const IconHelp = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
+  </svg>
+);
+
+const IconInfo = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="16" x2="12" y2="12" />
+    <line x1="12" y1="8" x2="12.01" y2="8" />
+  </svg>
+);
+
+const IconLogOut = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <polyline points="16,17 21,12 16,7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
+  </svg>
+);
+
+const IconStar = ({ size = 16, filled = false, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26 12,2" />
+  </svg>
+);
+
+const IconSettings = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+  </svg>
+);
+
+const IconX = ({ size = 20, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+// NEW: Camera icon for avatar edit
+const IconCamera = ({ size = 24, className = '' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+    <circle cx="12" cy="13" r="4" />
+  </svg>
+);
+
+// Toggle Component
+const Toggle = ({ checked, onChange, showLabel = false }) => {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        padding: 0,
+        border: 'none',
+        background: 'none',
+        cursor: 'pointer',
+      }}
+    >
+      <div style={{ position: 'relative', width: '56px', height: '32px' }}>
+        <div
+          style={{
+            width: '56px',
+            height: '32px',
+            borderRadius: '100px',
+            backgroundColor: checked ? colors.backgroundAccentGreen : colors.backgroundQuartenary,
+            transition: 'background-color 0.3s ease',
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            top: '4px',
+            left: checked ? '28px' : '4px',
+            width: '24px',
+            height: '24px',
+            borderRadius: '100px',
+            backgroundColor: colors.contentPrimary,
+            transition: 'left 0.3s ease',
+          }}
+        />
+      </div>
+    </button>
+  );
+};
+
+// Menu Item Component
+const MenuItem = ({ icon, label, subtitle, onClick, showChevron = true, rightElement }) => (
+  <button
+    onClick={onClick}
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      width: '100%',
+      padding: '16px',
+      border: 'none',
+      background: 'none',
+      cursor: 'pointer',
+      textAlign: 'left',
+    }}
+  >
+    <div style={{ color: colors.contentPrimary }}>
+      {icon}
+    </div>
+    <div style={{ flex: 1 }}>
+      <div style={{
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+        fontSize: '16px',
+        fontWeight: 400,
+        lineHeight: '24px',
+        color: colors.contentPrimary,
+      }}>
+        {label}
+      </div>
+      {subtitle && (
+        <div style={{
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '14px',
+          fontWeight: 400,
+          lineHeight: '21px',
+          color: colors.contentTertiary,
+        }}>
+          {subtitle}
+        </div>
+      )}
+    </div>
+    {rightElement}
+    {showChevron && !rightElement && (
+      <IconChevronRight size={20} style={{ color: colors.contentTertiary }} />
+    )}
+  </button>
+);
+
+// Divider Component
+const Divider = () => (
+  <div style={{
+    height: '1px',
+    backgroundColor: colors.borderTertiary,
+    margin: '8px 16px',
+  }} />
+);
+
+// Tab Bar Item Component
+const TabBarItem = ({ icon, label, active, badge, onClick }) => (
+  <button
+    onClick={onClick}
+    style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '75px',
+      height: '49px',
+      border: 'none',
+      background: 'none',
+      cursor: 'pointer',
+      position: 'relative',
+      padding: '4px 0',
+    }}
+  >
+    {active && (
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '75px',
+        height: '3px',
+        backgroundColor: colors.borderPrimary,
+      }} />
+    )}
+    <div style={{ position: 'relative' }}>
+      <div style={{ color: active ? colors.contentPrimary : colors.contentTertiary }}>
+        {icon}
+      </div>
+      {badge && (
+        <div style={{
+          position: 'absolute',
+          top: '-2px',
+          right: '-4px',
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: colors.contentAlert,
+        }} />
+      )}
+    </div>
+    <span style={{
+      fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+      fontSize: '12px',
+      fontWeight: active ? 500 : 400,
+      lineHeight: '18px',
+      color: active ? colors.contentPrimary : colors.contentTertiary,
+      marginTop: '2px',
+    }}>
+      {label}
+    </span>
+  </button>
+);
+
+// Tab Bar Component
+const TabBar = ({ activeTab, onTabChange, inboxBadge = false }) => (
+  <div style={{
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    width: '390px',
+    backgroundColor: colors.backgroundTertiary,
+    borderTop: `1px solid ${colors.borderTertiary}`,
+  }}>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      height: '49px',
+    }}>
+      <TabBarItem icon={<IconHome size={24} />} label="Home" active={activeTab === 'home'} onClick={() => onTabChange('home')} />
+      <TabBarItem icon={<IconSearch size={24} />} label="Search" active={activeTab === 'search'} onClick={() => onTabChange('search')} />
+      <TabBarItem icon={<IconPlus size={24} />} label="Sell" active={activeTab === 'sell'} onClick={() => onTabChange('sell')} />
+      <TabBarItem icon={<IconInbox size={24} />} label="Inbox" active={activeTab === 'inbox'} badge={inboxBadge} onClick={() => onTabChange('inbox')} />
+      <TabBarItem icon={<IconProfile size={24} />} label="Profile" active={activeTab === 'profile'} onClick={() => onTabChange('profile')} />
+    </div>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-end',
+      height: '34px',
+      paddingBottom: '8px',
+    }}>
+      <div style={{
+        width: '134px',
+        height: '5px',
+        backgroundColor: colors.contentPrimary,
+        borderRadius: '100px',
+      }} />
+    </div>
+  </div>
+);
+
+// iOS Status Bar (reusable)
+const StatusBar = () => (
+  <div style={{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '11px 16px',
+    height: '44px',
+    boxSizing: 'border-box',
+  }}>
+    <span style={{
+      fontFamily: '-apple-system, SF Pro, sans-serif',
+      fontSize: '16px',
+      fontWeight: 600,
+      color: colors.contentPrimary,
+    }}>
+      9:41
+    </span>
+    <div style={{ width: '121px', height: '36px' }} />
+    <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+      <svg width="19" height="12" viewBox="0 0 19 12" fill={colors.contentPrimary}>
+        <rect x="0" y="4" width="3" height="8" rx="1" />
+        <rect x="5" y="2" width="3" height="10" rx="1" />
+        <rect x="10" y="0" width="3" height="12" rx="1" />
+        <rect x="15" y="0" width="3" height="12" rx="1" opacity="0.3" />
+      </svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" fill={colors.contentPrimary}>
+        <path d="M8.5 2.5C10.5 2.5 12.3 3.3 13.6 4.6L15 3.2C13.3 1.5 11 0.5 8.5 0.5C6 0.5 3.7 1.5 2 3.2L3.4 4.6C4.7 3.3 6.5 2.5 8.5 2.5Z" />
+        <path d="M8.5 5.5C9.6 5.5 10.6 5.9 11.4 6.6L12.8 5.2C11.6 4.1 10.1 3.5 8.5 3.5C6.9 3.5 5.4 4.1 4.2 5.2L5.6 6.6C6.4 5.9 7.4 5.5 8.5 5.5Z" />
+        <circle cx="8.5" cy="9.5" r="2" />
+      </svg>
+      <svg width="27" height="13" viewBox="0 0 27 13" fill="none">
+        <rect x="0.5" y="0.5" width="22" height="12" rx="3" stroke={colors.contentPrimary} />
+        <rect x="2" y="2" width="18" height="9" rx="2" fill={colors.contentPrimary} />
+        <rect x="24" y="4" width="2" height="5" rx="1" fill={colors.contentPrimary} />
+      </svg>
+    </div>
+  </div>
+);
+
+// App Header Component
+const AppHeader = ({ title, onBack, rightAction }) => (
+  <div style={{
+    backgroundColor: colors.backgroundPrimary,
+    borderBottom: `1px solid ${colors.borderTertiary}`,
+  }}>
+    <StatusBar />
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      padding: '16px',
+      height: '70px',
+      boxSizing: 'border-box',
+    }}>
+      {onBack && (
+        <button
+          onClick={onBack}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '24px',
+            height: '24px',
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            marginRight: '12px',
+            padding: 0,
+          }}
+        >
+          <IconChevronLeft size={24} style={{ color: colors.contentPrimary }} />
+        </button>
+      )}
+      <span style={{
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+        fontSize: '24px',
+        fontWeight: 500,
+        lineHeight: '32px',
+        color: colors.contentPrimary,
+        flex: 1,
+      }}>
+        {title}
+      </span>
+      {rightAction}
+    </div>
+  </div>
+);
+
+// ─────────────────────────────────────────────
+// V2: Profile Header with camera icon on avatar
+// ─────────────────────────────────────────────
+const ProfileHeader = ({ onClick, onPhotoEdit }) => (
+  <button
+    onClick={onClick}
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '16px',
+      width: '100%',
+      padding: '16px',
+      border: 'none',
+      background: 'none',
+      cursor: 'pointer',
+      textAlign: 'left',
+    }}
+  >
+    {/* Avatar with camera overlay */}
+    <div style={{
+      position: 'relative',
+      width: '56px',
+      height: '56px',
+      flexShrink: 0,
+    }}>
+      <div style={{
+        width: '56px',
+        height: '56px',
+        borderRadius: '50%',
+        backgroundColor: colors.backgroundSecondary,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        border: `1px solid ${colors.borderTertiary}`,
+        overflow: 'hidden',
+      }}>
+        <IconUser size={28} style={{ color: colors.contentTertiary }} />
+      </div>
+      {/* Camera edit button */}
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+          onPhotoEdit && onPhotoEdit();
+        }}
+        role="button"
+        tabIndex={0}
+        style={{
+          position: 'absolute',
+          bottom: '-2px',
+          right: '-2px',
+          width: '24px',
+          height: '24px',
+          borderRadius: '50%',
+          backgroundColor: colors.backgroundTertiary,
+          border: `1px solid ${colors.borderTertiary}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        }}
+      >
+        <IconCamera size={14} style={{ color: colors.contentPrimary }} />
+      </div>
+    </div>
+
+    {/* Info */}
+    <div style={{ flex: 1 }}>
+      <div style={{
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+        fontSize: '20px',
+        fontWeight: 500,
+        lineHeight: '28px',
+        color: colors.contentPrimary,
+      }}>
+        Jonas Jaeger
+      </div>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+        marginTop: '4px',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <IconStar
+              key={i}
+              size={16}
+              filled={i <= 4}
+              style={{ color: i <= 4 ? '#F59E0B' : colors.contentQuartenary }}
+            />
+          ))}
+        </div>
+        <span style={{
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '14px',
+          fontWeight: 400,
+          lineHeight: '21px',
+          color: colors.contentPrimary,
+        }}>
+          (19)
+        </span>
+      </div>
+    </div>
+
+    <IconChevronRight size={20} style={{ color: colors.contentTertiary }} />
+  </button>
+);
+
+// ─────────────────────────────────────────────
+// V2: Profile Completion Card (dismissible)
+// ─────────────────────────────────────────────
+const ProfileCompletionCard = ({ onDismiss, onContinue }) => {
+  const steps = [
+    { label: 'Email verified', completed: true },
+    { label: 'Phone verified', completed: true },
+    { label: 'Bio added', completed: true },
+    { label: 'Profile photo', completed: false },
+    { label: 'ID verified', completed: false },
+  ];
+
+  const completedCount = steps.filter(s => s.completed).length;
+  const nextStep = steps.find(s => !s.completed);
+  const progress = completedCount / steps.length;
+
+  return (
+    <div style={{
+      margin: '0 16px 12px',
+      padding: '16px',
+      backgroundColor: colors.backgroundSecondary,
+      borderRadius: '8px',
+      border: `1px solid ${colors.borderTertiary}`,
+    }}>
+      {/* Header row */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: '12px',
+      }}>
+        <span style={{
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '16px',
+          fontWeight: 500,
+          lineHeight: '24px',
+          color: colors.contentPrimary,
+        }}>
+          Complete your profile
+        </span>
+        <button
+          onClick={onDismiss}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '24px',
+            height: '24px',
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            padding: 0,
+          }}
+        >
+          <IconX size={18} style={{ color: colors.contentTertiary }} />
+        </button>
+      </div>
+
+      {/* Progress bar */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        marginBottom: '12px',
+      }}>
+        <div style={{
+          flex: 1,
+          height: '6px',
+          backgroundColor: colors.backgroundQuartenary,
+          borderRadius: '100px',
+          overflow: 'hidden',
+        }}>
+          <div style={{
+            width: `${progress * 100}%`,
+            height: '100%',
+            backgroundColor: colors.backgroundAccentGreen,
+            borderRadius: '100px',
+            transition: 'width 0.3s ease',
+          }} />
+        </div>
+        <span style={{
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '13px',
+          fontWeight: 500,
+          color: colors.contentTertiary,
+          whiteSpace: 'nowrap',
+        }}>
+          {completedCount}/{steps.length}
+        </span>
+      </div>
+
+      {/* Next step + action */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        <span style={{
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '14px',
+          fontWeight: 400,
+          lineHeight: '21px',
+          color: colors.contentTertiary,
+        }}>
+          Next: {nextStep ? nextStep.label : 'All done!'}
+        </span>
+        {nextStep && (
+          <button
+            onClick={onContinue}
+            style={{
+              fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+              fontSize: '14px',
+              fontWeight: 500,
+              lineHeight: '21px',
+              color: colors.contentPrimary,
+              padding: '6px 14px',
+              backgroundColor: 'transparent',
+              border: `1px solid ${colors.borderSecondary}`,
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            Continue
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────
+// V2: Seller Stats Row
+// ─────────────────────────────────────────────
+const SellerStatsRow = () => {
+  const stats = [
+    { value: '47', label: 'sold' },
+    { value: '< 2h', label: 'response' },
+    { value: '128', label: 'views' },
+  ];
+
+  return (
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: '6px',
+      padding: '12px 16px',
+    }}>
+      {stats.map((stat, i) => (
+        <React.Fragment key={stat.label}>
+          {i > 0 && (
+            <span style={{
+              fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+              fontSize: '14px',
+              color: colors.contentQuartenary,
+            }}>
+              ·
+            </span>
+          )}
+          <span style={{
+            fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+            fontSize: '14px',
+            fontWeight: 500,
+            color: colors.contentPrimary,
+          }}>
+            {stat.value}
+          </span>
+          <span style={{
+            fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+            fontSize: '14px',
+            fontWeight: 400,
+            color: colors.contentTertiary,
+          }}>
+            {stat.label}
+          </span>
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
+// Listings Card Component (unchanged from v1)
+const ListingsCard = ({ count = 12, onClick, onAddClick }) => (
+  <div
+    style={{
+      margin: '8px 16px 0',
+      padding: '16px',
+      backgroundColor: colors.backgroundSecondary,
+      borderRadius: '8px',
+      border: `1px solid ${colors.borderTertiary}`,
+    }}
+  >
+    <button
+      onClick={onClick}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
+        border: 'none',
+        background: 'none',
+        cursor: 'pointer',
+        textAlign: 'left',
+        padding: 0,
+        marginBottom: '12px',
+      }}
+    >
+      <div style={{ color: colors.contentPrimary, marginRight: '12px' }}>
+        <IconPackage size={24} />
+      </div>
+      <span style={{
+        flex: 1,
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+        fontSize: '16px',
+        fontWeight: 500,
+        lineHeight: '24px',
+        color: colors.contentPrimary,
+      }}>
+        My Listings
+      </span>
+      <span style={{
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+        fontSize: '14px',
+        fontWeight: 400,
+        lineHeight: '21px',
+        color: colors.contentTertiary,
+        marginRight: '8px',
+      }}>
+        {count} active
+      </span>
+      <IconChevronRight size={20} style={{ color: colors.contentTertiary }} />
+    </button>
+
+    <button
+      onClick={onAddClick}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '6px',
+        width: '100%',
+        height: '36px',
+        padding: '8px 12px',
+        backgroundColor: 'transparent',
+        border: `1px solid ${colors.borderSecondary}`,
+        borderRadius: '4px',
+        cursor: 'pointer',
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+        fontSize: '14px',
+        fontWeight: 400,
+        lineHeight: '21px',
+        color: colors.contentPrimary,
+      }}
+    >
+      <span style={{ fontSize: '16px' }}>+</span>
+      Add Listing
+    </button>
+  </div>
+);
+
+// Account Screen (unchanged from v1)
+const AccountScreen = ({ onBack }) => {
+  return (
+    <div style={{ backgroundColor: colors.backgroundPrimary }}>
+      <AppHeader title="Account" onBack={onBack} />
+      <div style={{ padding: '8px 0' }}>
+        <div style={{
+          padding: '16px 16px 8px',
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '12px',
+          fontWeight: 500,
+          lineHeight: '18px',
+          color: colors.contentTertiary,
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px',
+        }}>
+          Login & Security
+        </div>
+        <AccountItem label="Email" value="jonas@buycycle.com" />
+        <AccountItem label="Password" value="••••••••••••" />
+        <AccountItem label="Phone Number" value="+49 •••• ••• 482" />
+        <Divider />
+        <div style={{
+          padding: '16px 16px 8px',
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '12px',
+          fontWeight: 500,
+          lineHeight: '18px',
+          color: colors.contentTertiary,
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px',
+        }}>
+          Data & Privacy
+        </div>
+        <AccountItem label="Delete Account" labelColor={colors.contentAlert} />
+        <Divider />
+        <div style={{
+          padding: '16px 16px 8px',
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '12px',
+          fontWeight: 500,
+          lineHeight: '18px',
+          color: colors.contentTertiary,
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px',
+        }}>
+          Legal
+        </div>
+        <AccountItem label="Terms of Service" />
+        <AccountItem label="Privacy Policy" />
+      </div>
+    </div>
+  );
+};
+
+const AccountItem = ({ label, value, labelColor, valueColor }) => (
+  <button
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
+      padding: '14px 16px',
+      border: 'none',
+      background: 'none',
+      cursor: 'pointer',
+      textAlign: 'left',
+    }}
+  >
+    <span style={{
+      fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+      fontSize: '16px',
+      fontWeight: 400,
+      lineHeight: '24px',
+      color: labelColor || colors.contentPrimary,
+    }}>
+      {label}
+    </span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      {value && (
+        <span style={{
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '14px',
+          fontWeight: 400,
+          lineHeight: '21px',
+          color: valueColor || colors.contentTertiary,
+        }}>
+          {value}
+        </span>
+      )}
+      <IconChevronRight size={20} style={{ color: colors.contentTertiary }} />
+    </div>
+  </button>
+);
+
+// Notification Settings Screen (unchanged from v1)
+const NotificationSettings = ({ onBack, settings, onToggle }) => {
+  return (
+    <div style={{ backgroundColor: colors.backgroundPrimary }}>
+      <AppHeader title="Notifications" onBack={onBack} />
+      <div style={{ padding: '16px 0' }}>
+        <SectionHeader>Activity</SectionHeader>
+        <NotificationItem label="Messages" description="New messages from buyers/sellers" checked={settings.messages} onChange={(val) => onToggle('messages', val)} />
+        <NotificationItem label="Orders" description="Updates on your purchases" checked={settings.orders} onChange={(val) => onToggle('orders', val)} />
+        <NotificationItem label="Sales" description="New sales and shipping reminders" checked={settings.sales} onChange={(val) => onToggle('sales', val)} />
+        <Divider />
+        <SectionHeader>Listings</SectionHeader>
+        <NotificationItem label="Price Alerts" description="When wishlisted items drop in price" checked={settings.priceAlerts} onChange={(val) => onToggle('priceAlerts', val)} />
+        <NotificationItem label="Offers" description="When someone makes an offer" checked={settings.offers} onChange={(val) => onToggle('offers', val)} />
+        <NotificationItem label="Listing Tips" description="Suggestions to improve your listings" checked={settings.listingTips} onChange={(val) => onToggle('listingTips', val)} />
+        <Divider />
+        <SectionHeader>Marketing</SectionHeader>
+        <NotificationItem label="Promotions" description="Deals, discounts and campaigns" checked={settings.promotions} onChange={(val) => onToggle('promotions', val)} />
+        <NotificationItem label="Newsletter" description="Weekly updates and tips" checked={settings.newsletter} onChange={(val) => onToggle('newsletter', val)} />
+      </div>
+    </div>
+  );
+};
+
+// Reusable section header for settings screens
+const SectionHeader = ({ children }) => (
+  <div style={{
+    padding: '8px 16px',
+    fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+    fontSize: '12px',
+    fontWeight: 500,
+    lineHeight: '18px',
+    color: colors.contentTertiary,
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+  }}>
+    {children}
+  </div>
+);
+
+const NotificationItem = ({ label, description, checked, onChange }) => (
+  <div style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '12px 16px',
+  }}>
+    <div style={{ flex: 1, marginRight: '16px' }}>
+      <div style={{
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+        fontSize: '16px',
+        fontWeight: 400,
+        lineHeight: '24px',
+        color: colors.contentPrimary,
+      }}>
+        {label}
+      </div>
+      <div style={{
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+        fontSize: '14px',
+        fontWeight: 400,
+        lineHeight: '21px',
+        color: colors.contentTertiary,
+      }}>
+        {description}
+      </div>
+    </div>
+    <Toggle checked={checked} onChange={onChange} />
+  </div>
+);
+
+// Public Profile Screen (unchanged from v1)
+const PublicProfileScreen = ({ onBack }) => (
+  <div style={{ backgroundColor: colors.backgroundPrimary }}>
+    <AppHeader title="Profile" onBack={onBack} />
+    <div style={{ padding: '24px 16px', textAlign: 'center' }}>
+      <div style={{ position: 'relative', width: '80px', height: '80px', margin: '0 auto 12px' }}>
+        <div style={{
+          width: '80px', height: '80px', borderRadius: '50%',
+          backgroundColor: colors.backgroundSecondary,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          border: `1px solid ${colors.borderTertiary}`,
+        }}>
+          <IconUser size={40} style={{ color: colors.contentTertiary }} />
+        </div>
+        <button style={{
+          position: 'absolute', bottom: '0', right: '0',
+          width: '28px', height: '28px', borderRadius: '50%',
+          backgroundColor: colors.backgroundTertiary,
+          border: `1px solid ${colors.borderTertiary}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          cursor: 'pointer', padding: 0,
+        }}>
+          <IconSettings size={16} style={{ color: colors.contentPrimary }} />
+        </button>
+      </div>
+      <div style={{
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+        fontSize: '24px', fontWeight: 500, lineHeight: '32px',
+        color: colors.contentPrimary, marginBottom: '4px',
+      }}>
+        Jonas J.
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px', marginBottom: '8px' }}>
+        {[1,2,3,4,5].map(i => (
+          <IconStar key={i} size={16} filled style={{ color: '#F59E0B' }} />
+        ))}
+        <span style={{
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '14px', fontWeight: 400, color: colors.contentSecondary, marginLeft: '4px',
+        }}>
+          (5)
+        </span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '4px',
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '14px', color: colors.contentTertiary,
+        }}>
+          <IconMapPin size={16} />
+          München, DE
+        </div>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '4px',
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '14px', color: colors.contentTertiary,
+        }}>
+          Since 2021
+        </div>
+      </div>
+    </div>
+    {/* Tabs */}
+    <div style={{ display: 'flex', borderBottom: `1px solid ${colors.borderTertiary}` }}>
+      {['Listings', 'Ratings', 'About'].map((tab, i) => (
+        <button key={tab} style={{
+          flex: 1, padding: '12px 16px', border: 'none', background: 'none', cursor: 'pointer',
+          fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+          fontSize: '16px', fontWeight: i === 0 ? 500 : 400,
+          color: i === 0 ? colors.contentPrimary : colors.contentSecondary,
+          borderBottom: i === 0 ? `2px solid ${colors.borderPrimary}` : 'none',
+          marginBottom: '-1px',
+        }}>
+          {tab}
+        </button>
+      ))}
+    </div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px' }}>
+      <span style={{ fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif", fontSize: '14px', color: colors.contentTertiary }}>
+        3 listings
+      </span>
+      <span style={{ fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif", fontSize: '14px', color: colors.contentTertiary }}>
+        Sort by ▼
+      </span>
+    </div>
+    <div style={{ padding: '0 16px' }}>
+      <div style={{ border: `1px solid ${colors.borderTertiary}`, borderRadius: '8px', overflow: 'hidden' }}>
+        <div style={{ height: '200px', backgroundColor: colors.backgroundSecondary, position: 'relative' }}>
+          <button style={{
+            position: 'absolute', top: '12px', right: '12px',
+            width: '32px', height: '32px', borderRadius: '50%',
+            backgroundColor: colors.backgroundTertiary, border: 'none',
+            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <IconHeart size={18} style={{ color: colors.contentPrimary }} />
+          </button>
+        </div>
+        <div style={{ padding: '12px' }}>
+          <div style={{ fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif", fontSize: '12px', color: colors.contentTertiary, marginBottom: '4px' }}>2013</div>
+          <div style={{ fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif", fontSize: '16px', fontWeight: 500, color: colors.contentPrimary, marginBottom: '4px' }}>LVS 3+ Lawinensuchgerät</div>
+          <div style={{ fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif", fontSize: '14px', color: colors.contentTertiary, marginBottom: '8px' }}>Protective Gear</div>
+          <div style={{ fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif", fontSize: '18px', fontWeight: 500, color: colors.contentPrimary }}>
+            € 33 <span style={{ fontSize: '14px', fontWeight: 400, color: colors.contentTertiary }}>incl.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// ─────────────────────────────────────────────
+// V2: Settings Sub-Screen
+// ─────────────────────────────────────────────
+const SettingsScreen = ({ onBack, onNavigate }) => (
+  <div style={{ backgroundColor: colors.backgroundPrimary }}>
+    <AppHeader title="Settings" onBack={onBack} />
+    <div style={{ padding: '8px 0' }}>
+      <MenuItem icon={<IconBell size={24} />} label="Notifications" onClick={() => onNavigate('notifications')} />
+      <MenuItem icon={<IconGlobe size={24} />} label="Language & Currency" onClick={() => onNavigate('language')} />
+      <MenuItem icon={<IconMapPin size={24} />} label="Shipping Address" onClick={() => onNavigate('addresses')} />
+      <MenuItem icon={<IconUser size={24} />} label="Account" onClick={() => onNavigate('account')} />
+    </div>
+  </div>
+);
+
+// ─────────────────────────────────────────────
+// V2: Help & Support Sub-Screen
+// ─────────────────────────────────────────────
+const HelpSupportScreen = ({ onBack, onNavigate }) => (
+  <div style={{ backgroundColor: colors.backgroundPrimary }}>
+    <AppHeader title="Help & Support" onBack={onBack} />
+    <div style={{ padding: '8px 0' }}>
+      <MenuItem icon={<IconHelp size={24} />} label="Help Center" onClick={() => onNavigate('helpCenter')} />
+      <MenuItem icon={<IconInfo size={24} />} label="About buycycle" onClick={() => onNavigate('about')} />
+    </div>
+  </div>
+);
+
+// ─────────────────────────────────────────────
+// V2: Restructured Main Profile Screen
+// ─────────────────────────────────────────────
+const ProfileScreen = ({ onNavigate, onPhotoEdit, showCompletion, onDismissCompletion }) => (
+  <div style={{ backgroundColor: colors.backgroundPrimary }}>
+    {/* Status bar */}
+    <StatusBar />
+
+    {/* Profile Header — taps to public profile */}
+    <ProfileHeader
+      onClick={() => onNavigate('publicProfile')}
+      onPhotoEdit={onPhotoEdit}
+    />
+
+    {/* Profile Completion Card (dismissible) */}
+    {showCompletion && (
+      <ProfileCompletionCard
+        onDismiss={onDismissCompletion}
+        onContinue={onPhotoEdit}
+      />
+    )}
+
+    {/* My Listings Card */}
+    <ListingsCard
+      count={12}
+      onClick={() => onNavigate('listings')}
+      onAddClick={() => onNavigate('addListing')}
+    />
+
+    {/* Seller Stats */}
+    <SellerStatsRow />
+
+    <Divider />
+
+    {/* Activity Group: Purchases, Sales, Wishlist, Balance */}
+    <MenuItem
+      icon={<IconShoppingBag size={24} />}
+      label="Purchases"
+      onClick={() => onNavigate('orders')}
+    />
+    <MenuItem
+      icon={<IconTag size={24} />}
+      label="Sales"
+      onClick={() => onNavigate('sales')}
+    />
+    <MenuItem
+      icon={<IconHeart size={24} />}
+      label="Wishlist"
+      onClick={() => onNavigate('wishlist')}
+    />
+    <MenuItem
+      icon={<IconWallet size={24} />}
+      label="Balance & Payouts"
+      onClick={() => onNavigate('balance')}
+      rightElement={
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{
+            fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+            fontSize: '14px',
+            fontWeight: 500,
+            lineHeight: '21px',
+            color: colors.contentPositive,
+          }}>
+            € 42.50
+          </span>
+          <IconChevronRight size={20} style={{ color: colors.contentTertiary }} />
+        </div>
+      }
+    />
+
+    <Divider />
+
+    {/* Settings & Support Group */}
+    <MenuItem
+      icon={<IconSettings size={24} />}
+      label="Settings"
+      onClick={() => onNavigate('settings')}
+    />
+    <MenuItem
+      icon={<IconHelp size={24} />}
+      label="Help & Support"
+      onClick={() => onNavigate('helpSupport')}
+    />
+
+    <Divider />
+
+    {/* Sign Out */}
+    <MenuItem
+      icon={<IconLogOut size={24} />}
+      label="Sign out"
+      showChevron={false}
+      onClick={() => console.log('Sign out')}
+    />
+  </div>
+);
+
+// ─────────────────────────────────────────────
+// V2: Main App Component with navigation stack
+// ─────────────────────────────────────────────
+function BuycycleProfileRedesign() {
+  const [activeTab, setActiveTab] = useState('profile');
+  const [screenStack, setScreenStack] = useState(['main']);
+  const [completionDismissed, setCompletionDismissed] = useState(false);
+  const [notificationSettings, setNotificationSettings] = useState({
+    messages: true,
+    orders: true,
+    sales: true,
+    priceAlerts: true,
+    offers: true,
+    listingTips: false,
+    promotions: false,
+    newsletter: false,
+  });
+
+  const currentScreen = screenStack[screenStack.length - 1];
+
+  const handleNavigate = (screen) => {
+    setScreenStack(prev => [...prev, screen]);
+  };
+
+  const handleBack = () => {
+    setScreenStack(prev => prev.length > 1 ? prev.slice(0, -1) : prev);
+  };
+
+  const handleToggleNotification = (key, value) => {
+    setNotificationSettings(prev => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handlePhotoEdit = () => {
+    alert('Photo upload would open here');
+  };
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'notifications':
+        return (
+          <NotificationSettings
+            onBack={handleBack}
+            settings={notificationSettings}
+            onToggle={handleToggleNotification}
+          />
+        );
+      case 'publicProfile':
+        return <PublicProfileScreen onBack={handleBack} />;
+      case 'account':
+        return <AccountScreen onBack={handleBack} />;
+      case 'settings':
+        return <SettingsScreen onBack={handleBack} onNavigate={handleNavigate} />;
+      case 'helpSupport':
+        return <HelpSupportScreen onBack={handleBack} onNavigate={handleNavigate} />;
+      default:
+        return (
+          <ProfileScreen
+            onNavigate={handleNavigate}
+            onPhotoEdit={handlePhotoEdit}
+            showCompletion={!completionDismissed}
+            onDismissCompletion={() => setCompletionDismissed(true)}
+          />
+        );
+    }
+  };
+
+  return (
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      minHeight: '100vh',
+      backgroundColor: '#1a1a1a',
+      padding: '20px',
+      fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif",
+    }}>
+      {/* Phone Frame */}
+      <div style={{
+        width: '390px',
+        height: '844px',
+        backgroundColor: colors.backgroundPrimary,
+        borderRadius: '40px',
+        overflow: 'hidden',
+        position: 'relative',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+      }}>
+        <div style={{
+          height: 'calc(100% - 83px)',
+          overflowY: 'auto',
+        }}>
+          {renderScreen()}
+        </div>
+
+        <TabBar
+          activeTab={activeTab}
+          onTabChange={(tab) => {
+            setActiveTab(tab);
+            if (tab === 'profile') {
+              setScreenStack(['main']);
+            }
+          }}
+          inboxBadge={true}
+        />
+      </div>
+
+      {/* Legend */}
+      <div style={{
+        marginLeft: '40px',
+        maxWidth: '300px',
+        color: '#fff',
+        fontFamily: "'Neue Haas Grotesk Text Pro', -apple-system, sans-serif",
+      }}>
+        <h2 style={{
+          fontSize: '24px',
+          fontWeight: 500,
+          marginBottom: '16px',
+          color: '#fff',
+        }}>
+          Profile Redesign V2
+        </h2>
+
+        <div style={{
+          backgroundColor: 'rgba(255,255,255,0.1)',
+          borderRadius: '8px',
+          padding: '16px',
+          marginBottom: '16px',
+        }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 500, marginBottom: '8px', color: colors.backgroundAccentGreen }}>
+            What's New
+          </h3>
+          <ul style={{ fontSize: '14px', lineHeight: '1.6', paddingLeft: '16px', margin: 0, color: 'rgba(255,255,255,0.8)' }}>
+            <li>Profile completion card (dismiss with ✕)</li>
+            <li>Seller stats: 47 sold · &lt; 2h · 128 views</li>
+            <li>Camera icon on avatar for photo upload</li>
+            <li>"My Orders" → "Purchases", "My Sales" → "Sales"</li>
+            <li>Settings & Help consolidated into sub-screens</li>
+            <li>Balance preview (€ 42.50) on menu item</li>
+            <li>Navigation stack (proper back behavior)</li>
+          </ul>
+        </div>
+
+        <div style={{
+          backgroundColor: 'rgba(255,255,255,0.1)',
+          borderRadius: '8px',
+          padding: '16px',
+        }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 500, marginBottom: '8px', color: colors.backgroundAccentGreen }}>
+            Try it
+          </h3>
+          <ul style={{ fontSize: '14px', lineHeight: '1.6', paddingLeft: '16px', margin: 0, color: 'rgba(255,255,255,0.8)' }}>
+            <li>Tap camera icon on avatar</li>
+            <li>Dismiss completion card with ✕</li>
+            <li>Settings → Notifications → back → back</li>
+            <li>Help & Support → sub-items</li>
+            <li>Tap profile header → Public profile</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<BuycycleProfileRedesign />);
+  </script>
+</body>
+</html>
