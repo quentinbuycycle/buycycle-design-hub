@@ -1,0 +1,1579 @@
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>buycycle - Unmanaged: Pack and Send Order (v2)</title>
+  <style>
+    /* buycycle Design System Tokens — colors.md + typography.md */
+    :root {
+      /* Background — colors.md */
+      --bg-primary: #FCFCFC;
+      --bg-secondary: #F3F3F3;
+      --bg-tertiary: #FFFFFF;
+      --bg-quartenary: #EAEAEA;
+      --bg-primary-reverse: #090907;
+      --bg-positive: #E8F8F0;
+      --bg-attention: #FFFBEB;
+      --bg-warning: #FFF7ED;
+      --bg-information: #EFF6FF;
+      --bg-alert: #FFEBEB;
+      --bg-accent-green: #DAFDA0;
+      --bg-accent-yellow: #FDFDA0;
+
+      /* Content — colors.md */
+      --content-primary: #090907;
+      --content-secondary: #333333;
+      --content-tertiary: #535353;
+      --content-quartenary: #A9A9A9;
+      --content-primary-reverse: #FCFCFC;
+      --content-positive: #146C43;
+      --content-attention: #92400E;
+      --content-warning: #EA580C;
+      --content-information: #1D4ED8;
+      --content-alert: #B91C1C;
+      --content-accent-green: #2F4B02;
+      --content-accent-yellow: #4B4B02;
+
+      /* Border — colors.md */
+      --border-primary: #090907;
+      --border-secondary: #757575;
+      --border-tertiary: #EAEAEA;
+      --border-quartenary: #D0D0D0;
+      --border-primary-reverse: #FCFCFC;
+      --border-positive: #146C43;
+      --border-attention: #92400E;
+      --border-alert: #B91C1C;
+      --border-accent-green: #DAFDA0;
+      --border-accent-yellow: #FDFDA0;
+
+      /* Font Family — typography.md */
+      --font-primary: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+
+      /* Font Weights — typography.md */
+      --font-regular: 400;
+      --font-medium: 500;
+      --font-bold: 700;
+
+      /* Font Sizes — typography.md */
+      --text-4xl: 36px;
+      --text-3xl: 30px;
+      --text-2xl: 24px;
+      --text-xl: 20px;
+      --text-lg: 18px;
+      --text-base: 16px;
+      --text-sm: 14px;
+      --text-xs: 12px;
+
+      /* Line Heights — typography.md */
+      --leading-4xl: 45px;
+      --leading-3xl: 39px;
+      --leading-2xl: 32px;
+      --leading-xl: 28px;
+      --leading-lg: 27px;
+      --leading-base: 24px;
+      --leading-sm: 21px;
+      --leading-xs: 18px;
+
+      /* Letter Spacing — typography.md */
+      --tracking-tight: -1px;
+      --tracking-snug: -0.5px;
+      --tracking-normal: 0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-quartenary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 0;
+        align-items: stretch;
+        background-color: var(--bg-tertiary);
+      }
+      .subflow-wrapper {
+        max-width: 100%;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: visible;
+      }
+      .chat-container {
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+      }
+      .subflow-wrapper.subflow-active .chat-container {
+        display: none;
+      }
+      .subflow-panel {
+        position: relative;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-content {
+        padding: 24px 16px;
+        overflow-y: visible;
+      }
+      .modal-footer {
+        padding: 16px;
+        position: sticky;
+        bottom: 0;
+      }
+      .photo-slot {
+        width: 100%;
+        max-width: 280px;
+      }
+    }
+
+    /* ─── Reduced motion ─── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+      }
+    }
+
+    /* ─── Focus ring (DS: accessibility.md) ─── */
+    :focus-visible {
+      outline: 2px solid var(--content-primary);
+      outline-offset: 2px;
+    }
+
+    /* Subflow wrapper */
+    .subflow-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 853px;
+      height: 618px;
+      overflow: hidden;
+    }
+
+    /* Chat Container */
+    .chat-container {
+      width: 100%;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0px -1px 6px 0px rgba(83, 83, 83, 0.15), 0px 1px 6px 0px rgba(83, 83, 83, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 618px;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    }
+
+    .subflow-wrapper.subflow-active .chat-container {
+      transform: translateX(-30%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Chat Header */
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+    }
+
+    .chat-header-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .product-image-container {
+      position: relative;
+      width: 80px;
+      height: 45px;
+    }
+
+    .product-image {
+      width: 80px;
+      height: 45px;
+      border-radius: 3px;
+      object-fit: cover;
+      background: var(--bg-secondary);
+    }
+
+    .user-avatar-small {
+      position: absolute;
+      bottom: -7px;
+      right: -2px;
+      width: 21px;
+      height: 21px;
+      border-radius: 100px;
+      object-fit: cover;
+      background: var(--bg-quartenary);
+    }
+
+    .product-info h2 { /* text-base/Medium · contentPrimary */
+      font-size: var(--text-base);
+      font-weight: var(--font-medium);
+      line-height: var(--leading-base);
+      color: var(--content-primary);
+    }
+
+    .product-info .price { /* text-sm/Regular · contentSecondary */
+      font-size: var(--text-sm);
+      font-weight: var(--font-regular);
+      line-height: var(--leading-sm);
+      color: var(--content-secondary);
+    }
+
+    .options-icon {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* View Order Progress */
+    .order-progress-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+      cursor: pointer;
+    }
+
+    .order-progress-bar:hover { background: var(--bg-secondary); }
+
+    .order-progress-text { /* text-sm/Regular · contentPrimary */
+      font-size: var(--text-sm);
+      font-weight: var(--font-regular);
+      color: var(--content-primary);
+      text-decoration: underline;
+    }
+
+    /* Chat Body */
+    .chat-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Protection Banner */
+    .protection-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+    }
+
+    .protection-icon { width: 24px; height: 24px; flex-shrink: 0; }
+
+    .protection-text { /* text-xs/Regular · contentTertiary */
+      font-size: var(--text-xs);
+      font-weight: var(--font-regular);
+      line-height: var(--leading-xs);
+      color: var(--content-tertiary);
+    }
+
+    /* Admin Messages */
+    .admin-messages-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 100%;
+    }
+
+    .admin-message {
+      padding: 16px;
+      border-top: 1px solid var(--border-tertiary);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .admin-message:first-child { border-top: none; }
+
+    .admin-message.inactive .admin-message-title { color: var(--content-tertiary); }
+    .admin-message.inactive .admin-message-body { color: var(--content-tertiary); }
+    .admin-message.active .admin-message-title { color: var(--content-primary); }
+    .admin-message.active .admin-message-body { color: var(--content-secondary); }
+
+    .admin-message-title { font-size: var(--text-base); font-weight: var(--font-medium); line-height: var(--leading-base); } /* text-base/Medium */
+    .admin-message-body { font-size: var(--text-sm); font-weight: var(--font-regular); line-height: var(--leading-sm); } /* text-sm/Regular */
+    .admin-message-time { font-size: var(--text-xs); font-weight: var(--font-regular); line-height: var(--leading-xs); color: var(--content-tertiary); } /* text-xs/Regular · contentTertiary */
+
+    /* Action Buttons */
+    .action-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+    /* ─── button/main — buttons.md ─── */
+
+    /* Primary: Small (32px) for inline chat CTA */
+    .btn-primary {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 32px;
+      padding: 6px 14px;
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-primary);
+      font-size: 13px; /* non-standard: between text-xs(12) and text-sm(14) */
+      font-weight: var(--font-regular);
+      cursor: pointer;
+      box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+      transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+      opacity: 0;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4);
+      transform: translateY(-0.5px);
+    }
+    .btn-primary:hover::before { opacity: 1; }
+
+    .btn-primary:active {
+      box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3);
+      transform: translateY(0) scale(0.97);
+    }
+
+    .btn-primary svg { width: 18px; height: 18px; }
+
+    .btn-primary:disabled {
+      background: var(--bg-quartenary);
+      color: var(--content-tertiary);
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-primary:disabled::before { display: none; }
+    .btn-primary:disabled:hover {
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Primary Large (52px) for full-width CTAs */
+    .btn-primary-lg {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      height: 52px;
+      padding: 14px 24px;
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      border: none;
+      border-radius: 12px;
+      font-family: var(--font-primary);
+      font-size: var(--text-base);
+      font-weight: var(--font-regular);
+      cursor: pointer;
+      box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+      transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary-lg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+      opacity: 0;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary-lg:hover {
+      box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4);
+      transform: translateY(-0.5px);
+    }
+    .btn-primary-lg:hover::before { opacity: 1; }
+
+    .btn-primary-lg:active {
+      box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3);
+      transform: translateY(0) scale(0.97);
+    }
+
+    .btn-primary-lg svg { width: 24px; height: 24px; }
+
+    .btn-primary-lg:disabled {
+      background: var(--bg-quartenary);
+      color: var(--content-tertiary);
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-primary-lg:disabled::before { display: none; }
+    .btn-primary-lg:disabled:hover {
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Secondary: Medium (40px) */
+    .btn-secondary {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      padding: 10px 18px;
+      background: var(--bg-tertiary);
+      color: var(--content-primary);
+      border: 1.5px solid var(--border-secondary);
+      border-radius: 10px;
+      font-family: var(--font-primary);
+      font-size: var(--text-sm);
+      font-weight: var(--font-regular);
+      cursor: pointer;
+      transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-secondary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(9,9,7,0.05) 100%);
+      opacity: 0;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-secondary);
+      border-color: var(--border-primary);
+    }
+    .btn-secondary:hover::before { opacity: 1; }
+
+    .btn-secondary:active {
+      background: var(--bg-quartenary);
+      border-color: var(--border-primary);
+      transform: scale(0.97);
+    }
+
+    .btn-secondary:disabled {
+      background: var(--bg-quartenary);
+      color: var(--content-tertiary);
+      border-color: var(--border-tertiary);
+      cursor: not-allowed;
+    }
+
+    /* Tertiary (link-style) */
+    .btn-tertiary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-primary);
+      font-size: var(--text-xs);
+      color: var(--content-tertiary);
+      padding: 4px 0;
+      transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-tertiary::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      width: calc(100% - 16px);
+      height: 1px;
+      background: rgba(9,9,7,0.3);
+      transform: translateX(-50%);
+      transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-tertiary:hover {
+      color: var(--content-primary);
+    }
+    .btn-tertiary:hover::after {
+      height: 1.5px;
+      background: var(--content-primary);
+    }
+
+    /* Comment Input */
+    .comment-section {
+      background: var(--bg-secondary);
+      padding: 16px;
+      margin-top: auto;
+    }
+
+    .comment-input-container { display: flex; align-items: center; gap: 16px; }
+    .input-wrapper { flex: 1; height: 48px; }
+
+    /* inputs/text-field — inputs.md */
+    .message-input {
+      width: 100%;
+      height: 48px;
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border: 1.5px solid var(--border-tertiary);
+      border-radius: 12px;
+      font-family: var(--font-primary);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      color: var(--content-primary);
+      outline: none;
+      transition: all 200ms ease;
+    }
+
+    .message-input::placeholder { color: var(--content-quartenary); }
+    .message-input:hover { border-color: var(--content-quartenary); }
+    .message-input:focus {
+      border-width: 2px;
+      border-color: var(--border-secondary);
+      box-shadow: 0 0 0 3px rgba(9,9,7,0.08);
+      outline: none;
+    }
+
+    .send-button {
+      width: 24px;
+      height: 24px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Subflow Panel */
+    .subflow-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 618px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0px -1px 6px 0px rgba(83, 83, 83, 0.15), 0px 1px 6px 0px rgba(83, 83, 83, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateX(100%);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .subflow-panel.active {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+      flex-shrink: 0;
+    }
+
+    .modal-back { /* text-xl/Medium · contentPrimary */
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-primary);
+      font-size: var(--text-xl);
+      font-weight: var(--font-medium);
+      color: var(--content-primary);
+    }
+
+    .modal-back svg { width: 24px; height: 24px; }
+
+    .modal-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 32px;
+    }
+
+    .modal-footer {
+      padding: 16px 32px;
+      border-top: 1px solid var(--border-tertiary);
+      background: var(--bg-secondary);
+      flex-shrink: 0;
+    }
+
+    .modal-footer-hint { /* text-xs/Regular · contentTertiary */
+      font-size: var(--text-xs);
+      color: var(--content-tertiary);
+      line-height: var(--leading-xs);
+      text-align: center;
+      margin-bottom: 8px;
+      display: none;
+    }
+
+    .modal-footer-hint.visible {
+      display: block;
+    }
+
+    /* Step numbering */
+    .step-section {
+      margin-bottom: 32px;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .step-number { /* text-sm/Medium · contentPrimaryReverse on bgPrimaryReverse */
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-sm);
+      font-weight: var(--font-medium);
+      flex-shrink: 0;
+    }
+
+    .step-number.completed {
+      background: var(--content-positive);
+    }
+
+    .step-title { /* text-lg/Medium · contentPrimary */
+      font-size: var(--text-lg);
+      font-weight: var(--font-medium);
+      color: var(--content-primary);
+      line-height: var(--leading-lg);
+    }
+
+    .step-description { /* text-base/Regular · contentSecondary */
+      font-size: var(--text-base);
+      color: var(--content-secondary);
+      line-height: var(--leading-base);
+      margin-bottom: 12px;
+    }
+
+    /* Warning Box — backgroundAttention + contentAttention */
+    .warning-box {
+      background: var(--bg-attention);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .warning-box-title {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: var(--text-sm);
+      font-weight: var(--font-bold);
+      color: var(--content-attention);
+      line-height: var(--leading-sm);
+    }
+
+    .warning-box-text {
+      font-size: var(--text-sm);
+      color: var(--content-attention);
+      line-height: var(--leading-sm);
+    }
+
+    /* Error Box — backgroundAlert + contentAlert */
+    .error-box {
+      background: var(--bg-alert);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .error-box-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: var(--text-sm);
+      font-weight: var(--font-bold);
+      color: var(--content-alert);
+      line-height: var(--leading-sm);
+    }
+
+    .error-box-text {
+      font-size: var(--text-sm);
+      color: var(--content-alert);
+      line-height: var(--leading-sm);
+    }
+
+    /* Photo Slot */
+    .photo-slot {
+      width: 200px;
+      aspect-ratio: 4/3;
+      border-radius: 8px;
+      border: 2px dashed var(--border-tertiary);
+      background: var(--bg-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  background 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo-slot:hover {
+      border-color: var(--content-quartenary);
+      background: var(--bg-secondary);
+    }
+
+    .photo-slot-label { /* text-xs/Medium · contentTertiary */
+      font-size: var(--text-xs);
+      font-weight: var(--font-medium);
+      color: var(--content-tertiary);
+      line-height: var(--leading-xs);
+      text-align: center;
+      padding: 0 4px;
+    }
+
+    .photo-slot.uploading {
+      border-style: solid;
+      border-color: var(--content-quartenary);
+      cursor: default;
+    }
+
+    .photo-slot.uploaded {
+      border: 2px solid var(--content-positive);
+      cursor: default;
+    }
+
+    .photo-slot.uploaded:hover {
+      border-color: var(--content-positive);
+      background: var(--bg-primary);
+    }
+
+    .photo-slot.error {
+      border-color: var(--content-alert);
+      border-style: solid;
+    }
+
+    .photo-slot-uploaded-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+    }
+
+    .photo-slot-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0);
+      transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .photo-slot.uploaded:hover .photo-slot-overlay {
+      background: rgba(0,0,0,0.4);
+      cursor: pointer;
+    }
+
+    .photo-slot-remove {
+      display: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      border: none;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-slot.uploaded:hover .photo-slot-remove {
+      display: flex;
+    }
+
+    .photo-slot-success-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--content-positive);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-slot-error-text { /* text-xs/Regular · contentAlert */
+      font-size: var(--text-xs);
+      color: var(--content-alert);
+      line-height: var(--leading-xs);
+      text-align: center;
+      padding: 0 4px;
+    }
+
+    /* Add photo button (below slot) — text-sm/Regular · contentPrimary · borderSecondary */
+    .add-photo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 8px 16px;
+      background: none;
+      border: 1.5px solid var(--border-secondary);
+      border-radius: 10px;
+      font-family: var(--font-primary);
+      font-size: var(--text-sm);
+      font-weight: var(--font-regular);
+      color: var(--content-primary);
+      cursor: pointer;
+      transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .add-photo-btn:hover {
+      background: var(--bg-secondary);
+      border-color: var(--border-primary);
+    }
+
+    .add-photo-btn.hidden {
+      display: none;
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 2.5px solid var(--bg-quartenary);
+      border-top-color: var(--content-primary);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Form checkbox — controls/checkbox-ML */
+    .form-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .form-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      min-height: 20px;
+      margin: 0;
+      margin-top: 2px;
+      border: 1px solid var(--border-secondary);
+      border-radius: 4px;
+      background: var(--bg-tertiary);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: all 200ms ease;
+    }
+
+    .form-checkbox input[type="checkbox"]:checked {
+      background-color: var(--bg-primary-reverse);
+      border-color: var(--border-primary);
+      background-image: url("data:image/svg+xml,%3Csvg width='14' height='11' viewBox='0 0 14 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 5L5.5 9.5L13 1' stroke='%23FCFCFC' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); /* stroke: contentPrimaryReverse #FCFCFC */
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .form-checkbox.has-error input[type="checkbox"] {
+      border-color: var(--content-alert);
+    }
+
+    .form-checkbox-label { /* text-base/Regular · contentSecondary */
+      font-size: var(--text-base);
+      color: var(--content-secondary);
+      line-height: var(--leading-base);
+      flex: 1;
+    }
+
+    .form-checkbox-label a {
+      color: var(--content-secondary);
+      text-decoration: underline;
+    }
+
+    /* Inline validation message — inputs.md error text · text-xs/Regular · contentAlert */
+    .validation-msg {
+      font-size: var(--text-xs);
+      color: var(--content-alert);
+      line-height: var(--leading-xs);
+      margin-top: 4px;
+      display: none;
+    }
+
+    .validation-msg.visible {
+      display: block;
+    }
+
+    /* Toast — status.md toasts */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      max-width: 826px;
+      padding: 8px 16px;
+      border-radius: 0;
+      font-family: var(--font-primary);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 2000;
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast.error {
+      background: var(--bg-alert);
+      color: var(--content-alert);
+      border-left: 6px solid var(--content-alert);
+    }
+
+    .toast.success {
+      background: var(--bg-positive);
+      color: var(--content-positive);
+      border-left: 6px solid var(--content-positive);
+    }
+  </style>
+</head>
+<body>
+  <div class="subflow-wrapper" id="subflow-wrapper">
+    <!-- Chat Container - Unmanaged Step 5: Packing -->
+    <div class="chat-container">
+      <!-- Header -->
+      <div class="chat-header">
+        <div class="chat-header-content">
+          <div class="product-image-container">
+            <img class="product-image" src="https://www.figma.com/api/mcp/asset/871387d7-ac91-49c7-8a4c-869195d61471" alt="Product" onerror="this.style.background='#EAEAEA'">
+            <img class="user-avatar-small" src="https://www.figma.com/api/mcp/asset/1346fbaa-08aa-4bda-a4f2-4c04c49cc00e" alt="User" onerror="this.style.background='#EAEAEA'">
+          </div>
+          <div class="product-info">
+            <h2>Cycling Jersey Pro</h2>
+            <span class="price">€89</span>
+          </div>
+        </div>
+        <div class="options-icon">
+          <svg width="20" height="4" viewBox="0 0 20 4" fill="none">
+            <circle cx="2" cy="2" r="2" fill="var(--content-primary)"/>
+            <circle cx="10" cy="2" r="2" fill="var(--content-primary)"/>
+            <circle cx="18" cy="2" r="2" fill="var(--content-primary)"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- View Order Progress -->
+      <div class="order-progress-bar">
+        <span class="order-progress-text">View order progress</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M9 18L15 12L9 6" stroke="var(--content-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <!-- Chat Body with Admin Messages -->
+      <div class="chat-body">
+        <!-- Protection Banner -->
+        <div class="protection-banner">
+          <div class="protection-icon">
+            <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+              <path d="M9 0L0 3.63636V9.09091C0 14.1409 3.843 18.8636 9 20C14.157 18.8636 18 14.1409 18 9.09091V3.63636L9 0ZM9 9.99091H16.2C15.723 13.7318 12.822 17.1 9 17.9909V10H1.8V4.58182L9 1.87273V9.99091Z" fill="var(--content-primary)"/>
+            </svg>
+          </div>
+          <span class="protection-text">buycycle's seller protection guarantees you'll be paid securely. Learn more.</span>
+        </div>
+
+        <!-- Admin Messages -->
+        <div class="admin-messages-container">
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Paid! Confirm your details by [date]</div>
+            <div class="admin-message-body">Congratulations! The buyer paid and we're securely holding the funds until they received the order. Confirm your details in time to get your shipping label. You will have 7 days to send the order.</div>
+            <div class="admin-message-time">14:58</div>
+          </div>
+
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Details confirmed!</div>
+            <div class="admin-message-body">You must send the order before [date].</div>
+            <div class="admin-message-time">14:58</div>
+          </div>
+
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Payment information saved</div>
+            <div class="admin-message-body">Your updated payment details have been saved.</div>
+            <div class="admin-message-time">14:58</div>
+          </div>
+
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Pack and send the order before [date]</div>
+            <div class="admin-message-body">Follow our 4-step process.</div>
+            <div class="admin-message-time">15:12</div>
+          </div>
+
+          <div class="admin-message active">
+            <div class="admin-message-title">Pack and send the order before [date]</div>
+            <div class="admin-message-body">Get your parcel ready in just a few easy steps.</div>
+            <div class="admin-message-time">16:30</div>
+            <div class="action-buttons">
+              <button class="btn-primary" onclick="openPackSendOrderModal()">
+                Pack and send the order
+                <svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comment Input -->
+      <div class="comment-section">
+        <div class="comment-input-container">
+          <div class="input-wrapper">
+            <input type="text" class="message-input" placeholder="Your message...">
+          </div>
+          <button class="send-button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M4 12L20 12M20 12L14 6M20 12L14 18" stroke="var(--content-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pack and Send Order Subflow Panel -->
+    <div class="subflow-panel" id="pack-send-order-panel">
+      <!-- Panel Header -->
+      <div class="modal-header">
+        <button class="modal-back" onclick="closePackSendOrderModal()">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Pack and send the order
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="modal-content">
+
+        <!-- Callout: packaging size reminder — bgAccentYellow → bgAccentGreen gradient -->
+        <div style="background: linear-gradient(197.28deg, var(--bg-accent-yellow) 30%, var(--bg-accent-green) 100%); padding: 16px; border-radius: 12px; margin-bottom: 24px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <svg width="24" height="24" viewBox="0 0 20 20" fill="none" style="flex-shrink: 0;">
+              <g transform="translate(2.5, 1.5)"><path opacity="0.4" d="M0 4.25C2.5 5.66562 5 7.08438 7.5 8.5C8.41562 7.98125 9.425 7.40938 10.5281 6.78438L3.63125 2.90312L3.00313 2.55L0 4.25ZM4.525 1.68438L11.6156 5.675L12.0531 5.91875L15 4.25L7.5 0L4.525 1.68438Z" fill="var(--content-secondary)"/></g>
+              <g transform="translate(2.5, 5.75)"><path d="M7.5 12.75L15 8.5V0L7.5 4.25L0 0V8.5L7.5 12.75Z" fill="var(--content-secondary)"/></g>
+            </svg>
+            <!-- text-base/Bold · contentPrimary -->
+            <div style="flex: 1; font-size: var(--text-base); font-weight: var(--font-bold); color: var(--content-primary); line-height: var(--leading-base);">You selected size M (30×25×15cm) for this listing.</div>
+          </div>
+          <!-- text-sm/Regular · contentSecondary -->
+          <div style="font-size: var(--text-sm); color: var(--content-secondary); line-height: var(--leading-sm);">Pack within these dimensions to avoid an <strong>oversize surcharge</strong> on your payout. Include everything described in your listing.</div>
+        </div>
+
+        <!-- Step 1: Photo of item in the box -->
+        <div class="step-section">
+          <div class="step-header">
+            <div class="step-number" id="step1-number">1</div>
+            <div class="step-title">Photo of the item in the box</div>
+          </div>
+
+          <div class="step-description">Show the item and any padding inside the open box.</div>
+
+          <div class="photo-slot" id="slot-0" onclick="handleSlotClick(0)">
+            <svg width="32" height="32" viewBox="0 0 20 20" fill="none">
+              <g transform="translate(3.51, 6.86)"><path opacity="0.4" d="M0 4.35625L4.75313 7.07187L5.24063 7.35C5.33438 7.13125 5.5875 6.5375 6.00313 5.57187V10.275L0.00312495 6.84688V4.35625H0ZM7 3.42812L13.0031 0V6.85L7 10.2781V3.42812Z" fill="var(--content-quartenary)"/></g>
+              <g transform="translate(0.88, 1.42)"><path d="M8.09688 12.2719L7.875 12.7875L7.3875 12.5094L2.63438 9.79375V12.2844L8.63437 15.7125V11.0094L8.09375 12.2719H8.09688ZM8.50313 8.7875L2.37812 5.2875L1.275 7.8625L7.4 11.3625L8.50313 8.7875ZM3.14375 4.575L9.13437 8L15.1281 4.575L9.1375 1.15L3.14375 4.575ZM16.6375 6.37813V12.8625L16.3844 13.0062L9.38437 17.0063L9.1375 17.1469L8.89062 17.0063L1.89062 13.0062L1.6375 12.8625V9.22188C0.659375 8.66563 0.115625 8.35312 0 8.2875L0.175 7.87813L1.675 4.37813L1.74063 4.225L1.8875 4.14062L8.8875 0.140625L9.13437 0L9.38125 0.140625L16.3813 4.14062L16.4938 4.20625L16.5625 4.31875L18.0625 6.81875L18.3188 7.24687L17.4625 7.7625C17.3438 7.56562 17.0656 7.10313 16.6344 6.38125L16.6375 6.37813ZM9.6375 8.8625V15.7125L15.6406 12.2844V5.43437L9.6375 8.8625Z" fill="var(--content-quartenary)"/></g>
+            </svg>
+            <span class="photo-slot-label">Item in the open box</span>
+          </div>
+
+          <button class="add-photo-btn" id="add-photo-btn-0" onclick="handleSlotClick(0)">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <g transform="translate(3, 3)"><path opacity="0.4" d="M0 7C0 10.8656 3.13437 14 7 14C10.8656 14 14 10.8656 14 7C14 3.13437 10.8656 0 7 0C3.13437 0 0 3.13437 0 7ZM3.5 6.5H6.5V3.5H7.5V6.5H10.5V7.5H7.5V10.5H6.5V7.5H3.5V6.5Z" fill="currentColor"/></g>
+              <g transform="translate(2, 2)"><path d="M8 1C11.8656 1 15 4.13438 15 8C15 11.8656 11.8656 15 8 15C4.13438 15 1 11.8656 1 8C1 4.13438 4.13438 1 8 1ZM8 16C12.4187 16 16 12.4187 16 8C16 3.58125 12.4187 0 8 0C3.58125 0 0 3.58125 0 8C0 12.4187 3.58125 16 8 16ZM7.5 11.5H8.5V8.5H11.5V7.5H8.5V4.5H7.5V7.5H4.5V8.5H7.5V11.5Z" fill="currentColor"/></g>
+            </svg>
+            Add photo
+          </button>
+
+          <div class="validation-msg" id="photo1-validation-msg">Please upload this photo before confirming.</div>
+        </div>
+
+        <!-- Step 2: Print the shipping label -->
+        <div class="step-section">
+          <div class="step-header">
+            <div class="step-number" id="step2-number">2</div>
+            <div class="step-title">Print the shipping label</div>
+          </div>
+
+          <div class="step-description">
+            Stick it on your sealed package and make sure the barcode is scannable.
+          </div>
+
+          <button class="btn-primary-lg" onclick="markLabelPrinted()">
+            Print shipping label
+          </button>
+          <div id="label-printed-msg" style="display: none; margin-top: 8px; font-size: var(--text-xs); color: var(--content-positive); line-height: var(--leading-xs); align-items: center; gap: 4px;">
+          </div>
+        </div>
+
+        <!-- Step 3: Photo of sealed box with label -->
+        <div class="step-section">
+          <div class="step-header">
+            <div class="step-number" id="step3-number">3</div>
+            <div class="step-title">Photo of the sealed package</div>
+          </div>
+
+          <div class="step-description">Show the sealed box with the shipping label visible.</div>
+
+          <div class="photo-slot" id="slot-1" onclick="handleSlotClick(1)">
+            <svg width="32" height="32" viewBox="0 0 20 20" fill="none">
+              <g transform="translate(3, 2.5)"><path opacity="0.4" d="M0 4L2.5 0H6L5 4H0ZM5 4V7.5H9V4H5ZM8 0H11.5L14 4H9L8 0Z" fill="var(--content-quartenary)"/></g>
+              <g transform="translate(3, 6.5)"><path d="M5 0H0V10.5H14V0H9V3.5H5V0Z" fill="var(--content-quartenary)"/></g>
+            </svg>
+            <span class="photo-slot-label">Sealed box with label</span>
+          </div>
+
+          <button class="add-photo-btn" id="add-photo-btn-1" onclick="handleSlotClick(1)">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+              <g transform="translate(3, 3)"><path opacity="0.4" d="M0 7C0 10.8656 3.13437 14 7 14C10.8656 14 14 10.8656 14 7C14 3.13437 10.8656 0 7 0C3.13437 0 0 3.13437 0 7ZM3.5 6.5H6.5V3.5H7.5V6.5H10.5V7.5H7.5V10.5H6.5V7.5H3.5V6.5Z" fill="currentColor"/></g>
+              <g transform="translate(2, 2)"><path d="M8 1C11.8656 1 15 4.13438 15 8C15 11.8656 11.8656 15 8 15C4.13438 15 1 11.8656 1 8C1 4.13438 4.13438 1 8 1ZM8 16C12.4187 16 16 12.4187 16 8C16 3.58125 12.4187 0 8 0C3.58125 0 0 3.58125 0 8C0 12.4187 3.58125 16 8 16ZM7.5 11.5H8.5V8.5H11.5V7.5H8.5V4.5H7.5V7.5H4.5V8.5H7.5V11.5Z" fill="currentColor"/></g>
+            </svg>
+            Add photo
+          </button>
+
+          <div class="validation-msg" id="photo2-validation-msg">Please upload this photo before confirming.</div>
+        </div>
+
+        <!-- Step 4: Send the order -->
+        <div class="step-section">
+          <div class="step-header">
+            <div class="step-number">4</div>
+            <div class="step-title">Send the order</div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <!-- text-base/Regular · contentSecondary -->
+            <div style="font-size: var(--text-base); color: var(--content-secondary); line-height: var(--leading-base);">Carrier: DHL</div>
+            <img src="https://www.figma.com/api/mcp/asset/1a5baab3-124e-4782-8f64-2230ab8ef5de" alt="DHL" style="height: 20px; width: 31.4px;">
+          </div>
+
+          <button class="btn-secondary" style="width: 100%; margin-bottom: 12px;">
+            See branches / parcel shops
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <!-- text-sm/Regular · contentSecondary -->
+          <div style="font-size: var(--text-sm); color: var(--content-secondary); line-height: var(--leading-sm);">
+            <strong>Send by 24 January 2025</strong> or the sale will be cancelled and your listing deactivated.
+          </div>
+        </div>
+
+        <!-- Terms & Conditions -->
+        <div class="step-section">
+          <!-- text-lg/Medium · contentPrimary -->
+          <div style="font-size: var(--text-lg); font-weight: var(--font-medium); color: var(--content-primary); margin-bottom: 16px;">Terms & Conditions</div>
+
+          <div class="form-checkbox" id="checkbox-group-1" style="margin-bottom: 16px;">
+            <input type="checkbox" id="pack-terms-1" onchange="updateConfirmState()">
+            <label for="pack-terms-1" class="form-checkbox-label">My package fits within my selected size (M — 30×25×15cm). I understand an <strong>oversize surcharge will be deducted from my payout</strong> if it exceeds these dimensions.</label>
+          </div>
+          <div class="validation-msg" id="checkbox1-validation-msg">You must accept this term to continue.</div>
+
+          <div class="form-checkbox" id="checkbox-group-2">
+            <input type="checkbox" id="pack-terms-2" onchange="updateConfirmState()">
+            <label for="pack-terms-2" class="form-checkbox-label">My item is securely padded. I acknowledge that <strong>shipping damage due to improper packing will be deducted from my payment</strong>.</label>
+          </div>
+          <div class="validation-msg" id="checkbox2-validation-msg">You must accept this term to continue.</div>
+        </div>
+      </div>
+
+      <!-- Panel Footer -->
+      <div class="modal-footer">
+        <div class="modal-footer-hint" id="footer-hint">Upload both photos and accept both terms to confirm.</div>
+        <button class="btn-primary-lg" id="confirm-btn" disabled onclick="handleConfirm()">
+          Confirm
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <g transform="translate(2, 2)"><path opacity="0.4" d="M0 8C0 12.4187 3.58125 16 8 16C12.4187 16 16 12.4187 16 8C16 3.58125 12.4187 0 8 0C3.58125 0 0 3.58125 0 8ZM3.69063 8.75L4.75 7.69063L6.90938 9.85L10.6406 4.71875L11.0813 4.1125L12.2937 4.99687L11.8531 5.60313L7.60625 11.4438L7.09062 12.1531L6.47188 11.5312L3.69375 8.75313L3.69063 8.75Z" fill="currentColor"/></g>
+            <g transform="translate(5.694, 6.112)"><path d="M8.6 0.88125L8.15937 1.4875L3.9125 7.32812L3.39687 8.0375L2.77813 7.41562L0 4.6375L1.05938 3.57812L3.21875 5.7375L6.95 0.60625L7.39063 0L8.60312 0.884375L8.6 0.88125Z" fill="currentColor"/></g>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Hidden file input -->
+  <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/heic" style="display: none;" onchange="handleFileSelected(event)">
+
+  <script>
+    // ─── State ───
+    const state = {
+      photos: [null, null], // index 0 = step 1 (item in box), index 1 = step 3 (sealed box)
+      labelPrinted: false,
+      activeSlot: null,
+      confirmAttempted: false,
+    };
+
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+
+    // Per-slot configuration: icon SVG, label, step badge ID
+    const SLOT_CONFIG = [
+      {
+        stepId: 'step1-number',
+        stepNum: '1',
+        validationId: 'photo1-validation-msg',
+        label: 'Item in the open box',
+        icon: `<svg width="32" height="32" viewBox="0 0 20 20" fill="none">
+          <g transform="translate(3.51, 6.86)"><path opacity="0.4" d="M0 4.35625L4.75313 7.07187L5.24063 7.35C5.33438 7.13125 5.5875 6.5375 6.00313 5.57187V10.275L0.00312495 6.84688V4.35625H0ZM7 3.42812L13.0031 0V6.85L7 10.2781V3.42812Z" fill="var(--content-quartenary)"/></g>
+          <g transform="translate(0.88, 1.42)"><path d="M8.09688 12.2719L7.875 12.7875L7.3875 12.5094L2.63438 9.79375V12.2844L8.63437 15.7125V11.0094L8.09375 12.2719H8.09688ZM8.50313 8.7875L2.37812 5.2875L1.275 7.8625L7.4 11.3625L8.50313 8.7875ZM3.14375 4.575L9.13437 8L15.1281 4.575L9.1375 1.15L3.14375 4.575ZM16.6375 6.37813V12.8625L16.3844 13.0062L9.38437 17.0063L9.1375 17.1469L8.89062 17.0063L1.89062 13.0062L1.6375 12.8625V9.22188C0.659375 8.66563 0.115625 8.35312 0 8.2875L0.175 7.87813L1.675 4.37813L1.74063 4.225L1.8875 4.14062L8.8875 0.140625L9.13437 0L9.38125 0.140625L16.3813 4.14062L16.4938 4.20625L16.5625 4.31875L18.0625 6.81875L18.3188 7.24687L17.4625 7.7625C17.3438 7.56562 17.0656 7.10313 16.6344 6.38125L16.6375 6.37813ZM9.6375 8.8625V15.7125L15.6406 12.2844V5.43437L9.6375 8.8625Z" fill="var(--content-quartenary)"/></g>
+        </svg>`,
+      },
+      {
+        stepId: 'step3-number',
+        stepNum: '3',
+        validationId: 'photo2-validation-msg',
+        label: 'Sealed box with label',
+        icon: `<svg width="32" height="32" viewBox="0 0 20 20" fill="none">
+          <g transform="translate(3, 2.5)"><path opacity="0.4" d="M0 4L2.5 0H6L5 4H0ZM5 4V7.5H9V4H5ZM8 0H11.5L14 4H9L8 0Z" fill="var(--content-quartenary)"/></g>
+          <g transform="translate(3, 6.5)"><path d="M5 0H0V10.5H14V0H9V3.5H5V0Z" fill="var(--content-quartenary)"/></g>
+        </svg>`,
+      },
+    ];
+
+    const CHECK_SVG = `<svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 5L5.5 9.5L13 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+    // ─── Panel open / close ───
+    function openPackSendOrderModal() {
+      document.getElementById('subflow-wrapper').classList.add('subflow-active');
+      document.getElementById('pack-send-order-panel').classList.add('active');
+    }
+
+    function closePackSendOrderModal() {
+      document.getElementById('pack-send-order-panel').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('subflow-wrapper').classList.remove('subflow-active');
+      }, 150);
+    }
+
+    // ─── Label ───
+    function markLabelPrinted() {
+      state.labelPrinted = true;
+      const msg = document.getElementById('label-printed-msg');
+      msg.style.display = 'flex';
+      msg.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M13.3 4.3L6 11.6L2.7 8.3" stroke="var(--content-positive)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Label downloaded
+      `;
+      document.getElementById('step2-number').classList.add('completed');
+      document.getElementById('step2-number').innerHTML = CHECK_SVG;
+      updateConfirmState();
+    }
+
+    // ─── Photo slot click ───
+    function handleSlotClick(index) {
+      const photo = state.photos[index];
+      if (photo && typeof photo === 'object' && photo.url) return;
+      if (photo === 'uploading') return;
+
+      state.activeSlot = index;
+      document.getElementById('file-input').click();
+    }
+
+    // ─── File selected ───
+    function handleFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const slotIndex = state.activeSlot;
+      if (slotIndex === null) return;
+
+      event.target.value = '';
+
+      if (!ACCEPTED_TYPES.includes(file.type)) {
+        state.photos[slotIndex] = { error: 'Invalid file type. Use JPG, PNG, or WebP.' };
+        renderSlot(slotIndex);
+        showToast('Invalid file type. Please use JPG, PNG, or WebP.', 'error');
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        state.photos[slotIndex] = { error: 'File too large. Max 10MB.' };
+        renderSlot(slotIndex);
+        showToast('File too large. Maximum size is 10MB.', 'error');
+        return;
+      }
+
+      state.photos[slotIndex] = 'uploading';
+      renderSlot(slotIndex);
+
+      const uploadTime = 800 + Math.random() * 1200;
+      setTimeout(() => {
+        if (Math.random() < 0.1) {
+          state.photos[slotIndex] = { error: 'Upload failed. Tap to retry.' };
+          renderSlot(slotIndex);
+          showToast('Upload failed. Please try again.', 'error');
+          return;
+        }
+
+        const url = URL.createObjectURL(file);
+        state.photos[slotIndex] = { url, name: file.name };
+        renderSlot(slotIndex);
+        updateConfirmState();
+
+        // Mark step badge as completed
+        const config = SLOT_CONFIG[slotIndex];
+        const badge = document.getElementById(config.stepId);
+        badge.classList.add('completed');
+        badge.innerHTML = CHECK_SVG;
+
+        showToast('Photo uploaded!', 'success');
+      }, uploadTime);
+    }
+
+    // ─── Remove photo ───
+    function removePhoto(index, event) {
+      event.stopPropagation();
+      if (state.photos[index] && typeof state.photos[index] === 'object' && state.photos[index].url) {
+        URL.revokeObjectURL(state.photos[index].url);
+      }
+      state.photos[index] = null;
+      renderSlot(index);
+      updateConfirmState();
+
+      // Reset step badge
+      const config = SLOT_CONFIG[index];
+      const badge = document.getElementById(config.stepId);
+      badge.classList.remove('completed');
+      badge.textContent = config.stepNum;
+    }
+
+    // ─── Render a single photo slot ───
+    function renderSlot(index) {
+      const photo = state.photos[index];
+      const config = SLOT_CONFIG[index];
+      const slot = document.getElementById(`slot-${index}`);
+      const addBtn = document.getElementById(`add-photo-btn-${index}`);
+
+      // Reset classes
+      slot.className = 'photo-slot';
+
+      if (photo === null || (typeof photo === 'object' && photo.error)) {
+        addBtn.classList.remove('hidden');
+        if (photo && photo.error) {
+          slot.classList.add('error');
+          slot.innerHTML = `
+            ${config.icon}
+            <span class="photo-slot-error-text">${photo.error}</span>
+          `;
+        } else {
+          slot.innerHTML = `
+            ${config.icon}
+            <span class="photo-slot-label">${config.label}</span>
+          `;
+        }
+      } else if (photo === 'uploading') {
+        addBtn.classList.add('hidden');
+        slot.classList.add('uploading');
+        slot.innerHTML = `<div class="spinner"></div>`;
+      } else if (photo.url) {
+        addBtn.classList.add('hidden');
+        slot.classList.add('uploaded');
+        slot.innerHTML = `
+          <img class="photo-slot-uploaded-img" src="${photo.url}" alt="${config.label}">
+          <div class="photo-slot-success-badge">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M2 5L4.5 7.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="photo-slot-overlay">
+            <button class="photo-slot-remove" onclick="removePhoto(${index}, event)" title="Remove photo">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M11 3L3 11M3 3L11 11" stroke="var(--content-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    // ─── Confirm state ───
+    function updateConfirmState() {
+      const uploaded = state.photos.filter(p => p && typeof p === 'object' && p.url).length;
+      const cb1 = document.getElementById('pack-terms-1').checked;
+      const cb2 = document.getElementById('pack-terms-2').checked;
+      const allMet = uploaded === 2 && cb1 && cb2;
+
+      document.getElementById('confirm-btn').disabled = !allMet;
+
+      const hint = document.getElementById('footer-hint');
+      if (!allMet) {
+        hint.classList.add('visible');
+        const missing = [];
+        if (uploaded < 2) missing.push(`${2 - uploaded} photo${2 - uploaded > 1 ? 's' : ''}`);
+        if (!cb1 || !cb2) missing.push('terms acceptance');
+        hint.textContent = `Still needed: ${missing.join(' and ')}.`;
+      } else {
+        hint.classList.remove('visible');
+      }
+
+      if (state.confirmAttempted) {
+        if (state.photos[0] && typeof state.photos[0] === 'object' && state.photos[0].url) {
+          document.getElementById('photo1-validation-msg').classList.remove('visible');
+        }
+        if (state.photos[1] && typeof state.photos[1] === 'object' && state.photos[1].url) {
+          document.getElementById('photo2-validation-msg').classList.remove('visible');
+        }
+        if (cb1) {
+          document.getElementById('checkbox-group-1').classList.remove('has-error');
+          document.getElementById('checkbox1-validation-msg').classList.remove('visible');
+        }
+        if (cb2) {
+          document.getElementById('checkbox-group-2').classList.remove('has-error');
+          document.getElementById('checkbox2-validation-msg').classList.remove('visible');
+        }
+      }
+    }
+
+    // ─── Confirm handler with validation ───
+    function handleConfirm() {
+      state.confirmAttempted = true;
+
+      const photo1 = state.photos[0] && typeof state.photos[0] === 'object' && state.photos[0].url;
+      const photo2 = state.photos[1] && typeof state.photos[1] === 'object' && state.photos[1].url;
+      const cb1 = document.getElementById('pack-terms-1').checked;
+      const cb2 = document.getElementById('pack-terms-2').checked;
+
+      let hasError = false;
+
+      if (!photo1) {
+        document.getElementById('photo1-validation-msg').classList.add('visible');
+        hasError = true;
+      }
+
+      if (!photo2) {
+        document.getElementById('photo2-validation-msg').classList.add('visible');
+        hasError = true;
+      }
+
+      if (!cb1) {
+        document.getElementById('checkbox-group-1').classList.add('has-error');
+        document.getElementById('checkbox1-validation-msg').classList.add('visible');
+        hasError = true;
+      }
+
+      if (!cb2) {
+        document.getElementById('checkbox-group-2').classList.add('has-error');
+        document.getElementById('checkbox2-validation-msg').classList.add('visible');
+        hasError = true;
+      }
+
+      if (hasError) {
+        const firstError = document.querySelector('.validation-msg.visible, .has-error');
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        showToast('Please complete all required fields.', 'error');
+        return;
+      }
+
+      showToast('Order confirmed! Drop off your parcel.', 'success');
+      document.getElementById('confirm-btn').disabled = true;
+      document.getElementById('confirm-btn').innerHTML = `
+        Confirmed
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+    }
+
+    // ─── Toast ───
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type;
+      toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+
+      requestAnimationFrame(() => {
+        toast.classList.add('visible');
+      });
+
+      const duration = type === 'error' ? 5000 : 3000;
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, duration);
+    }
+
+    // ─── Init ───
+    updateConfirmState();
+  </script>
+</body>
+</html>
