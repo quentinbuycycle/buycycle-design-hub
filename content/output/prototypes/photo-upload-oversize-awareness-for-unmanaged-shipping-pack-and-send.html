@@ -1,0 +1,1444 @@
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>buycycle - Unmanaged: Pack and Send Order (v2)</title>
+  <style>
+    /* buycycle Design System Tokens — colors.md */
+    :root {
+      /* Background */
+      --bg-primary: #FCFCFC;
+      --bg-secondary: #F3F3F3;
+      --bg-tertiary: #FFFFFF;
+      --bg-quartenary: #EAEAEA;
+      --bg-primary-reverse: #090907;
+      --bg-positive: #E8F8F0;
+      --bg-attention: #FFFBEB;
+      --bg-warning: #FFF7ED;
+      --bg-alert: #FFEBEB;
+
+      /* Content */
+      --content-primary: #090907;
+      --content-secondary: #333333;
+      --content-tertiary: #535353;
+      --content-quartenary: #A9A9A9;
+      --content-primary-reverse: #FCFCFC;
+      --content-positive: #146C43;
+      --content-attention: #92400E;
+      --content-alert: #B91C1C;
+
+      /* Border */
+      --border-primary: #090907;
+      --border-secondary: #757575;
+      --border-tertiary: #EAEAEA;
+      --border-quartenary: #D0D0D0;
+      --border-positive: #146C43;
+      --border-alert: #B91C1C;
+
+      /* Font */
+      --font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      background-color: #e8e8e8;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    /* ─── Reduced motion ─── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+      }
+    }
+
+    /* ─── Focus ring (DS: accessibility.md) ─── */
+    :focus-visible {
+      outline: 2px solid var(--content-primary);
+      outline-offset: 2px;
+    }
+
+    /* Subflow wrapper */
+    .subflow-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 853px;
+      height: 618px;
+      overflow: hidden;
+    }
+
+    /* Chat Container */
+    .chat-container {
+      width: 100%;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0px -1px 6px 0px rgba(83, 83, 83, 0.15), 0px 1px 6px 0px rgba(83, 83, 83, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 618px;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    }
+
+    .subflow-wrapper.subflow-active .chat-container {
+      transform: translateX(-30%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Chat Header */
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+    }
+
+    .chat-header-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .product-image-container {
+      position: relative;
+      width: 80px;
+      height: 45px;
+    }
+
+    .product-image {
+      width: 80px;
+      height: 45px;
+      border-radius: 3px;
+      object-fit: cover;
+      background: var(--bg-secondary);
+    }
+
+    .user-avatar-small {
+      position: absolute;
+      bottom: -7px;
+      right: -2px;
+      width: 21px;
+      height: 21px;
+      border-radius: 100px;
+      object-fit: cover;
+      background: var(--bg-quartenary);
+    }
+
+    .product-info h2 {
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 24px;
+      color: var(--content-primary);
+    }
+
+    .product-info .price {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 21px;
+      color: var(--content-secondary);
+    }
+
+    .options-icon {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* View Order Progress */
+    .order-progress-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+      cursor: pointer;
+    }
+
+    .order-progress-bar:hover { background: var(--bg-secondary); }
+
+    .order-progress-text {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--content-primary);
+      text-decoration: underline;
+    }
+
+    /* Chat Body */
+    .chat-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Protection Banner */
+    .protection-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+    }
+
+    .protection-icon { width: 24px; height: 24px; flex-shrink: 0; }
+
+    .protection-text {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 18px;
+      color: var(--content-tertiary);
+    }
+
+    /* Admin Messages */
+    .admin-messages-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 100%;
+    }
+
+    .admin-message {
+      padding: 16px;
+      border-top: 1px solid var(--border-tertiary);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .admin-message:first-child { border-top: none; }
+
+    .admin-message.inactive .admin-message-title { color: var(--content-tertiary); }
+    .admin-message.inactive .admin-message-body { color: var(--content-tertiary); }
+    .admin-message.active .admin-message-title { color: var(--content-primary); }
+    .admin-message.active .admin-message-body { color: var(--content-secondary); }
+
+    .admin-message-title { font-size: 16px; font-weight: 500; line-height: 24px; }
+    .admin-message-body { font-size: 14px; font-weight: 400; line-height: 21px; }
+    .admin-message-time { font-size: 12px; font-weight: 400; line-height: 18px; color: var(--content-tertiary); }
+
+    /* Action Buttons */
+    .action-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+    /* ─── button/main — buttons.md ─── */
+
+    /* Primary: Small (32px) for inline chat CTA */
+    .btn-primary {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 32px;
+      padding: 6px 14px;
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-family);
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+      box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+      transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+      opacity: 0;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4);
+      transform: translateY(-0.5px);
+    }
+    .btn-primary:hover::before { opacity: 1; }
+
+    .btn-primary:active {
+      box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3);
+      transform: translateY(0) scale(0.97);
+    }
+
+    .btn-primary svg { width: 18px; height: 18px; }
+
+    .btn-primary:disabled {
+      background: var(--bg-quartenary);
+      color: var(--content-tertiary);
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-primary:disabled::before { display: none; }
+    .btn-primary:disabled:hover {
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Primary Large (52px) for full-width CTAs */
+    .btn-primary-lg {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      height: 52px;
+      padding: 14px 24px;
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      border: none;
+      border-radius: 12px;
+      font-family: var(--font-family);
+      font-size: 16px;
+      font-weight: 400;
+      cursor: pointer;
+      box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+      transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary-lg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+      opacity: 0;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-primary-lg:hover {
+      box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4);
+      transform: translateY(-0.5px);
+    }
+    .btn-primary-lg:hover::before { opacity: 1; }
+
+    .btn-primary-lg:active {
+      box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3);
+      transform: translateY(0) scale(0.97);
+    }
+
+    .btn-primary-lg svg { width: 24px; height: 24px; }
+
+    .btn-primary-lg:disabled {
+      background: var(--bg-quartenary);
+      color: var(--content-tertiary);
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-primary-lg:disabled::before { display: none; }
+    .btn-primary-lg:disabled:hover {
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Secondary: Medium (40px) */
+    .btn-secondary {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      height: 40px;
+      padding: 10px 18px;
+      background: var(--bg-tertiary);
+      color: var(--content-primary);
+      border: 1.5px solid var(--border-secondary);
+      border-radius: 10px;
+      font-family: var(--font-family);
+      font-size: 14px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-secondary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(9,9,7,0.05) 100%);
+      opacity: 0;
+      transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-secondary);
+      border-color: var(--border-primary);
+    }
+    .btn-secondary:hover::before { opacity: 1; }
+
+    .btn-secondary:active {
+      background: var(--bg-quartenary);
+      border-color: var(--border-primary);
+      transform: scale(0.97);
+    }
+
+    .btn-secondary:disabled {
+      background: var(--bg-quartenary);
+      color: var(--content-tertiary);
+      border-color: var(--border-tertiary);
+      cursor: not-allowed;
+    }
+
+    /* Tertiary (link-style) */
+    .btn-tertiary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-family);
+      font-size: 12px;
+      color: var(--content-tertiary);
+      padding: 4px 0;
+      transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-tertiary::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      width: calc(100% - 16px);
+      height: 1px;
+      background: rgba(9,9,7,0.3);
+      transform: translateX(-50%);
+      transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-tertiary:hover {
+      color: var(--content-primary);
+    }
+    .btn-tertiary:hover::after {
+      height: 1.5px;
+      background: var(--content-primary);
+    }
+
+    /* Comment Input */
+    .comment-section {
+      background: var(--bg-secondary);
+      padding: 16px;
+      margin-top: auto;
+    }
+
+    .comment-input-container { display: flex; align-items: center; gap: 16px; }
+    .input-wrapper { flex: 1; height: 48px; }
+
+    /* inputs/text-field — inputs.md */
+    .message-input {
+      width: 100%;
+      height: 48px;
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border: 1.5px solid var(--border-tertiary);
+      border-radius: 12px;
+      font-family: var(--font-family);
+      font-size: 16px;
+      line-height: 24px;
+      color: var(--content-primary);
+      outline: none;
+      transition: all 200ms ease;
+    }
+
+    .message-input::placeholder { color: var(--content-quartenary); }
+    .message-input:hover { border-color: var(--content-quartenary); }
+    .message-input:focus {
+      border-width: 2px;
+      border-color: var(--border-secondary);
+      box-shadow: 0 0 0 3px rgba(9,9,7,0.08);
+      outline: none;
+    }
+
+    .send-button {
+      width: 24px;
+      height: 24px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Subflow Panel */
+    .subflow-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 618px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0px -1px 6px 0px rgba(83, 83, 83, 0.15), 0px 1px 6px 0px rgba(83, 83, 83, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateX(100%);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .subflow-panel.active {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+      flex-shrink: 0;
+    }
+
+    .modal-back {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-family);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--content-primary);
+    }
+
+    .modal-back svg { width: 24px; height: 24px; }
+
+    .modal-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 32px;
+    }
+
+    .modal-footer {
+      padding: 16px 32px;
+      border-top: 1px solid var(--border-tertiary);
+      background: var(--bg-secondary);
+      flex-shrink: 0;
+    }
+
+    .modal-footer-hint {
+      font-size: 12px;
+      color: var(--content-tertiary);
+      line-height: 18px;
+      text-align: center;
+      margin-bottom: 8px;
+      display: none;
+    }
+
+    .modal-footer-hint.visible {
+      display: block;
+    }
+
+    /* Step numbering */
+    .step-section {
+      margin-bottom: 24px;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .step-number.completed {
+      background: var(--content-positive);
+    }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--content-primary);
+      line-height: 27px;
+    }
+
+    .step-description {
+      font-size: 16px;
+      color: var(--content-secondary);
+      line-height: 24px;
+      margin-bottom: 12px;
+    }
+
+    /* Warning Box — backgroundAttention + contentAttention */
+    .warning-box {
+      background: var(--bg-attention);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .warning-box-title {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--content-attention);
+      line-height: 21px;
+    }
+
+    .warning-box-text {
+      font-size: 14px;
+      color: var(--content-attention);
+      line-height: 21px;
+    }
+
+    /* Error Box — backgroundAlert + contentAlert */
+    .error-box {
+      background: var(--bg-alert);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .error-box-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--content-alert);
+      line-height: 21px;
+    }
+
+    .error-box-text {
+      font-size: 14px;
+      color: var(--content-alert);
+      line-height: 21px;
+    }
+
+    /* Add Photos Button */
+    .add-photos-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      height: 40px;
+      padding: 10px 16px;
+      border: 1.5px solid var(--border-tertiary);
+      border-radius: 10px;
+      background: var(--bg-tertiary);
+      font-family: var(--font-family);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--content-primary);
+      cursor: pointer;
+      transition: border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  background 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      margin-bottom: 12px;
+    }
+
+    .add-photos-btn:hover {
+      border-color: var(--border-secondary);
+      background: var(--bg-primary);
+    }
+
+    .add-photos-btn:active {
+      background: var(--bg-quartenary);
+    }
+
+    .add-photos-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* Photo Grid */
+    .photo-grid {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .photo-placeholder {
+      width: 88px;
+      height: 88px;
+      border: 1.5px dashed var(--border-tertiary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 200ms cubic-bezier(0.4, 0, 0.2, 1),
+                  background 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .photo-placeholder:hover {
+      border-color: var(--content-quartenary);
+      background: var(--bg-secondary);
+    }
+
+    .photo-placeholder.uploading {
+      border-style: solid;
+      border-color: var(--content-quartenary);
+      cursor: default;
+    }
+
+    .photo-placeholder.uploaded {
+      border: 1.5px solid var(--content-positive);
+      cursor: default;
+    }
+
+    .photo-placeholder.uploaded:hover {
+      border-color: var(--content-positive);
+      background: transparent;
+    }
+
+    .photo-placeholder.error {
+      border-color: var(--content-alert);
+      border-style: solid;
+    }
+
+    .photo-placeholder-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+    }
+
+    .photo-placeholder-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0);
+      transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .photo-placeholder.uploaded:hover .photo-placeholder-overlay {
+      background: rgba(0,0,0,0.4);
+      cursor: pointer;
+    }
+
+    .photo-placeholder-remove {
+      display: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.9);
+      border: none;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-placeholder.uploaded:hover .photo-placeholder-remove {
+      display: flex;
+    }
+
+    .photo-placeholder-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--content-positive);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--bg-quartenary);
+      border-top-color: var(--content-primary);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Form checkbox — controls/checkbox-ML */
+    .form-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .form-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      min-height: 20px;
+      margin: 0;
+      margin-top: 2px;
+      border: 1px solid var(--border-secondary);
+      border-radius: 4px;
+      background: var(--bg-tertiary);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: all 200ms ease;
+    }
+
+    .form-checkbox input[type="checkbox"]:checked {
+      background-color: var(--bg-primary-reverse);
+      border-color: var(--border-primary);
+      background-image: url("data:image/svg+xml,%3Csvg width='14' height='11' viewBox='0 0 14 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 5L5.5 9.5L13 1' stroke='%23FCFCFC' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .form-checkbox.has-error input[type="checkbox"] {
+      border-color: var(--content-alert);
+    }
+
+    .form-checkbox-label {
+      font-size: 16px;
+      color: var(--content-secondary);
+      line-height: 24px;
+      flex: 1;
+    }
+
+    .form-checkbox-label a {
+      color: var(--content-secondary);
+      text-decoration: underline;
+    }
+
+    /* Inline validation message — inputs.md error text */
+    .validation-msg {
+      font-size: 12px;
+      color: var(--content-alert);
+      line-height: 18px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .validation-msg.visible {
+      display: block;
+    }
+
+    /* Toast — status.md toasts */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      max-width: 826px;
+      padding: 8px 16px;
+      border-radius: 0;
+      font-family: var(--font-family);
+      font-size: 16px;
+      line-height: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 2000;
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast.error {
+      background: var(--bg-alert);
+      color: var(--content-alert);
+      border-left: 6px solid var(--content-alert);
+    }
+
+    .toast.success {
+      background: var(--bg-positive);
+      color: var(--content-positive);
+      border-left: 6px solid var(--content-positive);
+    }
+  </style>
+</head>
+<body>
+  <div class="subflow-wrapper" id="subflow-wrapper">
+    <!-- Chat Container - Unmanaged Step 5: Packing -->
+    <div class="chat-container">
+      <!-- Header -->
+      <div class="chat-header">
+        <div class="chat-header-content">
+          <div class="product-image-container">
+            <img class="product-image" src="https://www.figma.com/api/mcp/asset/871387d7-ac91-49c7-8a4c-869195d61471" alt="Product" onerror="this.style.background='#EAEAEA'">
+            <img class="user-avatar-small" src="https://www.figma.com/api/mcp/asset/1346fbaa-08aa-4bda-a4f2-4c04c49cc00e" alt="User" onerror="this.style.background='#EAEAEA'">
+          </div>
+          <div class="product-info">
+            <h2>Cycling Jersey Pro</h2>
+            <span class="price">€89</span>
+          </div>
+        </div>
+        <div class="options-icon">
+          <svg width="20" height="4" viewBox="0 0 20 4" fill="none">
+            <circle cx="2" cy="2" r="2" fill="#090907"/>
+            <circle cx="10" cy="2" r="2" fill="#090907"/>
+            <circle cx="18" cy="2" r="2" fill="#090907"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- View Order Progress -->
+      <div class="order-progress-bar">
+        <span class="order-progress-text">View order progress</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M9 18L15 12L9 6" stroke="#090907" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <!-- Chat Body with Admin Messages -->
+      <div class="chat-body">
+        <!-- Protection Banner -->
+        <div class="protection-banner">
+          <div class="protection-icon">
+            <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+              <path d="M9 0L0 3.63636V9.09091C0 14.1409 3.843 18.8636 9 20C14.157 18.8636 18 14.1409 18 9.09091V3.63636L9 0ZM9 9.99091H16.2C15.723 13.7318 12.822 17.1 9 17.9909V10H1.8V4.58182L9 1.87273V9.99091Z" fill="#090907"/>
+            </svg>
+          </div>
+          <span class="protection-text">buycycle's seller protection guarantees you'll be paid securely. Learn more.</span>
+        </div>
+
+        <!-- Admin Messages -->
+        <div class="admin-messages-container">
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Paid! Confirm your details by [date]</div>
+            <div class="admin-message-body">Congratulations! The buyer paid and we're securely holding the funds until they received the order. Confirm your details in time to get your shipping label. You will have 7 days to send the order.</div>
+            <div class="admin-message-time">14:58</div>
+          </div>
+
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Details confirmed!</div>
+            <div class="admin-message-body">You must send the order before [date].</div>
+            <div class="admin-message-time">14:58</div>
+          </div>
+
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Payment information saved</div>
+            <div class="admin-message-body">Your updated payment details have been saved.</div>
+            <div class="admin-message-time">14:58</div>
+          </div>
+
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Pack and send the order before [date]</div>
+            <div class="admin-message-body">Follow our 3-step process.</div>
+            <div class="admin-message-time">15:12</div>
+          </div>
+
+          <div class="admin-message active">
+            <div class="admin-message-title">Pack and send the order before [date]</div>
+            <div class="admin-message-body">Get your parcel ready in just a few easy steps.</div>
+            <div class="admin-message-time">16:30</div>
+            <div class="action-buttons">
+              <button class="btn-primary" onclick="openPackSendOrderModal()">
+                Pack and send the order
+                <svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comment Input -->
+      <div class="comment-section">
+        <div class="comment-input-container">
+          <div class="input-wrapper">
+            <input type="text" class="message-input" placeholder="Your message...">
+          </div>
+          <button class="send-button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M4 12L20 12M20 12L14 6M20 12L14 18" stroke="#090907" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pack and Send Order Subflow Panel -->
+    <div class="subflow-panel" id="pack-send-order-panel">
+      <!-- Panel Header -->
+      <div class="modal-header">
+        <button class="modal-back" onclick="closePackSendOrderModal()">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Pack and send the order
+        </button>
+      </div>
+
+      <!-- Modal Content -->
+      <div class="modal-content">
+
+        <!-- Step 1: Pack the order -->
+        <div class="step-section">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-title">Pack the order</div>
+          </div>
+
+          <div style="background: linear-gradient(197.28deg, rgb(253, 253, 160) 30%, rgb(218, 253, 160) 100%); padding: 16px; border-radius: 12px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="flex-shrink: 0;">
+                <rect x="3" y="5" width="18" height="14" rx="2" stroke="#090907" stroke-width="1.5"/>
+                <path d="M3 10H21" stroke="#090907" stroke-width="1.5"/>
+                <path d="M8 5V10" stroke="#090907" stroke-width="1.5"/>
+                <path d="M16 5V10" stroke="#090907" stroke-width="1.5"/>
+              </svg>
+              <div style="flex: 1; font-size: 16px; font-weight: 700; color: var(--content-primary); line-height: 24px;">You selected size M (30×25×15cm) for this listing.</div>
+            </div>
+            <div style="font-size: 14px; color: var(--content-secondary); line-height: 21px;">Pack within these dimensions to avoid an <strong>oversize surcharge</strong> on your payout.</div>
+          </div>
+
+          <div class="step-description" style="margin-bottom: 0;">
+            Include everything described in your listing.
+          </div>
+        </div>
+
+        <!-- Step 2: Print the shipping label -->
+        <div class="step-section">
+          <div class="step-header">
+            <div class="step-number" id="step2-number">2</div>
+            <div class="step-title">Print the shipping label</div>
+          </div>
+
+          <div class="step-description">
+            Stick it on your package and make sure the barcode is scannable.
+          </div>
+
+          <button class="btn-primary-lg" onclick="markLabelPrinted()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M6 15V21H18V15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M3 9H21V16.5H3V9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 9V3H18V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Print shipping label
+          </button>
+          <div id="label-printed-msg" style="display: none; margin-top: 8px; font-size: 12px; color: var(--content-positive); line-height: 18px; align-items: center; gap: 4px;">
+          </div>
+        </div>
+
+        <!-- Step 3: Take photos of the packed order -->
+        <div class="step-section">
+          <div class="step-header">
+            <div class="step-number" id="step3-number">3</div>
+            <div class="step-title">Take photos of the packed order</div>
+          </div>
+
+          <div class="step-description">Upload at least 3 photos of the sealed package.</div>
+
+          <button class="add-photos-btn" onclick="addPhoto()">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <rect x="2" y="3" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/>
+              <circle cx="6.5" cy="7.5" r="1.5" stroke="currentColor" stroke-width="1.1"/>
+              <path d="M2 12.5l3.5-3.5 2.5 2.5 3-3.5 4.5 5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Add photos
+          </button>
+
+          <div class="photo-grid">
+            <div class="photo-placeholder" id="slot-0" onclick="handleSlotClick(0)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="var(--content-quartenary)" stroke-width="1.2"/>
+                <path d="M3 16l5-5 3.5 3.5L15 11l6 7" stroke="var(--content-quartenary)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="photo-placeholder" id="slot-1" onclick="handleSlotClick(1)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="var(--content-quartenary)" stroke-width="1.2"/>
+                <path d="M3 16l5-5 3.5 3.5L15 11l6 7" stroke="var(--content-quartenary)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="photo-placeholder" id="slot-2" onclick="handleSlotClick(2)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="4" width="18" height="16" rx="2" stroke="var(--content-quartenary)" stroke-width="1.2"/>
+                <path d="M3 16l5-5 3.5 3.5L15 11l6 7" stroke="var(--content-quartenary)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="validation-msg" id="photo-validation-msg">Please upload all 3 photos before confirming.</div>
+        </div>
+
+        <!-- Step 4: Send the order -->
+        <div class="step-section">
+          <div class="step-header">
+            <div class="step-number">4</div>
+            <div class="step-title">Send the order</div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <div style="font-size: 16px; color: var(--content-secondary); line-height: 24px;">Carrier: DHL</div>
+            <img src="https://www.figma.com/api/mcp/asset/1a5baab3-124e-4782-8f64-2230ab8ef5de" alt="DHL" style="height: 20px; width: 31.4px;">
+          </div>
+
+          <button class="btn-secondary" style="width: 100%; margin-bottom: 12px;">
+            See branches / parcel shops
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+
+          <div style="font-size: 14px; color: var(--content-secondary); line-height: 21px;">
+            <strong>Send by 24 January 2025</strong> or the sale will be cancelled and your listing deactivated.
+          </div>
+        </div>
+
+        <!-- Terms & Conditions -->
+        <div class="step-section">
+          <div style="font-size: 18px; font-weight: 500; color: var(--content-primary); margin-bottom: 16px;">Terms & Conditions</div>
+
+          <div class="form-checkbox" id="checkbox-group-1" style="margin-bottom: 16px;">
+            <input type="checkbox" id="pack-terms-1" onchange="updateConfirmState()">
+            <label for="pack-terms-1" class="form-checkbox-label">My package fits within my selected size (M — 30×25×15cm). I understand an <strong>oversize surcharge will be deducted from my payout</strong> if it exceeds these dimensions.</label>
+          </div>
+          <div class="validation-msg" id="checkbox1-validation-msg">You must accept this term to continue.</div>
+
+          <div class="form-checkbox" id="checkbox-group-2">
+            <input type="checkbox" id="pack-terms-2" onchange="updateConfirmState()">
+            <label for="pack-terms-2" class="form-checkbox-label">My item is securely padded. I acknowledge that <strong>shipping damage due to improper packing will be deducted from my payment</strong>.</label>
+          </div>
+          <div class="validation-msg" id="checkbox2-validation-msg">You must accept this term to continue.</div>
+        </div>
+      </div>
+
+      <!-- Panel Footer -->
+      <div class="modal-footer">
+        <div class="modal-footer-hint" id="footer-hint">Upload 3 photos and accept both terms to confirm.</div>
+        <button class="btn-primary-lg" id="confirm-btn" disabled onclick="handleConfirm()">
+          Confirm
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Hidden file input -->
+  <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/heic" style="display: none;" onchange="handleFileSelected(event)">
+
+  <script>
+    // ─── State ───
+    const state = {
+      photos: [null, null, null],
+      labelPrinted: false,
+      activeSlot: null,
+      confirmAttempted: false,
+    };
+
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+
+    // ─── Panel open / close ───
+    function openPackSendOrderModal() {
+      document.getElementById('subflow-wrapper').classList.add('subflow-active');
+      document.getElementById('pack-send-order-panel').classList.add('active');
+    }
+
+    function closePackSendOrderModal() {
+      document.getElementById('pack-send-order-panel').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('subflow-wrapper').classList.remove('subflow-active');
+      }, 150);
+    }
+
+    // ─── Add photo (fills next empty slot) ───
+    function addPhoto() {
+      const nextEmpty = state.photos.findIndex(p => p === null || (typeof p === 'object' && p.error));
+      if (nextEmpty === -1) return;
+      state.activeSlot = nextEmpty;
+      document.getElementById('file-input').click();
+    }
+
+    // ─── Label ───
+    function markLabelPrinted() {
+      state.labelPrinted = true;
+      const msg = document.getElementById('label-printed-msg');
+      msg.style.display = 'flex';
+      msg.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M13.3 4.3L6 11.6L2.7 8.3" stroke="#146C43" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Label downloaded
+      `;
+      document.getElementById('step2-number').classList.add('completed');
+      document.getElementById('step2-number').innerHTML = `
+        <svg width="14" height="11" viewBox="0 0 14 11" fill="none">
+          <path d="M1 5L5.5 9.5L13 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+      updateConfirmState();
+    }
+
+    // ─── Photo slot click ───
+    function handleSlotClick(index) {
+      const photo = state.photos[index];
+      if (photo && typeof photo === 'object' && photo.url) return;
+      if (photo === 'uploading') return;
+
+      state.activeSlot = index;
+      document.getElementById('file-input').click();
+    }
+
+    // ─── File selected ───
+    function handleFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const slotIndex = state.activeSlot;
+      if (slotIndex === null) return;
+
+      event.target.value = '';
+
+      if (!ACCEPTED_TYPES.includes(file.type)) {
+        state.photos[slotIndex] = { error: 'Invalid file type. Use JPG, PNG, or WebP.' };
+        renderSlots();
+        showToast('Invalid file type. Please use JPG, PNG, or WebP.', 'error');
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        state.photos[slotIndex] = { error: 'File too large. Max 10MB.' };
+        renderSlots();
+        showToast('File too large. Maximum size is 10MB.', 'error');
+        return;
+      }
+
+      state.photos[slotIndex] = 'uploading';
+      renderSlots();
+
+      const uploadTime = 800 + Math.random() * 1200;
+      setTimeout(() => {
+        if (Math.random() < 0.1) {
+          state.photos[slotIndex] = { error: 'Upload failed. Tap to retry.' };
+          renderSlots();
+          showToast('Upload failed. Please try again.', 'error');
+          return;
+        }
+
+        const url = URL.createObjectURL(file);
+        state.photos[slotIndex] = { url, name: file.name };
+        renderSlots();
+        updateConfirmState();
+
+        const uploaded = state.photos.filter(p => p && typeof p === 'object' && p.url).length;
+        if (uploaded === 3) {
+          showToast('All photos uploaded!', 'success');
+          document.getElementById('step3-number').classList.add('completed');
+          document.getElementById('step3-number').innerHTML = `
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none">
+              <path d="M1 5L5.5 9.5L13 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          `;
+        }
+      }, uploadTime);
+    }
+
+    // ─── Remove photo ───
+    function removePhoto(index, event) {
+      event.stopPropagation();
+      if (state.photos[index] && typeof state.photos[index] === 'object' && state.photos[index].url) {
+        URL.revokeObjectURL(state.photos[index].url);
+      }
+      state.photos[index] = null;
+      renderSlots();
+      updateConfirmState();
+
+      const step3 = document.getElementById('step3-number');
+      step3.classList.remove('completed');
+      step3.textContent = '3';
+    }
+
+    // ─── Render photo slots ───
+    const PLACEHOLDER_SVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="var(--content-quartenary)" stroke-width="1.2"/><path d="M3 16l5-5 3.5 3.5L15 11l6 7" stroke="var(--content-quartenary)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+    function renderSlots() {
+      state.photos.forEach((photo, i) => {
+        const slot = document.getElementById(`slot-${i}`);
+        slot.className = 'photo-placeholder';
+
+        if (photo === null || (typeof photo === 'object' && photo.error)) {
+          if (photo && photo.error) slot.classList.add('error');
+          slot.innerHTML = PLACEHOLDER_SVG;
+        } else if (photo === 'uploading') {
+          slot.classList.add('uploading');
+          slot.innerHTML = `<div class="spinner"></div>`;
+        } else if (photo.url) {
+          slot.classList.add('uploaded');
+          slot.innerHTML = `
+            <img class="photo-placeholder-img" src="${photo.url}" alt="Photo ${i + 1}">
+            <div class="photo-placeholder-badge">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <path d="M2 5L4.5 7.5L8 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="photo-placeholder-overlay">
+              <button class="photo-placeholder-remove" onclick="removePhoto(${i}, event)" title="Remove photo">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M11 3L3 11M3 3L11 11" stroke="#090907" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          `;
+        }
+      });
+
+      const uploaded = state.photos.filter(p => p && typeof p === 'object' && p.url).length;
+      if (uploaded === 3) {
+        document.getElementById('photo-validation-msg').classList.remove('visible');
+      }
+    }
+
+    // ─── Confirm state ───
+    function updateConfirmState() {
+      const uploaded = state.photos.filter(p => p && typeof p === 'object' && p.url).length;
+      const cb1 = document.getElementById('pack-terms-1').checked;
+      const cb2 = document.getElementById('pack-terms-2').checked;
+      const allMet = uploaded === 3 && cb1 && cb2;
+
+      document.getElementById('confirm-btn').disabled = !allMet;
+
+      const hint = document.getElementById('footer-hint');
+      if (!allMet) {
+        hint.classList.add('visible');
+        const missing = [];
+        if (uploaded < 3) missing.push(`${3 - uploaded} photo${3 - uploaded > 1 ? 's' : ''}`);
+        if (!cb1 || !cb2) missing.push('terms acceptance');
+        hint.textContent = `Still needed: ${missing.join(' and ')}.`;
+      } else {
+        hint.classList.remove('visible');
+      }
+
+      if (state.confirmAttempted) {
+        if (uploaded === 3) {
+          document.getElementById('photo-validation-msg').classList.remove('visible');
+        }
+        if (cb1) {
+          document.getElementById('checkbox-group-1').classList.remove('has-error');
+          document.getElementById('checkbox1-validation-msg').classList.remove('visible');
+        }
+        if (cb2) {
+          document.getElementById('checkbox-group-2').classList.remove('has-error');
+          document.getElementById('checkbox2-validation-msg').classList.remove('visible');
+        }
+      }
+    }
+
+    // ─── Confirm handler with validation ───
+    function handleConfirm() {
+      state.confirmAttempted = true;
+
+      const uploaded = state.photos.filter(p => p && typeof p === 'object' && p.url).length;
+      const cb1 = document.getElementById('pack-terms-1').checked;
+      const cb2 = document.getElementById('pack-terms-2').checked;
+
+      let hasError = false;
+
+      if (uploaded < 3) {
+        document.getElementById('photo-validation-msg').classList.add('visible');
+        hasError = true;
+      }
+
+      if (!cb1) {
+        document.getElementById('checkbox-group-1').classList.add('has-error');
+        document.getElementById('checkbox1-validation-msg').classList.add('visible');
+        hasError = true;
+      }
+
+      if (!cb2) {
+        document.getElementById('checkbox-group-2').classList.add('has-error');
+        document.getElementById('checkbox2-validation-msg').classList.add('visible');
+        hasError = true;
+      }
+
+      if (hasError) {
+        const firstError = document.querySelector('.validation-msg.visible, .has-error');
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        showToast('Please complete all required fields.', 'error');
+        return;
+      }
+
+      showToast('Order confirmed! Drop off your parcel.', 'success');
+      document.getElementById('confirm-btn').disabled = true;
+      document.getElementById('confirm-btn').innerHTML = `
+        Confirmed
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      `;
+    }
+
+    // ─── Toast ───
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type;
+      // Set aria-live based on severity
+      toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+
+      requestAnimationFrame(() => {
+        toast.classList.add('visible');
+      });
+
+      const duration = type === 'error' ? 5000 : 3000;
+      setTimeout(() => {
+        toast.classList.remove('visible');
+      }, duration);
+    }
+
+    // ─── Init ───
+    updateConfirmState();
+  </script>
+</body>
+</html>
