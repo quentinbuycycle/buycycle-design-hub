@@ -6,7 +6,8 @@ team: "Product Design"
 tags: ["Seller","Seller XP"]
 prototypes:
   - "/prototypes/photo-upload-oversize-awareness-for-unmanaged-shipping-pack-and-send.html"
-finalPrototypes: []
+finalPrototypes:
+  - "/prototypes/pack-and-send-v2.html"
 ---
 
 ## Problem
