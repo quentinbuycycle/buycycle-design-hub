@@ -1,0 +1,813 @@
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>buycycle — Rating Flow</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #E2E2DF;
+      font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      color: #090907;
+      min-height: 100vh;
+    }
+
+    /* ─── PROTO NAV BAR ─── */
+    .proto-bar {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: #090907; color: white;
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 20px; z-index: 1000;
+      font-size: 12px; font-weight: 500;
+    }
+    .proto-logo { font-size: 14px; font-weight: 700; letter-spacing: -0.3px; }
+    .proto-sep { opacity: 0.2; }
+    .proto-label { opacity: 0.5; font-weight: 400; }
+    .proto-tag { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+    .proto-nav { display: flex; gap: 4px; margin-left: auto; }
+    .proto-nav-link { color: rgba(255,255,255,0.5); text-decoration: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; transition: all 0.15s; }
+    .proto-nav-link:hover { background: rgba(255,255,255,0.1); color: white; }
+    .proto-nav-link.active { background: rgba(255,255,255,0.12); color: white; }
+
+    /* ─── SECTION LABELS ─── */
+    .section-group { padding: 72px 32px 0; }
+    .section-group + .section-group { padding-top: 64px; }
+    .section-group-label {
+      font-size: 11px; font-weight: 700; color: #757575;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      margin-bottom: 20px; padding-left: 4px; text-align: center;
+    }
+    .section-group-desc {
+      font-size: 13px; color: #535353; text-align: center;
+      margin-bottom: 32px; margin-top: -12px;
+      max-width: 600px; margin-left: auto; margin-right: auto;
+      line-height: 20px;
+    }
+
+    /* ─── LAYOUT ─── */
+    .canvas { display: flex; justify-content: center; align-items: flex-start; gap: 40px; flex-wrap: wrap; padding-bottom: 64px; }
+    .phone-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .phone-label { font-size: 11px; font-weight: 600; color: #535353; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ─── PHONE FRAME ─── */
+    .phone {
+      width: 390px; height: 844px;
+      background: #fff; border-radius: 50px;
+      border: 8px solid #1A1A1A;
+      box-shadow: 0 0 0 1px #333, 0 32px 64px rgba(0,0,0,0.35);
+      overflow: hidden; flex-shrink: 0;
+      display: flex; flex-direction: column;
+    }
+    .screen { flex: 1; overflow-y: auto; display: flex; flex-direction: column; background: #FCFCFC; }
+    .screen::-webkit-scrollbar { display: none; }
+
+    /* Status bar */
+    .status-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
+    .status-bar.light { background: #FCFCFC; }
+    .status-time { font-size: 15px; font-weight: 600; color: #090907; }
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+
+    /* Nav bar */
+    .nav-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px; border-bottom: 1px solid #EAEAEA; flex-shrink: 0; background: #FCFCFC; }
+    .nav-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+    .nav-title { font-size: 16px; font-weight: 600; color: #090907; }
+
+    /* ─── PROGRESS BAR ─── */
+    .progress-bar { height: 3px; background: #EAEAEA; flex-shrink: 0; }
+    .progress-fill { height: 100%; background: #090907; border-radius: 0 2px 2px 0; }
+    .progress-label { padding: 4px 16px 0; text-align: right; }
+    .progress-label span { font-size: 11px; color: #757575; font-weight: 500; }
+
+    /* ─── RATING CONTENT ─── */
+    .rating-content { padding: 0 16px 32px; flex: 1; overflow-y: auto; }
+    .rating-content::-webkit-scrollbar { display: none; }
+    .seller-ctx { display: flex; align-items: center; gap: 12px; padding: 20px 0 0; }
+    .avatar-sm { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(150deg, #B8DC32, #D8EE3A); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #090907; flex-shrink: 0; }
+    .seller-bike { font-size: 12px; color: #757575; margin-bottom: 2px; }
+    .seller-name-lg { font-size: 14px; font-weight: 700; color: #090907; }
+
+    .rating-q { font-size: 24px; font-weight: 700; color: #090907; line-height: 1.3; letter-spacing: -0.4px; margin: 20px 0 6px; }
+    .rating-sub { font-size: 14px; color: #757575; margin-bottom: 28px; }
+
+    .star-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; }
+    .star-btn { font-size: 42px; cursor: pointer; line-height: 1; color: #EA580C; }
+    .star-label { text-align: center; font-size: 14px; font-weight: 600; color: #090907; margin-bottom: 28px; }
+
+    .tag-select-label { font-size: 16px; font-weight: 700; color: #090907; margin-bottom: 14px; }
+    .tag-select-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .sel-tag { background: #EAEAEA; border: none; border-radius: 24px; padding: 8px 14px; font-size: 14px; font-weight: 500; color: #333333; cursor: pointer; font-family: inherit; }
+    /* DS deviation: green selected is intentional for positive-rating context, not black */
+    .sel-tag.selected { background: #E8F8F0; color: #146C43; }
+
+    .free-text-label { font-size: 14px; font-weight: 600; color: #090907; margin-bottom: 8px; }
+    .free-text-optional { font-size: 14px; font-weight: 400; color: #757575; }
+    .free-text-area { width: 100%; min-height: 96px; border: 1px solid #D0D0D0; border-radius: 6px; padding: 12px; font-size: 14px; font-family: inherit; color: #090907; background: #FCFCFC; resize: none; outline: none; line-height: 1.5; margin-bottom: 24px; }
+    .free-text-area::placeholder { color: #A0A0A0; }
+    .free-text-area:focus { border-color: #090907; }
+
+    .btn-full { width: 100%; height: 48px; border-radius: 6px; font-size: 16px; font-weight: 400; font-family: inherit; cursor: pointer; background: #090907; border: none; color: white; margin-bottom: 12px; }
+    .btn-full:disabled { background: #EAEAEA; color: #A0A0A0; cursor: default; }
+    .skip-link { display: block; text-align: center; padding-bottom: 40px; font-size: 13px; color: #757575; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ─── DESIGN ANNOTATIONS ─── */
+    .design-note { margin: 10px 16px 16px; background: #FFFBEB; border: 1px dashed #D97706; border-radius: 10px; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-start; }
+    .design-note-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+    .design-note-body { flex: 1; }
+    .design-note-label { font-size: 10px; font-weight: 700; color: #D97706; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .design-note-text { font-size: 12px; color: #78350F; line-height: 17px; }
+    .design-note-rule { font-size: 11px; font-weight: 600; color: #92400E; margin-top: 6px; padding-top: 6px; border-top: 1px solid #FCD34D; font-variant-numeric: tabular-nums; }
+
+    /* ─── WEB MOBILE CHROME ─── */
+    .web-mobile-frame {
+      width: 390px;
+      background: #fff;
+      border-radius: 50px;
+      border: 8px solid #1A1A1A;
+      box-shadow: 0 0 0 1px #333, 0 32px 64px rgba(0,0,0,0.35);
+      overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .web-mobile-screen { flex: 1; overflow-y: auto; background: #F3F3F3; }
+    .web-mobile-screen::-webkit-scrollbar { display: none; }
+    .wm-status { height: 44px; background: #FCFCFC; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; }
+    .wm-browser-bar { background: #FCFCFC; padding: 8px 12px; border-bottom: 1px solid #EAEAEA; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .wm-url { flex: 1; background: #F3F3F3; border-radius: 8px; padding: 6px 10px; font-size: 11px; color: #757575; display: flex; align-items: center; gap: 4px; }
+    .wm-url-lock { opacity: 0.5; }
+    .bc-header { background: #FCFCFC; border-bottom: 1px solid #EAEAEA; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; height: 52px; flex-shrink: 0; }
+    .bc-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; color: #090907; }
+    .bc-header-icons { display: flex; gap: 8px; align-items: center; }
+
+    /* Switch to App banner */
+    .app-banner { background: #090907; padding: 10px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .app-banner-text { font-size: 12px; color: white; flex: 1; line-height: 16px; }
+    .app-banner-cta { font-size: 12px; font-weight: 700; color: #B8DC32; white-space: nowrap; }
+
+    /* Web mobile rating card */
+    .wm-rating-page { background: #FCFCFC; min-height: 600px; }
+    .wm-page-header { padding: 20px 16px 0; border-bottom: 1px solid #EAEAEA; padding-bottom: 16px; }
+    .wm-breadcrumb { font-size: 11px; color: #757575; margin-bottom: 8px; }
+    .wm-page-title { font-size: 20px; font-weight: 700; color: #090907; letter-spacing: -0.3px; }
+    .wm-rating-content { padding: 0 16px 40px; }
+
+    /* ─── WEB DESKTOP FRAME ─── */
+    .desktop-frame {
+      width: 1100px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #D0D0D0;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      overflow: hidden; flex-shrink: 0;
+      display: flex; flex-direction: column;
+    }
+    .desktop-chrome {
+      background: #F0F0F0;
+      padding: 10px 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid #D8D8D8; flex-shrink: 0;
+    }
+    .dc-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dc-dot.red { background: #FF5F57; }
+    .dc-dot.yellow { background: #FEBC2E; }
+    .dc-dot.green { background: #28C840; }
+    .dc-url { flex: 1; background: white; border-radius: 6px; padding: 5px 12px; font-size: 12px; color: #757575; display: flex; align-items: center; gap: 5px; max-width: 480px; margin: 0 auto; border: 1px solid #E0E0E0; }
+    .desktop-bc-header { background: #FCFCFC; border-bottom: 1px solid #EAEAEA; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 60px; flex-shrink: 0; }
+    .desktop-bc-logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; color: #090907; }
+    .desktop-bc-nav { display: flex; gap: 24px; align-items: center; }
+    .desktop-bc-nav-item { font-size: 14px; color: #535353; cursor: pointer; }
+    .desktop-bc-nav-item.active { font-weight: 600; color: #090907; }
+    .desktop-bc-actions { display: flex; gap: 12px; align-items: center; }
+    .desktop-bc-actions button { height: 36px; padding: 0 16px; border-radius: 6px; font-size: 13px; font-family: inherit; cursor: pointer; }
+    .btn-login { background: none; border: 1px solid #090907; color: #090907; }
+    .btn-sell { background: #090907; border: none; color: white; }
+
+    /* Desktop layout */
+    .desktop-body { background: #F3F3F3; padding: 40px 32px 60px; display: flex; justify-content: center; }
+    .desktop-rating-card {
+      background: #FCFCFC; border-radius: 12px;
+      border: 1px solid #EAEAEA;
+      width: 560px; padding: 32px;
+    }
+    .desktop-card-title { font-size: 22px; font-weight: 700; color: #090907; letter-spacing: -0.4px; margin-bottom: 4px; }
+    .desktop-card-sub { font-size: 14px; color: #757575; margin-bottom: 24px; }
+    .desktop-order-ctx { background: #F3F3F3; border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+    .desktop-order-img { width: 52px; height: 52px; border-radius: 6px; background: #EAEAEA; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .desktop-order-info { flex: 1; }
+    .desktop-order-name { font-size: 14px; font-weight: 700; color: #090907; }
+    .desktop-order-meta { font-size: 12px; color: #757575; margin-top: 2px; }
+    .desktop-star-row { display: flex; gap: 10px; margin-bottom: 8px; }
+    .desktop-star { font-size: 48px; cursor: pointer; line-height: 1; color: #EA580C; }
+    .desktop-star-label { font-size: 14px; font-weight: 600; color: #090907; margin-bottom: 24px; }
+    .desktop-tag-label { font-size: 16px; font-weight: 700; color: #090907; margin-bottom: 12px; }
+    .desktop-tag-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .desktop-free-text-label { font-size: 14px; font-weight: 600; color: #090907; margin-bottom: 8px; }
+    .desktop-free-text-area { width: 100%; min-height: 96px; border: 1px solid #D0D0D0; border-radius: 6px; padding: 12px; font-size: 14px; font-family: inherit; color: #090907; background: #FCFCFC; resize: vertical; outline: none; line-height: 1.5; margin-bottom: 24px; }
+    .desktop-free-text-area:focus { border-color: #090907; }
+    .desktop-actions { display: flex; gap: 12px; align-items: center; }
+    .desktop-submit-btn { flex: 1; height: 48px; border-radius: 6px; background: #090907; border: none; color: white; font-size: 16px; font-weight: 400; font-family: inherit; cursor: pointer; }
+    .desktop-skip-link { font-size: 13px; color: #757575; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+
+    /* Desktop annotation alongside card */
+    .desktop-annotation-col {
+      width: 280px; padding-top: 8px; flex-shrink: 0;
+    }
+    .anno-card { background: #FFFBEB; border: 1px dashed #D97706; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+    .anno-label { font-size: 10px; font-weight: 700; color: #D97706; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .anno-text { font-size: 12px; color: #78350F; line-height: 17px; }
+    .anno-rule { font-size: 11px; font-weight: 600; color: #92400E; margin-top: 8px; padding-top: 8px; border-top: 1px solid #FCD34D; }
+
+  </style>
+</head>
+<body>
+
+  <!-- ─── PROTO BAR ─── -->
+  <div class="proto-bar">
+    <span class="proto-logo">buycycle</span>
+    <span class="proto-sep">|</span>
+    <span class="proto-label">Rating Flow</span>
+    <span class="proto-tag">Concept · Feb 2026</span>
+    <nav class="proto-nav">
+      <a href="pdp.html" class="proto-nav-link">PDP</a>
+      <a href="seller-profile.html" class="proto-nav-link">Seller Profile</a>
+      <a href="rating-flow.html" class="proto-nav-link active">Rating Flow</a>
+    </nav>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       APP
+  ══════════════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">App</div>
+    <div class="section-group-desc">Triggered after a successful purchase is confirmed. Step 2 of 3 — the seller rating screen. The buyer rates their experience, selects positive tags, and optionally adds a free text note.</div>
+
+    <div class="canvas">
+
+      <!-- Step 1 — Star selection (empty / no selection yet) -->
+      <div class="phone-col">
+        <p class="phone-label">Step 1 · Select Stars</p>
+        <div class="phone"><div class="screen">
+
+          <div class="status-bar light">
+            <span class="status-time">9:41</span>
+            <div class="status-icons">
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"/><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"/><circle cx="8" cy="11" r="1.5" fill="#090907"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg>
+            </div>
+          </div>
+
+          <div class="nav-bar">
+            <div class="nav-btn"></div>
+            <span class="nav-title">Review</span>
+            <div class="nav-btn">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 4L14 14M14 4L4 14" stroke="#090907" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+
+          <div class="progress-bar"><div class="progress-fill" style="width:33%;"></div></div>
+          <div class="progress-label"><span>1 / 3</span></div>
+
+          <div class="rating-content">
+            <div class="seller-ctx">
+              <div class="avatar-sm" style="width:50px;height:50px;font-size:18px;">TK</div>
+              <div>
+                <div class="seller-bike">Canyon Aeroad · Munich</div>
+                <div class="seller-name-lg">Thomas K.</div>
+              </div>
+            </div>
+
+            <div class="rating-q">How was your experience with Thomas?</div>
+            <div class="rating-sub">Your review helps other buyers.</div>
+
+            <div class="star-row">
+              <span class="star-btn" style="color:#EAEAEA;">★</span>
+              <span class="star-btn" style="color:#EAEAEA;">★</span>
+              <span class="star-btn" style="color:#EAEAEA;">★</span>
+              <span class="star-btn" style="color:#EAEAEA;">★</span>
+              <span class="star-btn" style="color:#EAEAEA;">★</span>
+            </div>
+            <div class="star-label" style="color:#A0A0A0;">Tap to rate</div>
+
+            <button class="btn-full" disabled>Continue</button>
+            <span class="skip-link">Skip</span>
+          </div>
+
+        </div></div>
+      </div>
+
+      <!-- Step 2 — Tags + free text (5★ selected) -->
+      <div class="phone-col">
+        <p class="phone-label">Step 2 · High Rating (3–5★)</p>
+        <div class="phone"><div class="screen">
+
+          <div class="status-bar light">
+            <span class="status-time">9:41</span>
+            <div class="status-icons">
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"/><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"/><circle cx="8" cy="11" r="1.5" fill="#090907"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg>
+            </div>
+          </div>
+
+          <div class="nav-bar">
+            <div class="nav-btn"></div>
+            <span class="nav-title">Review</span>
+            <div class="nav-btn">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 4L14 14M14 4L4 14" stroke="#090907" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+
+          <div class="progress-bar"><div class="progress-fill" style="width:66%;"></div></div>
+          <div class="progress-label"><span>2 / 3</span></div>
+
+          <div class="rating-content">
+            <div class="seller-ctx">
+              <div class="avatar-sm" style="width:50px;height:50px;font-size:18px;">TK</div>
+              <div>
+                <div class="seller-bike">Canyon Aeroad · Munich</div>
+                <div class="seller-name-lg">Thomas K.</div>
+              </div>
+            </div>
+
+            <div class="rating-q">How was your experience with Thomas?</div>
+            <div class="rating-sub">Your review helps other buyers.</div>
+
+            <div class="star-row">
+              <span class="star-btn">★</span>
+              <span class="star-btn">★</span>
+              <span class="star-btn">★</span>
+              <span class="star-btn">★</span>
+              <span class="star-btn">★</span>
+            </div>
+            <div class="star-label">Excellent</div>
+
+            <div class="tag-select-label">What was particularly good?</div>
+            <div class="tag-select-wrap">
+              <span class="sel-tag selected">Bike as described</span>
+              <span class="sel-tag selected">Very friendly</span>
+              <span class="sel-tag">Fast response</span>
+              <span class="sel-tag selected">Easy handover</span>
+              <span class="sel-tag">Honest photos</span>
+              <span class="sel-tag">All documented</span>
+              <span class="sel-tag">Great packaging</span>
+              <span class="sel-tag">Something else</span>
+            </div>
+
+            <div class="free-text-label">Anything else you'd like to add? <span class="free-text-optional">(optional)</span></div>
+            <textarea class="free-text-area" placeholder="Share more about your experience…"></textarea>
+
+            <button class="btn-full">Continue</button>
+            <span class="skip-link">Skip</span>
+          </div>
+
+        </div></div>
+
+        <!-- Annotation: tag color deviation -->
+        <div class="design-note" style="max-width:390px;">
+          <div class="design-note-icon">📐</div>
+          <div class="design-note-body">
+            <div class="design-note-label">DS Deviation — Selected chip color</div>
+            <div class="design-note-text">Selected tags use green (#E8F8F0 bg / #146C43 text) instead of the DS default black. Intentional: the positive-reinforcement context makes green more appropriate than a neutral dark fill.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 — Low rating variant (1–2★, chips hidden) -->
+      <div class="phone-col">
+        <p class="phone-label">Step 2 · Low Rating (1–2★)</p>
+        <div class="phone"><div class="screen">
+
+          <div class="status-bar light">
+            <span class="status-time">9:41</span>
+            <div class="status-icons">
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"/><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"/><circle cx="8" cy="11" r="1.5" fill="#090907"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg>
+            </div>
+          </div>
+
+          <div class="nav-bar">
+            <div class="nav-btn"></div>
+            <span class="nav-title">Review</span>
+            <div class="nav-btn">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 4L14 14M14 4L4 14" stroke="#090907" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+
+          <div class="progress-bar"><div class="progress-fill" style="width:66%;"></div></div>
+          <div class="progress-label"><span>2 / 3</span></div>
+
+          <div class="rating-content">
+            <div class="seller-ctx">
+              <div class="avatar-sm" style="width:50px;height:50px;font-size:18px;">TK</div>
+              <div>
+                <div class="seller-bike">Canyon Aeroad · Munich</div>
+                <div class="seller-name-lg">Thomas K.</div>
+              </div>
+            </div>
+
+            <div class="rating-q">How was your experience with Thomas?</div>
+            <div class="rating-sub">Your review helps other buyers.</div>
+
+            <div class="star-row">
+              <span class="star-btn">★</span>
+              <span class="star-btn">★</span>
+              <span class="star-btn" style="color:#EAEAEA;">★</span>
+              <span class="star-btn" style="color:#EAEAEA;">★</span>
+              <span class="star-btn" style="color:#EAEAEA;">★</span>
+            </div>
+            <div class="star-label">Could be better</div>
+
+            <!-- Chips hidden at 1–2 stars -->
+
+            <div class="free-text-label">What went wrong? <span class="free-text-optional">(optional)</span></div>
+            <textarea class="free-text-area" placeholder="Share more about your experience…"></textarea>
+
+            <button class="btn-full">Continue</button>
+            <span class="skip-link">Skip</span>
+          </div>
+
+        </div></div>
+
+        <!-- Annotation: chips hidden for 1–2 star ratings -->
+        <div class="design-note" style="max-width:390px;">
+          <div class="design-note-icon">📐</div>
+          <div class="design-note-body">
+            <div class="design-note-label">Design logic — Chips visibility</div>
+            <div class="design-note-text">The "What was particularly good?" chip selection is only shown for ratings of 3 stars or above. At 1–2 stars the chips are hidden entirely — a low rating signals a negative experience, so positive reinforcement prompts are skipped.</div>
+            <div class="design-note-rule">Rule: ≥ 3 stars → show chips · 1–2 stars → chips hidden</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 — Success / Thank you -->
+      <div class="phone-col">
+        <p class="phone-label">Step 3 · Confirmation</p>
+        <div class="phone"><div class="screen">
+
+          <div class="status-bar light">
+            <span class="status-time">9:41</span>
+            <div class="status-icons">
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"/><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"/><circle cx="8" cy="11" r="1.5" fill="#090907"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg>
+            </div>
+          </div>
+
+          <div class="nav-bar" style="border-bottom:none;">
+            <div class="nav-btn"></div>
+            <span class="nav-title"></span>
+            <div class="nav-btn">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M4 4L14 14M14 4L4 14" stroke="#090907" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+
+          <div class="progress-bar"><div class="progress-fill" style="width:100%;"></div></div>
+
+          <!-- Success state -->
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;">
+            <div style="width:72px;height:72px;border-radius:50%;background:#E8F8F0;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M7 16L13 22L25 10" stroke="#146C43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div style="font-size:24px;font-weight:700;color:#090907;letter-spacing:-0.4px;margin-bottom:8px;">Thanks for your review!</div>
+            <div style="font-size:15px;color:#535353;line-height:22px;margin-bottom:32px;">Your feedback helps Thomas build trust with future buyers. Reviews are published within 24h.</div>
+
+            <button class="btn-full">Back to purchases</button>
+          </div>
+
+        </div></div>
+
+      </div>
+
+    </div>
+
+    <!-- Auto-feedback annotation row -->
+    <div style="display:flex;justify-content:center;padding:0 32px 48px;">
+      <div class="design-note" style="max-width:760px;">
+        <div class="design-note-icon">📐</div>
+        <div class="design-note-body">
+          <div class="design-note-label">Auto-feedback — What happens if the buyer skips</div>
+          <div class="design-note-text">If the buyer skips or never opens the rating flow, buycycle auto-generates a silent 5★ for the completed transaction. This auto-entry is <strong>counted in the seller's total</strong> (e.g. "23 ratings") but <strong>never displayed</strong> as a review card on the seller profile — to avoid fabricated-looking feedback. The flow above shows the real review path; the auto path requires no UI.</div>
+          <div class="design-note-rule">Auto-feedback: counted in total · Never rendered as a review card · No buyer action required</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       WEB MOBILE
+  ══════════════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Web Mobile</div>
+    <div class="section-group-desc">Same flow in the mobile browser. The rating form lives on a dedicated page in the Order Management section. "Switch to App" banner nudges toward the native experience.</div>
+
+    <div class="canvas">
+
+      <!-- Web Mobile: Step 2 (stars selected, tags visible) -->
+      <div class="phone-col">
+        <p class="phone-label">Step 2 · Tags + Free Text</p>
+        <div class="web-mobile-frame" style="height:844px;">
+          <div class="wm-status" style="background:#FCFCFC;">
+            <span class="status-time" style="font-size:15px;font-weight:600;color:#090907;">9:41</span>
+            <div class="status-icons">
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"/><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"/><circle cx="8" cy="11" r="1.5" fill="#090907"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg>
+            </div>
+          </div>
+
+          <!-- Browser bar -->
+          <div class="wm-browser-bar">
+            <div class="wm-url">
+              <svg class="wm-url-lock" width="10" height="12" viewBox="0 0 10 12" fill="none"><rect x="1" y="5" width="8" height="7" rx="1.5" stroke="#535353" stroke-width="1.2"/><path d="M3 5V3.5A2 2 0 017 3.5V5" stroke="#535353" stroke-width="1.2" stroke-linecap="round"/></svg>
+              buycycle.com/orders/review
+            </div>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="1.5" fill="#535353"/><circle cx="2" cy="8" r="1.5" fill="#535353"/><circle cx="14" cy="8" r="1.5" fill="#535353"/></svg>
+          </div>
+
+          <!-- App nudge banner -->
+          <div class="app-banner">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="4" y="1" width="8" height="14" rx="2" stroke="white" stroke-width="1.2"/><circle cx="8" cy="12.5" r="0.8" fill="white"/></svg>
+            <span class="app-banner-text">Better in the buycycle app — track all your orders</span>
+            <span class="app-banner-cta">Open app</span>
+          </div>
+
+          <!-- buycycle header -->
+          <div class="bc-header">
+            <span class="bc-logo">buycycle</span>
+            <div class="bc-header-icons">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="10" cy="10" r="7" stroke="#090907" stroke-width="1.5"/><path d="M15.5 15.5L20 20" stroke="#090907" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2C7.1 2 4 5.1 4 9C4 13.5 11 21 11 21C11 21 18 13.5 18 9C18 5.1 14.9 2 11 2Z" stroke="#090907" stroke-width="1.5" fill="none"/><circle cx="11" cy="9" r="2.5" stroke="#090907" stroke-width="1.5"/></svg>
+            </div>
+          </div>
+
+          <!-- Page content -->
+          <div class="web-mobile-screen">
+            <div class="wm-rating-page">
+              <div class="wm-page-header">
+                <div class="wm-breadcrumb">Orders &rsaquo; Review</div>
+                <div class="wm-page-title">Rate your purchase</div>
+              </div>
+              <div class="wm-rating-content">
+                <!-- Progress -->
+                <div style="margin:16px 0 0;">
+                  <div style="height:3px;background:#EAEAEA;border-radius:2px;overflow:hidden;margin-bottom:4px;">
+                    <div style="height:100%;width:66%;background:#090907;border-radius:2px;"></div>
+                  </div>
+                  <div style="text-align:right;font-size:11px;color:#757575;font-weight:500;">2 / 3</div>
+                </div>
+
+                <!-- Seller context -->
+                <div style="display:flex;align-items:center;gap:12px;padding:12px 0 16px;border-bottom:1px solid #EAEAEA;margin-bottom:16px;">
+                  <div class="avatar-sm" style="width:44px;height:44px;font-size:16px;">TK</div>
+                  <div>
+                    <div style="font-size:12px;color:#757575;">Canyon Aeroad · Munich</div>
+                    <div style="font-size:14px;font-weight:700;color:#090907;">Thomas K.</div>
+                  </div>
+                </div>
+
+                <div style="font-size:20px;font-weight:700;color:#090907;line-height:1.3;letter-spacing:-0.3px;margin-bottom:6px;">How was your experience with Thomas?</div>
+                <div style="font-size:14px;color:#757575;margin-bottom:20px;">Your review helps other buyers.</div>
+
+                <!-- Stars -->
+                <div style="display:flex;gap:6px;margin-bottom:8px;">
+                  <span style="font-size:38px;color:#EA580C;cursor:pointer;">★</span>
+                  <span style="font-size:38px;color:#EA580C;cursor:pointer;">★</span>
+                  <span style="font-size:38px;color:#EA580C;cursor:pointer;">★</span>
+                  <span style="font-size:38px;color:#EA580C;cursor:pointer;">★</span>
+                  <span style="font-size:38px;color:#EA580C;cursor:pointer;">★</span>
+                </div>
+                <div style="font-size:14px;font-weight:600;color:#090907;margin-bottom:24px;">Excellent</div>
+
+                <!-- Tags -->
+                <div style="font-size:15px;font-weight:700;color:#090907;margin-bottom:12px;">What was particularly good?</div>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+                  <span class="sel-tag selected">Bike as described</span>
+                  <span class="sel-tag selected">Very friendly</span>
+                  <span class="sel-tag">Fast response</span>
+                  <span class="sel-tag selected">Easy handover</span>
+                  <span class="sel-tag">Honest photos</span>
+                  <span class="sel-tag">All documented</span>
+                  <span class="sel-tag">Great packaging</span>
+                  <span class="sel-tag">Something else</span>
+                </div>
+
+                <!-- Free text -->
+                <div style="font-size:14px;font-weight:600;color:#090907;margin-bottom:8px;">Anything else? <span style="font-weight:400;color:#757575;">(optional)</span></div>
+                <textarea class="free-text-area" placeholder="Share more about your experience…"></textarea>
+
+                <button class="btn-full">Continue</button>
+                <span class="skip-link">Skip</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Web Mobile: Confirmation -->
+      <div class="phone-col">
+        <p class="phone-label">Step 3 · Confirmation</p>
+        <div class="web-mobile-frame" style="height:844px;">
+          <div class="wm-status" style="background:#FCFCFC;">
+            <span class="status-time" style="font-size:15px;font-weight:600;color:#090907;">9:41</span>
+            <div class="status-icons">
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg>
+            </div>
+          </div>
+          <div class="wm-browser-bar">
+            <div class="wm-url">
+              <svg class="wm-url-lock" width="10" height="12" viewBox="0 0 10 12" fill="none"><rect x="1" y="5" width="8" height="7" rx="1.5" stroke="#535353" stroke-width="1.2"/><path d="M3 5V3.5A2 2 0 017 3.5V5" stroke="#535353" stroke-width="1.2" stroke-linecap="round"/></svg>
+              buycycle.com/orders/review/done
+            </div>
+          </div>
+          <div class="bc-header">
+            <span class="bc-logo">buycycle</span>
+          </div>
+          <div class="web-mobile-screen">
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;min-height:520px;">
+              <div style="width:72px;height:72px;border-radius:50%;background:#E8F8F0;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M7 16L13 22L25 10" stroke="#146C43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="font-size:22px;font-weight:700;color:#090907;letter-spacing:-0.4px;margin-bottom:8px;">Thanks for your review!</div>
+              <div style="font-size:14px;color:#535353;line-height:22px;margin-bottom:28px;">Your feedback is published within 24h and helps future buyers choose trustworthy sellers.</div>
+              <button class="btn-full">Back to orders</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       WEB DESKTOP
+  ══════════════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Web Desktop</div>
+    <div class="section-group-desc">Accessed from Order Management. The form is rendered as a centered card. The same 3-step flow — star selection, tags + free text, confirmation.</div>
+
+    <div class="canvas" style="align-items:flex-start;flex-direction:column;">
+
+      <!-- Desktop: Step 2 (tags + free text) -->
+      <div style="display:flex;justify-content:center;width:100%;margin-bottom:16px;">
+        <p style="font-size:11px;font-weight:600;color:#535353;text-transform:uppercase;letter-spacing:0.1em;">Step 2 · Tags + Free Text</p>
+      </div>
+      <div style="display:flex;justify-content:center;width:100%;margin-bottom:40px;">
+        <div class="desktop-frame">
+          <div class="desktop-chrome">
+            <div class="dc-dot red"></div>
+            <div class="dc-dot yellow"></div>
+            <div class="dc-dot green"></div>
+            <div class="dc-url">
+              <svg width="10" height="12" viewBox="0 0 10 12" fill="none" style="opacity:0.4;"><rect x="1" y="5" width="8" height="7" rx="1.5" stroke="#535353" stroke-width="1.2"/><path d="M3 5V3.5A2 2 0 017 3.5V5" stroke="#535353" stroke-width="1.2" stroke-linecap="round"/></svg>
+              buycycle.com/orders/review
+            </div>
+          </div>
+          <div class="desktop-bc-header">
+            <span class="desktop-bc-logo">buycycle</span>
+            <div class="desktop-bc-nav">
+              <span class="desktop-bc-nav-item">Buy</span>
+              <span class="desktop-bc-nav-item">Sell</span>
+              <span class="desktop-bc-nav-item active">My account</span>
+            </div>
+            <div class="desktop-bc-actions">
+              <button class="btn-login">Log in</button>
+              <button class="btn-sell">Sell your bike</button>
+            </div>
+          </div>
+
+          <div class="desktop-body">
+            <!-- Left: rating card -->
+            <div class="desktop-rating-card">
+              <!-- Progress -->
+              <div style="margin-bottom:24px;">
+                <div style="height:3px;background:#EAEAEA;border-radius:2px;overflow:hidden;margin-bottom:4px;">
+                  <div style="height:100%;width:66%;background:#090907;border-radius:2px;"></div>
+                </div>
+                <div style="text-align:right;font-size:11px;color:#757575;font-weight:500;">2 / 3</div>
+              </div>
+
+              <div class="desktop-card-title">Rate your experience</div>
+              <div class="desktop-card-sub">Your review helps other buyers make informed decisions.</div>
+
+              <!-- Order context -->
+              <div class="desktop-order-ctx">
+                <div class="desktop-order-img">🚲</div>
+                <div class="desktop-order-info">
+                  <div class="desktop-order-name">Canyon Aeroad CF SL 8</div>
+                  <div class="desktop-order-meta">Sold by Thomas K. · Munich · Order #BC-28491</div>
+                </div>
+              </div>
+
+              <!-- Stars -->
+              <div style="font-size:16px;font-weight:700;color:#090907;margin-bottom:12px;">How was your experience with Thomas?</div>
+              <div class="desktop-star-row">
+                <span class="desktop-star">★</span>
+                <span class="desktop-star">★</span>
+                <span class="desktop-star">★</span>
+                <span class="desktop-star">★</span>
+                <span class="desktop-star">★</span>
+              </div>
+              <div class="desktop-star-label">Excellent</div>
+
+              <!-- Tags -->
+              <div class="desktop-tag-label">What was particularly good?</div>
+              <div class="desktop-tag-wrap">
+                <span class="sel-tag selected">Bike as described</span>
+                <span class="sel-tag selected">Very friendly</span>
+                <span class="sel-tag">Fast response</span>
+                <span class="sel-tag selected">Easy handover</span>
+                <span class="sel-tag">Honest photos</span>
+                <span class="sel-tag">All documented</span>
+                <span class="sel-tag">Great packaging</span>
+                <span class="sel-tag">Something else</span>
+              </div>
+
+              <!-- Free text -->
+              <div class="desktop-free-text-label">Anything else you'd like to add? <span style="font-weight:400;color:#757575;">(optional)</span></div>
+              <textarea class="desktop-free-text-area" placeholder="Share more about your experience…"></textarea>
+
+              <div class="desktop-actions">
+                <button class="desktop-submit-btn">Submit review</button>
+                <span class="desktop-skip-link">Skip</span>
+              </div>
+            </div>
+
+            <!-- Right: annotation -->
+            <div class="desktop-annotation-col" style="margin-left:32px;">
+              <div class="anno-card">
+                <div class="anno-label">Design logic — Tag labels</div>
+                <div class="anno-text">Tags are pre-populated based on the star rating. 5★ → positive tags ("Bike as described", "Very friendly", …). For lower ratings, negative tags appear instead ("Not as described", "Slow response", …). The buyer can toggle any tag.</div>
+                <div class="anno-rule">Tags adapt to star rating · Multi-select · No min selection required</div>
+              </div>
+              <div class="anno-card">
+                <div class="anno-label">Free text — Optional field</div>
+                <div class="anno-text">Free text is always optional. No minimum character count. Placeholder copy is neutral. If a buyer submits with 5★ + tags but no text, the review still counts as a full written review — the text field is just additional context.</div>
+                <div class="anno-rule">Optional · No min length · Submitted even without text</div>
+              </div>
+              <div class="anno-card">
+                <div class="anno-label">Auto-feedback fallback</div>
+                <div class="anno-text">If the buyer never opens this flow (e.g. closes email CTA, ignores the in-app prompt), buycycle auto-generates a silent 5★. Counted in the seller's total — never shown as a review card.</div>
+                <div class="anno-rule">Auto: 5★ counted · Never rendered · No buyer action needed</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop: Confirmation -->
+      <div style="display:flex;justify-content:center;width:100%;margin-bottom:16px;">
+        <p style="font-size:11px;font-weight:600;color:#535353;text-transform:uppercase;letter-spacing:0.1em;">Step 3 · Confirmation</p>
+      </div>
+      <div style="display:flex;justify-content:center;width:100%;padding-bottom:80px;">
+        <div class="desktop-frame">
+          <div class="desktop-chrome">
+            <div class="dc-dot red"></div>
+            <div class="dc-dot yellow"></div>
+            <div class="dc-dot green"></div>
+            <div class="dc-url">
+              <svg width="10" height="12" viewBox="0 0 10 12" fill="none" style="opacity:0.4;"><rect x="1" y="5" width="8" height="7" rx="1.5" stroke="#535353" stroke-width="1.2"/><path d="M3 5V3.5A2 2 0 017 3.5V5" stroke="#535353" stroke-width="1.2" stroke-linecap="round"/></svg>
+              buycycle.com/orders/review/done
+            </div>
+          </div>
+          <div class="desktop-bc-header">
+            <span class="desktop-bc-logo">buycycle</span>
+            <div class="desktop-bc-nav">
+              <span class="desktop-bc-nav-item">Buy</span>
+              <span class="desktop-bc-nav-item">Sell</span>
+              <span class="desktop-bc-nav-item active">My account</span>
+            </div>
+            <div class="desktop-bc-actions">
+              <button class="btn-login">Log in</button>
+              <button class="btn-sell">Sell your bike</button>
+            </div>
+          </div>
+
+          <div class="desktop-body" style="justify-content:center;align-items:flex-start;padding-top:60px;">
+            <div style="background:#FCFCFC;border-radius:12px;border:1px solid #EAEAEA;width:480px;padding:40px;text-align:center;">
+              <div style="width:72px;height:72px;border-radius:50%;background:#E8F8F0;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M7 16L13 22L25 10" stroke="#146C43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <div style="font-size:24px;font-weight:700;color:#090907;letter-spacing:-0.4px;margin-bottom:8px;">Thanks for your review!</div>
+              <div style="font-size:15px;color:#535353;line-height:22px;margin-bottom:28px;">Your feedback is published within 24h and helps other buyers choose trustworthy sellers.</div>
+
+              <div style="display:flex;gap:12px;">
+                <button style="flex:1;height:48px;border-radius:6px;background:#090907;border:none;color:white;font-size:15px;font-family:inherit;cursor:pointer;">Back to orders</button>
+                <button style="height:48px;padding:0 20px;border-radius:6px;background:none;border:1px solid #090907;color:#090907;font-size:15px;font-family:inherit;cursor:pointer;">View Thomas's profile</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
