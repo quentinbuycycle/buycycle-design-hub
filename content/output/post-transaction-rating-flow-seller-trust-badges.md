@@ -5,6 +5,7 @@ date: "2026-03-01"
 team: "Design Team"
 tags: ["Buyer & Seller","Post-transaction XP"]
 prototypes:
+  - "/prototypes/rating-flow.html"
   - "/prototypes/seller-profile.html"
   - "/prototypes/post-transaction-rating-flow-seller-trust-badges.html"
 finalPrototypes: []
