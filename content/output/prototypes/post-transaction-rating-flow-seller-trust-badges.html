@@ -1,0 +1,495 @@
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>buycycle — PDP · Trust & Badges</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #E2E2DF; font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; color: #090907; min-height: 100vh; }
+
+    /* ─── PROTO BAR ─── */
+    .proto-bar { position: fixed; top: 0; left: 0; right: 0; background: #090907; color: white; display: flex; align-items: center; gap: 12px; padding: 10px 20px; z-index: 1000; font-size: 12px; font-weight: 500; }
+    .proto-logo { font-size: 14px; font-weight: 700; letter-spacing: -0.3px; }
+    .proto-sep { opacity: 0.2; }
+    .proto-label { opacity: 0.5; font-weight: 400; }
+    .proto-tag { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+    .proto-nav { margin-left: auto; display: flex; gap: 8px; }
+    .proto-nav a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); }
+    .proto-nav a.active { color: white; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+
+    /* ─── LAYOUT ─── */
+    .section-group { padding: 72px 32px 0; }
+    .section-group + .section-group { padding-top: 48px; }
+    .section-group-label { font-size: 11px; font-weight: 700; color: #757575; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 20px; padding-left: 4px; }
+    .canvas { display: flex; justify-content: center; align-items: flex-start; gap: 40px; flex-wrap: wrap; padding-bottom: 64px; }
+    .phone-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .phone-label { font-size: 11px; font-weight: 600; color: #535353; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ─── PHONE FRAME ─── */
+    .phone { width: 390px; height: 844px; background: #FCFCFC; border-radius: 50px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(255,255,255,0.5); }
+    .screen { height: 100%; overflow-y: scroll; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .screen::-webkit-scrollbar { display: none; }
+
+    /* ─── DESKTOP FRAME ─── */
+    .desktop-frame { width: 1100px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.05); }
+    .desktop-chrome { background: #F5F5F5; border-bottom: 1px solid #E0E0E0; padding: 8px 16px; display: flex; align-items: center; gap: 10px; }
+    .chrome-dots { display: flex; gap: 6px; }
+    .chrome-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .chrome-dot.r { background: #FF5F57; } .chrome-dot.y { background: #FEBC2E; } .chrome-dot.g { background: #28C840; }
+    .chrome-url { flex: 1; background: white; border-radius: 6px; padding: 4px 12px; font-size: 12px; color: #757575; text-align: center; border: 1px solid #E0E0E0; max-width: 520px; margin: 0 auto; }
+
+    /* ─── STATUS BAR ─── */
+    .status-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px 0 24px; position: sticky; top: 0; z-index: 50; background: #FCFCFC; }
+    .status-time { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
+
+    /* ─── NAV BAR ─── */
+    .nav-bar { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 4px; background: #FCFCFC; border-bottom: 1px solid #EAEAEA; }
+    .nav-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; flex-shrink: 0; }
+    .nav-actions { display: flex; gap: 2px; }
+
+    /* ─── WEB APP BANNER ─── */
+    .web-app-banner { background: #090907; color: white; display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; font-size: 12px; flex-shrink: 0; }
+    .web-app-banner-left { display: flex; align-items: center; gap: 8px; }
+    .app-icon-wrap { width: 28px; height: 28px; background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #090907; font-style: italic; }
+    .web-open-btn { background: white; color: #090907; border: none; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+    /* ─── WEB HEADER ─── */
+    .web-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #EAEAEA; background: white; flex-shrink: 0; }
+    .web-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; font-style: italic; }
+    .web-header-btns { display: flex; gap: 8px; }
+    .web-btn { padding: 6px 14px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .web-btn-login { background: white; border: 1px solid #090907; color: #090907; }
+    .web-btn-sell { background: #090907; border: none; color: white; }
+
+    /* ─── DESKTOP NAV ─── */
+    .desktop-nav { height: 58px; display: flex; align-items: center; padding: 0 32px; border-bottom: 1px solid #EAEAEA; gap: 20px; background: white; }
+    .desktop-nav-logo { font-size: 20px; font-weight: 700; font-style: italic; letter-spacing: -0.5px; }
+    .desktop-search { flex: 1; background: #F3F3F3; border-radius: 6px; padding: 8px 16px; font-size: 14px; color: #757575; border: none; font-family: inherit; }
+    .desktop-nav-btn { padding: 8px 18px; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+    /* ─── SHARED COMPONENT TOKENS ─── */
+    .price { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+    .price-orig { font-size: 14px; color: #535353; text-decoration: line-through; }
+    .listing-brand { font-size: 14px; color: #535353; margin-bottom: 2px; }
+    .listing-title { font-size: 20px; font-weight: 700; line-height: 1.3; letter-spacing: -0.3px; margin-bottom: 10px; }
+    .chip { background: #EAEAEA; border-radius: 20px; padding: 5px 11px; font-size: 12px; font-weight: 500; color: #333333; display: inline-flex; align-items: center; gap: 4px; }
+    .stars { color: #EA580C; letter-spacing: 0.5px; }
+    .top-seller-pill { background: #090907; color: white; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.02em; }
+    .meta-pill { background: #EAEAEA; color: #535353; font-size: 12px; font-weight: 500; padding: 3px 8px; border-radius: 20px; display: inline-flex; align-items: center; gap: 3px; }
+    .p-divider { height: 1px; background: #EAEAEA; margin: 12px 16px; }
+    .thick-div { height: 6px; background: #F3F3F3; }
+    .section-title { font-size: 14px; font-weight: 700; color: #090907; margin-bottom: 8px; }
+
+    /* ─── HIGH DEMAND BANNER ─── */
+    .hd-banner { background: #FFF7ED; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #EA580C; }
+
+    /* ─── BUYER PROTECTION ─── */
+    .bp-price { font-size: 13px; color: #146C43; display: flex; align-items: center; gap: 5px; margin-bottom: 10px; }
+    .bp-box { background: #E8F8F0; border-radius: 6px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: #146C43; }
+
+    /* ─── SELLER TRUST CARD (App) ─── */
+    .trust-card { background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 16px; overflow: hidden; cursor: pointer; transition: opacity 0.15s; }
+    .trust-card:active { opacity: 0.72; }
+    .trust-card-header { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; }
+    .avatar-sm { width: 42px; height: 42px; border-radius: 50%; background: #090907; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+    .seller-info-col { flex: 1; min-width: 0; }
+    .seller-name-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
+    .seller-name { font-size: 16px; font-weight: 700; color: #090907; }
+    .seller-rating-row { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
+    .rating-val { font-size: 12px; font-weight: 700; color: #090907; }
+    .rating-ct { font-size: 12px; color: #535353; }
+    .seller-meta-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .trust-card-footer { border-top: 1px solid #EAEAEA; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .trust-card-footer span { font-size: 14px; font-weight: 600; color: #090907; }
+
+    /* ─── DOC PILLS ─── */
+    .doc-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid #EAEAEA; }
+    .doc-item { display: inline-flex; align-items: center; gap: 5px; background: #EAEAEA; border-radius: 20px; padding: 5px 11px; font-size: 12px; font-weight: 500; color: #333333; }
+
+    /* ─── STICKY BOTTOM ─── */
+    .sticky-bottom { position: sticky; bottom: 0; background: linear-gradient(179.636deg, rgba(252,252,252,0) 0.95%, #FCFCFC 39.17%); padding: 12px 16px 0; display: flex; gap: 10px; }
+    .home-indicator { height: 34px; background: #FCFCFC; display: flex; align-items: center; justify-content: center; }
+    .home-indicator-pill { width: 134px; height: 5px; background: #090907; border-radius: 20px; }
+    .btn { height: 52px; border-radius: 12px; font-size: 16px; font-weight: 400; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-outline { flex: 1; background: white; border: 1.5px solid #757575; color: #090907; }
+    .btn-solid { flex: 2; background: #090907; border: none; color: white; }
+    .bottom-spacer { height: 100px; }
+
+    /* ─── DESIGN ANNOTATIONS ─── */
+    .design-note { margin: 10px 16px 16px; background: #FFFBEB; border: 1px dashed #D97706; border-radius: 10px; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-start; }
+    .design-note-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+    .design-note-body { flex: 1; }
+    .design-note-label { font-size: 10px; font-weight: 700; color: #D97706; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .design-note-text { font-size: 12px; color: #78350F; line-height: 17px; }
+    .design-note-rule { font-size: 11px; font-weight: 600; color: #92400E; margin-top: 6px; background: rgba(217,119,6,0.1); padding: 4px 8px; border-radius: 6px; display: inline-block; }
+
+    /* ─── DESKTOP PDP LAYOUT ─── */
+    .pdp-body { display: flex; }
+    .pdp-left { flex: 1; padding: 24px 32px 32px; border-right: 1px solid #EAEAEA; }
+    .pdp-sidebar { width: 368px; flex-shrink: 0; padding: 20px 24px; overflow-y: auto; max-height: 680px; }
+    .pdp-sidebar::-webkit-scrollbar { display: none; }
+    .desktop-img { background: linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%); border-radius: 12px; height: 340px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; position: relative; }
+    .desktop-thumbs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .desktop-thumb { width: 76px; height: 57px; background: linear-gradient(160deg,#DADADA 0%,#C4C4C4 100%); border-radius: 6px; border: 2px solid transparent; cursor: pointer; }
+    .desktop-thumb.active { border-color: #090907; }
+    .back-link { display: flex; align-items: center; gap: 5px; font-size: 14px; color: #757575; margin-bottom: 16px; cursor: pointer; }
+    .sidebar-brand { font-size: 13px; color: #757575; margin-bottom: 3px; }
+    .sidebar-title { font-size: 22px; font-weight: 700; line-height: 1.3; letter-spacing: -0.4px; margin-bottom: 10px; }
+    .sidebar-price { font-size: 28px; font-weight: 700; letter-spacing: -0.6px; }
+    .sidebar-msrp { font-size: 14px; color: #757575; text-decoration: line-through; margin-bottom: 4px; }
+    .sidebar-btn-primary { width: 100%; height: 48px; background: #090907; border: none; color: white; border-radius: 6px; font-size: 16px; font-weight: 500; cursor: pointer; font-family: inherit; margin-bottom: 8px; }
+    .sidebar-btn-secondary { width: 100%; height: 48px; background: white; border: 1px solid #757575; color: #090907; border-radius: 6px; font-size: 16px; font-weight: 400; cursor: pointer; font-family: inherit; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .sidebar-divider { height: 1px; background: #EAEAEA; margin: 16px 0; }
+    .desktop-seller-card { border: 1px solid #EAEAEA; border-radius: 12px; padding: 14px; margin-bottom: 12px; cursor: pointer; }
+    .desktop-seller-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+    .desktop-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg,#1a1a18,#3a3a38); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+    .desktop-contact-btn { width: 100%; height: 44px; background: white; border: 1px solid #757575; color: #090907; border-radius: 6px; font-size: 15px; font-weight: 400; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .good-price-bars { display: flex; gap: 3px; align-items: center; }
+    .gp-bar { height: 6px; width: 14px; border-radius: 3px; background: #146C43; }
+    .gp-bar.off { background: #EAEAEA; }
+  </style>
+</head>
+<body>
+
+  <div class="proto-bar">
+    <span class="proto-logo">buycycle</span>
+    <span class="proto-sep">|</span>
+    <span class="proto-label">Trust & Badges</span>
+    <span class="proto-tag">Design Review · Mar 2026</span>
+    <div class="proto-nav">
+      <a href="pdp.html" class="active">PDP</a>
+      <a href="seller-profile.html">Seller Profile</a>
+      <a href="rating-flow.html">Rating Flow</a>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       APP
+  ════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Platform — App</div>
+    <div class="canvas">
+
+      <div class="phone-col">
+        <p class="phone-label">PDP · App</p>
+        <div class="phone"><div class="screen">
+
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <div class="status-icons">
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg>
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"/><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"/><circle cx="8" cy="11" r="1.5" fill="#090907"/></svg>
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg>
+            </div>
+          </div>
+
+          <div class="nav-bar">
+            <div class="nav-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 15L7.5 10L12.5 5" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+
+          <!-- Photo -->
+          <div style="width:100%;height:280px;background:linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%);position:relative;display:flex;align-items:center;justify-content:center;">
+            <svg width="240" height="150" viewBox="0 0 260 160" fill="none"><circle cx="65" cy="110" r="42" stroke="#999" stroke-width="4" fill="none"/><circle cx="195" cy="110" r="42" stroke="#999" stroke-width="4" fill="none"/><line x1="65" y1="110" x2="118" y2="90" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="118" y1="90" x2="108" y2="48" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="108" y1="48" x2="168" y2="52" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="118" y1="90" x2="168" y2="52" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="168" y1="52" x2="180" y2="75" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="180" y1="75" x2="195" y2="110" stroke="#888" stroke-width="3" stroke-linecap="round"/><line x1="108" y1="48" x2="108" y2="34" stroke="#888" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="33" x2="116" y2="33" stroke="#888" stroke-width="3" stroke-linecap="round"/><line x1="168" y1="52" x2="175" y2="38" stroke="#888" stroke-width="3" stroke-linecap="round"/><line x1="170" y1="36" x2="182" y2="36" stroke="#888" stroke-width="3.5" stroke-linecap="round"/></svg>
+            <div style="position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,0.5);color:white;font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px;">1 / 11</div>
+            <div style="position:absolute;bottom:12px;right:12px;display:flex;gap:8px;">
+              <div style="background:rgba(255,255,255,0.9);width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M9 3V13M9 3L5.5 6.5M9 3L12.5 6.5M3 17H17" stroke="#090907" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <div style="background:rgba(255,255,255,0.9);height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 10px;gap:5px;"><svg width="16" height="14" viewBox="0 0 16 14" fill="none"><path d="M8 13C8 13 1 8.5 1 4.8A3.8 3.8 0 0 1 8 2.5A3.8 3.8 0 0 1 15 4.8C15 8.5 8 13 8 13Z" stroke="#090907" stroke-width="1.5" stroke-linejoin="round"/></svg><span style="font-size:13px;font-weight:600;color:#090907;">14</span></div>
+            </div>
+          </div>
+
+          <!-- ★ SELLER SECTION — right below photo, matching current app design ★ -->
+          <div style="padding:12px 16px;">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <div class="avatar-sm" style="width:52px;height:52px;font-size:16px;flex-shrink:0;">TK</div>
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;flex-wrap:wrap;">
+                  <span style="font-size:16px;font-weight:700;">Sold by Thomas K.</span>
+                  <span class="top-seller-pill">TOP SELLER</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:5px;margin-bottom:2px;">
+                  <span class="stars" style="font-size:14px;">★★★★★</span>
+                  <span style="font-size:14px;color:#535353;">(23)</span>
+                </div>
+                <div style="font-size:12px;color:#535353;margin-bottom:4px;">Munich, Germany</div>
+                <span class="meta-pill"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="4" stroke="#535353" stroke-width="1"/><line x1="4.5" y1="2" x2="4.5" y2="4.8" stroke="#535353" stroke-width="1" stroke-linecap="round"/><line x1="4.5" y1="4.8" x2="6" y2="4.8" stroke="#535353" stroke-width="1" stroke-linecap="round"/></svg>~45 min response</span>
+              </div>
+              <button style="height:40px;padding:0 14px;border-radius:10px;border:1.5px solid #757575;background:white;font-size:14px;font-weight:400;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;align-self:flex-start;margin-top:2px;">Ask seller</button>
+            </div>
+          </div>
+
+          <div class="p-divider" style="margin:0 0 0;"></div>
+
+          <!-- Listing info -->
+          <div style="padding:14px 16px 0;">
+            <div class="listing-brand">Specialized</div>
+            <div class="listing-title">Aethos Pro – Ultegra Di2 2023</div>
+            <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;"><span class="price">€ 3,399</span><span class="price-orig">€ 9,899 MSRP</span></div>
+            <div class="bp-price"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" fill="#146C43" opacity="0.2"/><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" stroke="#146C43" stroke-width="1.2"/><path d="M5 7L6.5 8.5L9 6" stroke="#146C43" stroke-width="1.2" stroke-linecap="round"/></svg>€ 3,450 with Buyer Protection</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0;"><span class="chip"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;"><circle cx="6" cy="6" r="5.5" stroke="#535353" stroke-width="1"/><line x1="6" y1="5.2" x2="6" y2="9" stroke="#535353" stroke-width="1.2" stroke-linecap="round"/><circle cx="6" cy="3.5" r="0.7" fill="#535353"/></svg>Very good condition</span><span class="chip">2023</span><span class="chip">58 cm</span><span class="chip"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;"><circle cx="6" cy="6" r="5.5" stroke="#535353" stroke-width="1"/><line x1="6" y1="5.2" x2="6" y2="9" stroke="#535353" stroke-width="1.2" stroke-linecap="round"/><circle cx="6" cy="3.5" r="0.7" fill="#535353"/></svg>Fits to height 176–186 cm</span><span class="chip">Shimano Ultegra Di2</span><span class="chip">Carbon frame</span><span class="chip">Disc brakes</span></div>
+          </div>
+
+          <div style="margin:12px 16px;"><div class="hd-banner"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/><path d="M4 7C4 10.3 6.3 13 9 14C11.7 13 14 10.3 14 7H4Z" fill="#EA580C" opacity="0.4"/></svg>In high demand! 3 buyers made offers in 10 days.</div></div>
+
+          <div class="p-divider"></div>
+          <div style="padding:0 16px;">
+            <div style="font-size:14px;color:#333333;line-height:22px;">Well-maintained aero road bike, used exclusively for training rides. No crash or transport damage.</div>
+          </div>
+          <div style="height:14px;"></div>
+
+          <div class="design-note">
+            <div class="design-note-icon">📐</div>
+            <div class="design-note-body">
+              <div class="design-note-label">Only changing element on PDP</div>
+              <div class="design-note-text">The seller info block keeps the current design — seller section is right below the photo, as in production. Only the TOP SELLER badge and response time pill are added.</div>
+            </div>
+          </div>
+          <div class="design-note">
+            <div class="design-note-icon">📐</div>
+            <div class="design-note-body">
+              <div class="design-note-label">TOP SELLER logic</div>
+              <div class="design-note-text">Fully data-driven. No manual verification. Absence of badge is the signal for sellers who haven't qualified.</div>
+              <div class="design-note-rule">≥ 3 completed deals &nbsp;·&nbsp; avg. rating ≥ 4.0</div>
+            </div>
+          </div>
+          <div class="design-note">
+            <div class="design-note-icon">📐</div>
+            <div class="design-note-body">
+              <div class="design-note-label">Response time pill logic</div>
+              <div class="design-note-text">Only shown when rolling 30-day avg ≤ 3h. Never shown as a negative label — slow responders simply have no pill.</div>
+              <div class="design-note-rule">≤ 3h avg → show &nbsp;·&nbsp; > 3h → hide entirely</div>
+            </div>
+          </div>
+
+          <div class="bottom-spacer"></div>
+          <div class="sticky-bottom" style="flex-direction:column;gap:0;padding-top:44px;">
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-outline"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 2.5H14.5C14.8 2.5 15 2.7 15 3V10C15 10.3 14.8 10.5 14.5 10.5H3.5L1 13V3C1 2.7 1.2 2.5 1.5 2.5Z" stroke="#090907" stroke-width="1.5" stroke-linejoin="round"/></svg>Message</button>
+              <button class="btn btn-solid">Buying Options</button>
+            </div>
+            <div class="home-indicator"><div class="home-indicator-pill"></div></div>
+          </div>
+
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       WEB MOBILE
+  ════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Platform — Web · Mobile</div>
+    <div class="canvas">
+
+      <div class="phone-col">
+        <p class="phone-label">PDP · Web Mobile</p>
+        <div class="phone"><div class="screen">
+
+          <!-- Switch to App banner -->
+          <div class="web-app-banner">
+            <div class="web-app-banner-left">
+              <span style="cursor:pointer;font-size:16px;line-height:1;opacity:0.6;">✕</span>
+              <div class="app-icon-wrap">b.</div>
+              <span>Switch to App</span>
+            </div>
+            <button class="web-open-btn">Open</button>
+          </div>
+
+          <!-- buycycle header -->
+          <div class="web-header">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="nav-btn" style="width:36px;height:36px;"><svg width="20" height="14" viewBox="0 0 20 14" fill="none"><line x1="0" y1="1" x2="20" y2="1" stroke="#090907" stroke-width="2" stroke-linecap="round"/><line x1="0" y1="7" x2="20" y2="7" stroke="#090907" stroke-width="2" stroke-linecap="round"/><line x1="0" y1="13" x2="20" y2="13" stroke="#090907" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <span class="web-logo">buycycle.</span>
+            </div>
+            <div class="web-header-btns">
+              <button class="web-btn web-btn-login">Login</button>
+              <button class="web-btn web-btn-sell">Sell</button>
+            </div>
+          </div>
+
+          <!-- Photo -->
+          <div style="width:100%;height:260px;background:linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%);position:relative;display:flex;align-items:center;justify-content:center;">
+            <svg width="210" height="130" viewBox="0 0 260 160" fill="none"><circle cx="65" cy="110" r="42" stroke="#999" stroke-width="4" fill="none"/><circle cx="195" cy="110" r="42" stroke="#999" stroke-width="4" fill="none"/><line x1="65" y1="110" x2="118" y2="90" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="118" y1="90" x2="108" y2="48" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="108" y1="48" x2="168" y2="52" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="118" y1="90" x2="168" y2="52" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="168" y1="52" x2="195" y2="110" stroke="#888" stroke-width="3" stroke-linecap="round"/></svg>
+            <div style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.5);color:white;font-size:12px;font-weight:600;padding:3px 9px;border-radius:20px;">1 / 11</div>
+            <div style="position:absolute;bottom:10px;right:10px;background:rgba(255,255,255,0.9);border-radius:8px;padding:5px;display:flex;align-items:center;justify-content:center;"><svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M9 3V13M9 3L5.5 6.5M9 3L12.5 6.5M3 17H17" stroke="#090907" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          </div>
+
+          <!-- Title block -->
+          <div style="padding:14px 16px 0;">
+            <div class="listing-brand">Specialized</div>
+            <div style="font-size:22px;font-weight:700;letter-spacing:-0.4px;line-height:1.3;margin-bottom:10px;">Aethos Pro – Ultegra Di2 2023</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"><span class="chip">58 cm</span><span class="chip">2023</span><span class="chip">Shimano Ultegra Di2</span></div>
+            <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:4px;"><span style="font-size:26px;font-weight:700;letter-spacing:-0.6px;">€ 3,399</span><span class="price-orig">€ 9,899 MSRP</span></div>
+            <div class="bp-price"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" fill="#146C43" opacity="0.2"/><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" stroke="#146C43" stroke-width="1.2"/><path d="M5 7L6.5 8.5L9 6" stroke="#146C43" stroke-width="1.2" stroke-linecap="round"/></svg>€ 3,450 with Buyer Protection</div>
+            <div class="hd-banner" style="margin:0 0 12px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>In high demand! 3 buyers made offers in 10 days.</div>
+          </div>
+
+          <div class="p-divider"></div>
+
+          <!-- ★ SELLER SECTION — Web Mobile ★ -->
+          <div style="padding:0 16px 16px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#1a1a18,#3a3a38);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;flex-shrink:0;">TK</div>
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px;">
+                  <span style="font-size:16px;font-weight:700;">Sold by Thomas K.</span>
+                  <span class="top-seller-pill">TOP SELLER</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;">
+                  <span class="stars" style="font-size:14px;">★★★★★</span>
+                  <span style="font-size:14px;font-weight:600;">4.9</span>
+                  <span style="font-size:14px;color:#757575;">(23)</span>
+                </div>
+                <div style="font-size:13px;color:#535353;">Munich · Last active: 1h ago</div>
+                <div style="font-size:13px;color:#535353;">⏱ Usually responds within 45 min</div>
+              </div>
+            </div>
+            <button style="width:100%;height:48px;background:white;border:1px solid #757575;border-radius:6px;font-size:16px;font-weight:400;margin-top:12px;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 2.5H14.5C14.8 2.5 15 2.7 15 3V10C15 10.3 14.8 10.5 14.5 10.5H3.5L1 13V3C1 2.7 1.2 2.5 1.5 2.5Z" stroke="#090907" stroke-width="1.5" stroke-linejoin="round"/></svg>Message</button>
+          </div>
+
+          <div class="bp-box" style="margin:0 16px 16px;">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1L2 4V9C2 13 9 17 9 17C9 17 16 13 16 9V4L9 1Z" fill="#E8F8F0"/><path d="M9 1L2 4V9C2 13 9 17 9 17C9 17 16 13 16 9V4L9 1Z" stroke="#146C43" stroke-width="1.3"/><path d="M6.5 9L8 10.5L11.5 7" stroke="#146C43" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span><strong>Buyer Protection:</strong> Seller is only paid once you've received and approved your item. <span style="text-decoration:underline;cursor:pointer;">Learn more</span></span>
+          </div>
+
+          <div class="design-note">
+            <div class="design-note-icon">📐</div>
+            <div class="design-note-body">
+              <div class="design-note-label">Web Mobile — seller section differences</div>
+              <div class="design-note-text">Flat inline layout (no card frame). Avatar 56px. Name prefixed with "Sold by". Message button inline. Same trust signals: TOP SELLER + response time.</div>
+            </div>
+          </div>
+
+          <div class="bottom-spacer"></div>
+          <div class="sticky-bottom" style="padding-bottom:16px;">
+            <button class="btn btn-outline" style="flex:1;">Make an offer</button>
+            <button class="btn btn-solid" style="flex:1.5;">Buying Options</button>
+          </div>
+
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       WEB DESKTOP
+  ════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Platform — Web · Desktop</div>
+    <div class="canvas" style="flex-direction:column;align-items:center;">
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+        <p class="phone-label">PDP · Web Desktop</p>
+        <div class="desktop-frame">
+
+          <div class="desktop-chrome">
+            <div class="chrome-dots"><div class="chrome-dot r"></div><div class="chrome-dot y"></div><div class="chrome-dot g"></div></div>
+            <div class="chrome-url">buycycle.com/listings/specialized-aethos-pro-ultegra-di2-2023</div>
+          </div>
+
+          <div class="desktop-nav">
+            <span class="desktop-nav-logo">buycycle.</span>
+            <input class="desktop-search" placeholder="Search 100k+ cycling & other sport items" readonly />
+            <button class="desktop-nav-btn" style="background:white;border:1px solid #090907;color:#090907;font-family:inherit;">Login</button>
+            <button class="desktop-nav-btn" style="background:#090907;border:none;color:white;font-family:inherit;">Sell</button>
+          </div>
+
+          <div class="pdp-body">
+
+            <!-- Left: image + details -->
+            <div class="pdp-left">
+              <div class="back-link"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7L9 3" stroke="#757575" stroke-width="1.6" stroke-linecap="round"/></svg>Back to search</div>
+              <div class="desktop-img">
+                <svg width="340" height="210" viewBox="0 0 260 160" fill="none"><circle cx="65" cy="110" r="42" stroke="#999" stroke-width="4" fill="none"/><circle cx="195" cy="110" r="42" stroke="#999" stroke-width="4" fill="none"/><line x1="65" y1="110" x2="118" y2="90" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="118" y1="90" x2="108" y2="48" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="108" y1="48" x2="168" y2="52" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="118" y1="90" x2="168" y2="52" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="168" y1="52" x2="180" y2="75" stroke="#888" stroke-width="3.5" stroke-linecap="round"/><line x1="180" y1="75" x2="195" y2="110" stroke="#888" stroke-width="3" stroke-linecap="round"/><line x1="108" y1="48" x2="108" y2="34" stroke="#888" stroke-width="3" stroke-linecap="round"/><line x1="100" y1="33" x2="116" y2="33" stroke="#888" stroke-width="3" stroke-linecap="round"/></svg>
+              </div>
+              <div class="desktop-thumbs">
+                <div class="desktop-thumb active"></div>
+                <div class="desktop-thumb"></div>
+                <div class="desktop-thumb"></div>
+                <div class="desktop-thumb"></div>
+              </div>
+              <div style="font-size:16px;font-weight:700;margin-bottom:12px;">General information</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;"><span class="chip" style="font-size:13px;">Condition: Very good</span><span class="chip" style="font-size:13px;">Year: 2023</span><span class="chip" style="font-size:13px;">Frame size: 58 cm</span><span class="chip" style="font-size:13px;">Fits to height: 178–186 cm</span></div>
+            </div>
+
+            <!-- Right: sidebar -->
+            <div class="pdp-sidebar">
+              <div class="sidebar-brand">Specialized</div>
+              <div class="sidebar-title">Aethos Pro – Ultegra Di2 2023</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;"><span class="chip">58 cm</span><span class="chip">2023</span><span class="chip">Shimano Ultegra Di2</span></div>
+
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+                <span class="sidebar-price">€ 3,399</span>
+                <div style="display:flex;align-items:center;gap:5px;"><span style="font-size:13px;color:#535353;">Good Price</span><div class="good-price-bars"><div class="gp-bar"></div><div class="gp-bar"></div><div class="gp-bar"></div><div class="gp-bar off"></div></div></div>
+              </div>
+              <div class="sidebar-msrp">€ 9,899 MSRP</div>
+              <div class="bp-price" style="margin-bottom:10px;"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" fill="#146C43" opacity="0.2"/><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" stroke="#146C43" stroke-width="1.2"/><path d="M5 7L6.5 8.5L9 6" stroke="#146C43" stroke-width="1.2" stroke-linecap="round"/></svg>€ 3,450 with Buyer Protection</div>
+              <div class="hd-banner" style="margin-bottom:14px;font-size:13px;"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>In high demand! 3 buyers made offers in 10 days.</div>
+
+              <button class="sidebar-btn-primary">Show buying options</button>
+              <button class="sidebar-btn-secondary"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3L11 8H15L12 11.5L13.5 16L8 13L2.5 16L4 11.5L1 8H5L8 3Z" stroke="#090907" stroke-width="1.5" stroke-linejoin="round" fill="none"/></svg>Make an offer</button>
+
+              <div class="sidebar-divider"></div>
+
+              <!-- ★ SELLER CARD (Desktop) ★ -->
+              <div class="desktop-seller-card" id="trust-card-desktop">
+                <div class="desktop-seller-row">
+                  <div class="desktop-avatar">TK</div>
+                  <div style="flex:1;min-width:0;">
+                    <div style="font-size:12px;color:#757575;margin-bottom:3px;">Sold by</div>
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px;">
+                      <span style="font-size:16px;font-weight:700;">Thomas K.</span>
+                      <span class="top-seller-pill">TOP SELLER</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">
+                      <span class="stars" style="font-size:13px;">★★★★★</span>
+                      <span style="font-size:13px;font-weight:600;">4.9</span>
+                      <span style="font-size:13px;color:#757575;">(23)</span>
+                    </div>
+                    <div style="font-size:13px;color:#535353;line-height:20px;">📍 Munich · Last active: 1h ago<br>⏱ Usually responds within 45 min</div>
+                  </div>
+                </div>
+                <button class="desktop-contact-btn"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M1.5 2.5H14.5C14.8 2.5 15 2.7 15 3V10C15 10.3 14.8 10.5 14.5 10.5H3.5L1 13V3C1 2.7 1.2 2.5 1.5 2.5Z" stroke="#090907" stroke-width="1.5" stroke-linejoin="round"/></svg>Contact seller</button>
+              </div>
+
+              <div class="bp-box">
+                <svg width="17" height="17" viewBox="0 0 18 18" fill="none"><path d="M9 1L2 4V9C2 13 9 17 9 17C9 17 16 13 16 9V4L9 1Z" fill="#E8F8F0"/><path d="M9 1L2 4V9C2 13 9 17 9 17C9 17 16 13 16 9V4L9 1Z" stroke="#146C43" stroke-width="1.3"/><path d="M6.5 9L8 10.5L11.5 7" stroke="#146C43" stroke-width="1.3" stroke-linecap="round"/></svg>
+                <span><strong>Buyer Protection:</strong> Seller is only paid once you've received and approved your item. <span style="color:#146C43;text-decoration:underline;cursor:pointer;">Learn more</span></span>
+              </div>
+
+              <div class="design-note" style="margin:14px 0 0;">
+                <div class="design-note-icon">📐</div>
+                <div class="design-note-body">
+                  <div class="design-note-label">Desktop — seller card changes</div>
+                  <div class="design-note-text">Same signals as App/Web Mobile. Wider layout with more breathing room. Clicking navigates to seller profile. Response time shown as inline text (no pill needed at this size).</div>
+                </div>
+              </div>
+
+              <div style="text-align:center;padding:14px 0 4px;font-size:12px;color:#757575;">See our <strong style="color:#090907;">11,123</strong> reviews on <span style="color:#090907;font-weight:600;cursor:pointer;">★ Trustpilot</span></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    document.getElementById('trust-card-app').addEventListener('click', function() {
+      this.style.opacity = '0.6';
+      setTimeout(() => { this.style.opacity = '1'; }, 200);
+    });
+    document.getElementById('trust-card-desktop').addEventListener('click', function() {
+      this.style.background = '#F9F9F9';
+      setTimeout(() => { this.style.background = ''; }, 200);
+    });
+  </script>
+
+</body>
+</html>
