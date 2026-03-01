@@ -1,0 +1,751 @@
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>buycycle — Seller Profile · Trust & Badges</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #E2E2DF; font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; color: #090907; min-height: 100vh; }
+
+    /* ─── PROTO BAR ─── */
+    .proto-bar { position: fixed; top: 0; left: 0; right: 0; background: #090907; color: white; display: flex; align-items: center; gap: 12px; padding: 10px 20px; z-index: 1000; font-size: 12px; font-weight: 500; }
+    .proto-logo { font-size: 14px; font-weight: 700; letter-spacing: -0.3px; }
+    .proto-sep { opacity: 0.2; }
+    .proto-label { opacity: 0.5; font-weight: 400; }
+    .proto-tag { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+    .proto-nav { margin-left: auto; display: flex; gap: 8px; }
+    .proto-nav a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); }
+    .proto-nav a.active { color: white; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+
+    /* ─── LAYOUT ─── */
+    .section-group { padding: 72px 32px 0; }
+    .section-group + .section-group { padding-top: 48px; }
+    .section-group-label { font-size: 11px; font-weight: 700; color: #757575; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 20px; padding-left: 4px; }
+    .canvas { display: flex; justify-content: center; align-items: flex-start; gap: 40px; flex-wrap: wrap; padding-bottom: 64px; }
+    .phone-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .phone-label { font-size: 11px; font-weight: 600; color: #535353; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ─── PHONE FRAME ─── */
+    .phone { width: 390px; height: 844px; background: #FCFCFC; border-radius: 50px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(255,255,255,0.5); }
+    .screen { height: 100%; overflow-y: scroll; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .screen::-webkit-scrollbar { display: none; }
+
+    /* ─── DESKTOP FRAME ─── */
+    .desktop-frame { width: 1100px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.05); }
+    .desktop-chrome { background: #F5F5F5; border-bottom: 1px solid #E0E0E0; padding: 8px 16px; display: flex; align-items: center; gap: 10px; }
+    .chrome-dots { display: flex; gap: 6px; }
+    .chrome-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .chrome-dot.r { background: #FF5F57; } .chrome-dot.y { background: #FEBC2E; } .chrome-dot.g { background: #28C840; }
+    .chrome-url { flex: 1; background: white; border-radius: 6px; padding: 4px 12px; font-size: 12px; color: #757575; text-align: center; border: 1px solid #E0E0E0; max-width: 500px; margin: 0 auto; }
+
+    /* ─── STATUS BAR ─── */
+    .status-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px 0 24px; position: relative; z-index: 5; }
+    .status-time { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
+
+    /* ─── NAV ─── */
+    .nav-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; flex-shrink: 0; }
+
+    /* ─── WEB CHROME ─── */
+    .web-app-banner { background: #090907; color: white; display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; font-size: 12px; flex-shrink: 0; }
+    .web-app-banner-left { display: flex; align-items: center; gap: 8px; }
+    .app-icon-wrap { width: 28px; height: 28px; background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #090907; font-style: italic; }
+    .web-open-btn { background: white; color: #090907; border: none; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .web-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #EAEAEA; background: white; flex-shrink: 0; }
+    .web-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; font-style: italic; }
+    .web-header-btns { display: flex; gap: 8px; }
+    .web-btn { padding: 6px 14px; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .web-btn-login { background: white; border: 1px solid #090907; color: #090907; }
+    .web-btn-sell { background: #090907; border: none; color: white; }
+    .desktop-nav { height: 58px; display: flex; align-items: center; padding: 0 32px; border-bottom: 1px solid #EAEAEA; gap: 20px; background: white; }
+    .desktop-nav-logo { font-size: 20px; font-weight: 700; font-style: italic; letter-spacing: -0.5px; }
+    .desktop-search { flex: 1; background: #F3F3F3; border-radius: 6px; padding: 8px 16px; font-size: 14px; color: #757575; border: none; font-family: inherit; }
+    .desktop-nav-btn { padding: 8px 18px; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+    /* ─── PROFILE HERO ─── */
+    .profile-hero { background: linear-gradient(150deg, #B8DC32 0%, #D8EE3A 100%); padding: 0 16px 24px; }
+    .profile-body { display: flex; align-items: flex-start; gap: 16px; padding-top: 8px; }
+    .profile-avatar { width: 88px; height: 88px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 12px rgba(0,0,0,0.1); font-size: 28px; font-weight: 700; color: #090907; letter-spacing: -1px; }
+    .profile-info { flex: 1; padding-top: 6px; }
+    .profile-name-line { font-size: 20px; font-weight: 700; color: #090907; letter-spacing: -0.3px; display: flex; align-items: center; gap: 7px; margin-bottom: 5px; flex-wrap: wrap; }
+    .top-seller-tag { background: rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.12); color: #1A1A18; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.03em; }
+    .profile-rating-row { display: flex; align-items: center; gap: 5px; margin-bottom: 10px; cursor: pointer; }
+    .profile-stars { color: #EA580C; font-size: 14px; letter-spacing: 0.5px; }
+    .profile-rating-val { font-size: 14px; font-weight: 700; color: #090907; }
+    .profile-rating-ct { font-size: 13px; color: #3A3A38; }
+    .profile-meta-list { display: flex; flex-direction: column; gap: 4px; }
+    .profile-meta-row { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #2A2A28; }
+    .new-seller-tag { display: inline-flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.07); border: 1px solid rgba(0,0,0,0.1); color: #1A1A18; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; margin-bottom: 10px; }
+
+    /* ─── TABS ─── */
+    .tab-bar { display: flex; background: #FCFCFC; border-bottom: 1px solid #EAEAEA; position: sticky; top: 44px; z-index: 20; }
+    .tab-btn { flex: 1; height: 44px; background: none; border: none; border-bottom: 2px solid transparent; font-size: 14px; font-weight: 600; color: #757575; font-family: inherit; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+    .tab-btn.active { color: #090907; border-bottom-color: #090907; }
+    .tab-panel { display: none; background: #FCFCFC; }
+    .tab-panel.active { display: block; }
+
+    /* ─── LISTING CARDS (App full-width) ─── */
+    .listings-section { padding: 16px; }
+    .listings-count-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .listings-count { font-size: 16px; font-weight: 700; }
+    .sort-btn { display: flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 500; cursor: pointer; }
+
+    /* View toggle buttons (App only) */
+    .view-toggle-wrap { display: flex; gap: 2px; background: #EAEAEA; border-radius: 6px; padding: 2px; }
+    .view-toggle-btn { width: 32px; height: 28px; background: none; border: none; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .view-toggle-btn.active { background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+
+    .listing-card { margin-bottom: 20px; cursor: pointer; }
+    .listing-card-img { width: 100%; height: 200px; background: linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%); border-radius: 14px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 10px; }
+    .listing-heart { position: absolute; bottom: 10px; right: 10px; background: white; border-radius: 10px; padding: 4px 10px; display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .listing-brand { font-size: 12px; color: #757575; margin-bottom: 2px; }
+    .listing-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .listing-specs { font-size: 13px; color: #757575; margin-bottom: 6px; }
+    .listing-price { font-size: 18px; font-weight: 700; }
+    .listing-price-orig { font-size: 13px; color: #757575; text-decoration: line-through; }
+
+    /* Compact (grid) listing cards */
+    .listings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .listing-card-compact { cursor: pointer; }
+    .listing-card-compact-img { width: 100%; aspect-ratio: 4/3; background: linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%); border-radius: 10px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 8px; }
+    .compact-heart { position: absolute; bottom: 6px; right: 6px; background: white; border-radius: 8px; padding: 3px 7px; font-size: 11px; font-weight: 600; }
+
+    /* ─── HIGH DEMAND TAG ─── */
+    .hd-tag { position: absolute; top: 8px; left: 8px; background: #FFF7ED; color: #EA580C; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; display: flex; align-items: center; gap: 4px; }
+
+    /* ─── RATINGS TAB ─── */
+    .ratings-section { padding: 16px; }
+    .what-buyers-say { font-size: 12px; font-weight: 700; color: #090907; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; }
+    .tags-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .tag-pill { background: #EAEAEA; border-radius: 20px; padding: 6px 13px; font-size: 14px; color: #333333; }
+    .reviews-title { font-size: 12px; font-weight: 700; color: #090907; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 12px; }
+    .review-card { border-top: 1px solid #EAEAEA; padding: 16px 0; }
+    .review-card:first-child { border-top: none; }
+    .review-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .review-av { width: 36px; height: 36px; border-radius: 50%; background: #EAEAEA; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #535353; flex-shrink: 0; }
+    .review-av.bc { background: #090907; color: white; }
+    .review-meta { flex: 1; }
+    .review-name { font-size: 14px; font-weight: 700; }
+    .review-date { font-size: 11px; color: #757575; margin-top: 1px; }
+    .review-stars { color: #EA580C; font-size: 12px; }
+    .review-text { font-size: 13px; color: #333333; line-height: 20px; margin-bottom: 6px; }
+    .rtag { background: #E8F8F0; color: #146C43; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+    .empty-state { text-align: center; padding: 48px 24px; }
+    .empty-icon { font-size: 36px; margin-bottom: 12px; }
+    .empty-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+    .empty-sub { font-size: 14px; color: #757575; line-height: 20px; }
+
+    /* ─── DESIGN ANNOTATIONS ─── */
+    .design-note { margin: 10px 16px 12px; background: #FFFBEB; border: 1px dashed #D97706; border-radius: 10px; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-start; }
+    .design-note-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+    .design-note-body { flex: 1; }
+    .design-note-label { font-size: 10px; font-weight: 700; color: #D97706; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .design-note-text { font-size: 12px; color: #78350F; line-height: 17px; }
+    .design-note-rule { font-size: 11px; font-weight: 600; color: #92400E; margin-top: 6px; background: rgba(217,119,6,0.1); padding: 4px 8px; border-radius: 6px; display: inline-block; }
+    .edge-note { margin: 12px 16px; background: #FFFBEB; border: 1px dashed #D97706; border-radius: 10px; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-start; }
+    .edge-note-label { font-size: 10px; font-weight: 700; color: #D97706; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .edge-note-text { font-size: 12px; color: #78350F; line-height: 17px; }
+
+    /* ─── DESKTOP PROFILE ─── */
+    .desktop-profile-hero { background: linear-gradient(150deg, #B8DC32 0%, #D8EE3A 100%); padding: 24px 40px 28px; display: flex; align-items: center; gap: 24px; }
+    .desktop-profile-avatar { width: 100px; height: 100px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700; flex-shrink: 0; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+    .desktop-tabs { display: flex; border-bottom: 1px solid #EAEAEA; padding: 0 40px; background: white; position: sticky; top: 58px; z-index: 10; }
+    .desktop-tab-btn { padding: 12px 0; margin-right: 32px; background: none; border: none; border-bottom: 2px solid transparent; font-size: 15px; font-weight: 600; color: #757575; font-family: inherit; cursor: pointer; }
+    .desktop-tab-btn.active { color: #090907; border-bottom-color: #090907; }
+    .desktop-tab-panel { display: none; }
+    .desktop-tab-panel.active { display: block; }
+    .desktop-listings-wrap { padding: 24px 40px; }
+    .desktop-listings-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .desktop-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .desktop-card { cursor: pointer; }
+    .desktop-card-img { width: 100%; aspect-ratio: 4/3; background: linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%); border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 8px; }
+    .desktop-card-heart { position: absolute; bottom: 6px; right: 6px; background: white; border-radius: 8px; padding: 3px 8px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 3px; }
+    .desktop-ratings-wrap { padding: 24px 40px; max-width: 720px; }
+    .desktop-review-card { border-top: 1px solid #EAEAEA; padding: 16px 0; display: flex; gap: 12px; }
+    .desktop-review-av { width: 40px; height: 40px; border-radius: 50%; background: #EAEAEA; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #535353; flex-shrink: 0; }
+    .desktop-review-av.bc { background: #090907; color: white; }
+
+    /* ─── CHIP ─── */
+    .chip { background: #EAEAEA; border-radius: 20px; padding: 5px 11px; font-size: 12px; font-weight: 500; color: #333333; }
+    .top-seller-pill { background: #090907; color: white; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; }
+    .bp-shield { display: flex; align-items: center; gap: 4px; font-size: 13px; color: #146C43; }
+  </style>
+</head>
+<body>
+
+  <div class="proto-bar">
+    <span class="proto-logo">buycycle</span>
+    <span class="proto-sep">|</span>
+    <span class="proto-label">Trust & Badges</span>
+    <span class="proto-tag">Design Review · Mar 2026</span>
+    <div class="proto-nav">
+      <a href="pdp.html">PDP</a>
+      <a href="seller-profile.html" class="active">Seller Profile</a>
+      <a href="rating-flow.html">Rating Flow</a>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       APP — 3 STATES
+  ════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Platform — App · 2 Profile States</div>
+    <div class="canvas">
+
+
+      <!-- STATE 1: ESTABLISHED SELLER -->
+      <div class="phone-col">
+        <p class="phone-label">State 1 · Established Seller</p>
+        <div class="phone"><div class="screen" id="profile-app-1">
+
+          <div class="status-bar" style="background:transparent;">
+            <span class="status-time">9:41</span>
+            <div class="status-icons"><svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"/><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"/><circle cx="8" cy="11" r="1.5" fill="#090907"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg></div>
+          </div>
+
+          <div class="profile-hero" style="margin-top:-44px;padding-top:0;">
+            <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 4px;">
+              <div class="nav-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 15L7.5 10L12.5 5" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span style="font-size:16px;font-weight:600;">Profile</span>
+              <div class="nav-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="6" r="1.5" fill="#090907"/><circle cx="10" cy="10" r="1.5" fill="#090907"/><circle cx="10" cy="14" r="1.5" fill="#090907"/></svg></div>
+            </div>
+            <div class="profile-body">
+              <div class="profile-avatar">TK</div>
+              <div class="profile-info">
+                <div class="profile-name-line">Thomas K.<span class="top-seller-tag">TOP SELLER</span></div>
+                <!-- TRI-3636: star rating row is tappable → scrolls to Ratings tab -->
+                <div class="profile-rating-row" id="app1-rating-row">
+                  <span class="profile-stars">★★★★★</span>
+                  <span class="profile-rating-val">4.9</span>
+                  <span class="profile-rating-ct">(23) →</span>
+                </div>
+                <div class="profile-meta-list">
+                  <div class="profile-meta-row"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1C5 1 3.5 2.3 3.5 4C3.5 6.5 6.5 12 6.5 12C6.5 12 9.5 6.5 9.5 4C9.5 2.3 8 1 6.5 1Z" stroke="#2A2A28" stroke-width="1.2" fill="none"/><circle cx="6.5" cy="4" r="1.3" stroke="#2A2A28" stroke-width="1.2"/></svg>Munich</div>
+                  <div class="profile-meta-row"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#2A2A28" stroke-width="1.2"/><line x1="6.5" y1="3" x2="6.5" y2="7" stroke="#2A2A28" stroke-width="1.2" stroke-linecap="round"/><line x1="6.5" y1="7" x2="9" y2="7" stroke="#2A2A28" stroke-width="1.2" stroke-linecap="round"/></svg>Member since March 2021</div>
+                  <!-- NOTE: "deals completed" row intentionally removed — shown only in Ratings tab count -->
+                  <div class="profile-meta-row"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#2A2A28" stroke-width="1.2"/><line x1="6.5" y1="3.5" x2="6.5" y2="6.8" stroke="#2A2A28" stroke-width="1.2" stroke-linecap="round"/><line x1="6.5" y1="6.8" x2="8.5" y2="6.8" stroke="#2A2A28" stroke-width="1.2" stroke-linecap="round"/></svg>Usually responds within 1h</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-bar">
+            <button class="tab-btn active" data-p="1" data-tab="app1-listings">Listings</button>
+            <button class="tab-btn" data-p="1" data-tab="app1-ratings">Ratings (23)</button>
+          </div>
+
+          <!-- LISTINGS TAB -->
+          <div id="app1-listings" class="tab-panel active">
+            <div class="listings-section">
+              <div class="listings-count-row">
+                <span class="listings-count">17 listings</span>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="sort-btn">Sort by <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="#090907" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                  <!-- Card layout toggle — App only feature (matches buycycle existing pattern) -->
+                  <div class="view-toggle-wrap">
+                    <button class="view-toggle-btn active" id="app1-list-btn" title="List view">
+                      <svg width="16" height="14" viewBox="0 0 16 14" fill="none"><rect x="0" y="0" width="6" height="6" rx="1" fill="#090907"/><rect x="8" y="0" width="8" height="2" rx="1" fill="#090907"/><rect x="8" y="4" width="6" height="2" rx="1" fill="#090907" opacity=".4"/><rect x="0" y="8" width="6" height="6" rx="1" fill="#090907" opacity=".4"/><rect x="8" y="8" width="8" height="2" rx="1" fill="#090907" opacity=".4"/><rect x="8" y="12" width="6" height="2" rx="1" fill="#090907" opacity=".4"/></svg>
+                    </button>
+                    <button class="view-toggle-btn" id="app1-grid-btn" title="Grid view">
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="0" width="6" height="6" rx="1" fill="#090907" opacity=".4"/><rect x="8" y="0" width="6" height="6" rx="1" fill="#090907" opacity=".4"/><rect x="0" y="8" width="6" height="6" rx="1" fill="#090907" opacity=".4"/><rect x="8" y="8" width="6" height="6" rx="1" fill="#090907" opacity=".4"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- LIST VIEW — horizontal card matching "Similar items" pattern in the app -->
+              <div id="app1-list-view">
+                <!-- Card 1 -->
+                <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #EAEAEA;cursor:pointer;">
+                  <div style="width:120px;height:120px;background:linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%);border-radius:10px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                    <div class="hd-tag" style="font-size:10px;padding:2px 6px;"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div>
+                    <div style="position:absolute;bottom:5px;right:5px;background:rgba(255,255,255,0.9);border-radius:8px;padding:2px 7px;font-size:11px;font-weight:600;">♡ 6</div>
+                  </div>
+                  <div style="flex:1;min-width:0;padding:2px 0;">
+                    <div style="font-size:12px;color:#757575;margin-bottom:1px;">Specialized</div>
+                    <div style="font-size:15px;font-weight:700;line-height:1.3;margin-bottom:2px;">Aethos Comp – Shimano 1…</div>
+                    <div style="font-size:12px;color:#757575;margin-bottom:5px;">56 cm · 2024 · Shimano 105 Di2</div>
+                    <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+                      <span style="font-size:15px;font-weight:700;">€ 2,528</span>
+                      <span style="display:flex;align-items:center;gap:2px;font-size:11px;color:#146C43;"><svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" fill="#146C43" opacity="0.2"/><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" stroke="#146C43" stroke-width="1.2"/></svg>incl.</span>
+                      <span style="font-size:12px;color:#757575;text-decoration:line-through;">€ 4,499 MSRP</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Card 2 -->
+                <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #EAEAEA;cursor:pointer;">
+                  <div style="width:120px;height:120px;background:linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%);border-radius:10px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                    <div class="hd-tag" style="font-size:10px;padding:2px 6px;"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div>
+                    <div style="position:absolute;bottom:5px;right:5px;background:rgba(255,255,255,0.9);border-radius:8px;padding:2px 7px;font-size:11px;font-weight:600;">♡ 14</div>
+                  </div>
+                  <div style="flex:1;min-width:0;padding:2px 0;">
+                    <div style="font-size:12px;color:#757575;margin-bottom:1px;">Specialized</div>
+                    <div style="font-size:15px;font-weight:700;line-height:1.3;margin-bottom:2px;">Aethos Pro – Ultegra Di2 2…</div>
+                    <div style="font-size:12px;color:#757575;margin-bottom:5px;">56 cm · 2022 · Shimano Ultegra Di</div>
+                    <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+                      <span style="font-size:15px;font-weight:700;">€ 2,731</span>
+                      <span style="display:flex;align-items:center;gap:2px;font-size:11px;color:#146C43;"><svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" fill="#146C43" opacity="0.2"/><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" stroke="#146C43" stroke-width="1.2"/></svg>incl.</span>
+                      <span style="font-size:12px;color:#757575;text-decoration:line-through;">€ 7,250 MSRP</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Card 3 -->
+                <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #EAEAEA;cursor:pointer;">
+                  <div style="width:120px;height:120px;background:linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%);border-radius:10px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                    <div style="position:absolute;bottom:5px;right:5px;background:rgba(255,255,255,0.9);border-radius:8px;padding:2px 7px;font-size:11px;font-weight:600;">♡ 1</div>
+                  </div>
+                  <div style="flex:1;min-width:0;padding:2px 0;">
+                    <div style="font-size:12px;color:#757575;margin-bottom:1px;">Specialized</div>
+                    <div style="font-size:15px;font-weight:700;line-height:1.3;margin-bottom:2px;">Specialized Aethos Expert…</div>
+                    <div style="font-size:12px;color:#757575;margin-bottom:5px;">58 cm · 2022 · Shimano Ultegra Di</div>
+                    <div style="display:flex;align-items:center;gap:4px;">
+                      <span style="font-size:15px;font-weight:700;">€ 3,553</span>
+                      <span style="font-size:12px;color:#757575;text-decoration:line-through;">€ 6,500 MSRP</span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Card 4 -->
+                <div style="display:flex;gap:10px;padding:10px 0;cursor:pointer;">
+                  <div style="width:120px;height:120px;background:linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%);border-radius:10px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                    <div style="position:absolute;bottom:5px;right:5px;background:rgba(255,255,255,0.9);border-radius:8px;padding:2px 7px;font-size:11px;font-weight:600;">♡ 3</div>
+                  </div>
+                  <div style="flex:1;min-width:0;padding:2px 0;">
+                    <div style="font-size:12px;color:#757575;margin-bottom:1px;">Specialized</div>
+                    <div style="font-size:15px;font-weight:700;line-height:1.3;margin-bottom:2px;">Aethos Sport – Shimano 10…</div>
+                    <div style="font-size:12px;color:#757575;margin-bottom:5px;">58 cm · 2025 · Shimano 105</div>
+                    <div style="display:flex;align-items:center;gap:4px;">
+                      <span style="font-size:15px;font-weight:700;">€ 2,081</span>
+                      <span style="font-size:12px;color:#757575;text-decoration:line-through;">€ 3,400 MSRP</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- GRID VIEW (hidden by default) -->
+              <div id="app1-grid-view" style="display:none;">
+                <div class="listings-grid">
+                  <div class="listing-card-compact">
+                    <div class="listing-card-compact-img"><div class="hd-tag" style="font-size:10px;padding:2px 6px;"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div><div class="compact-heart">♡ 6</div></div>
+                    <div style="font-size:11px;color:#757575;">Specialized</div>
+                    <div style="font-size:13px;font-weight:700;line-height:1.3;margin-bottom:2px;">Aethos Pro...</div>
+                    <div style="font-size:11px;color:#757575;margin-bottom:4px;">58 cm · 2023</div>
+                    <div style="font-size:14px;font-weight:700;">€ 3,450</div>
+                  </div>
+                  <div class="listing-card-compact">
+                    <div class="listing-card-compact-img"><div class="hd-tag" style="font-size:10px;padding:2px 6px;"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div><div class="compact-heart">♡ 14</div></div>
+                    <div style="font-size:11px;color:#757575;">Trek</div>
+                    <div style="font-size:13px;font-weight:700;line-height:1.3;margin-bottom:2px;">Émonda SL 7</div>
+                    <div style="font-size:11px;color:#757575;margin-bottom:4px;">56 cm · 2022</div>
+                    <div style="font-size:14px;font-weight:700;">€ 2,558</div>
+                  </div>
+                  <div class="listing-card-compact">
+                    <div class="listing-card-compact-img"><div class="compact-heart">♡ 47</div></div>
+                    <div style="font-size:11px;color:#757575;">Cannondale</div>
+                    <div style="font-size:13px;font-weight:700;line-height:1.3;margin-bottom:2px;">SuperSix EVO...</div>
+                    <div style="font-size:11px;color:#757575;margin-bottom:4px;">54 cm · 2022</div>
+                    <div style="font-size:14px;font-weight:700;">€ 2,487</div>
+                  </div>
+                  <div class="listing-card-compact">
+                    <div class="listing-card-compact-img"><div class="compact-heart">♡ 26</div></div>
+                    <div style="font-size:11px;color:#757575;">Factor</div>
+                    <div style="font-size:13px;font-weight:700;line-height:1.3;margin-bottom:2px;">O2 SRAM Red...</div>
+                    <div style="font-size:11px;color:#757575;margin-bottom:4px;">54 cm · 2024</div>
+                    <div style="font-size:14px;font-weight:700;">€ 4,669</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="design-note" style="margin-top:16px;">
+                <div class="design-note-icon">📐</div>
+                <div class="design-note-body">
+                  <div class="design-note-label">App only — Card layout toggle</div>
+                  <div class="design-note-text">buycycle already has a list/grid view toggle in other parts of the App (e.g. Similar items). Apply the same toggle to the Seller Profile listings tab for consistency.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RATINGS TAB (TRI-3636) -->
+          <div id="app1-ratings" class="tab-panel">
+            <div class="ratings-section">
+              <div class="what-buyers-say">What buyers say</div>
+              <div class="tags-wrap">
+                <span class="tag-pill">Very friendly</span><span class="tag-pill">Bike as described</span><span class="tag-pill">Fast response</span><span class="tag-pill">Easy handover</span><span class="tag-pill">All documented</span>
+              </div>
+              <div class="reviews-title">Ratings (23)</div>
+
+              <!-- Only real reviews shown — auto-feedback entries hidden (TRI-3636) -->
+              <div class="review-card">
+                <div class="review-top">
+                  <div class="review-av">MF</div>
+                  <div class="review-meta"><div class="review-name">Michael F.</div><div class="review-date">January 2026</div></div>
+                  <div class="review-stars">★★★★★</div>
+                </div>
+                <div class="review-text">Absolutely straightforward seller. Bike was exactly as described. Highly recommended!</div>
+                <div style="display:flex;flex-wrap:wrap;gap:5px;"><span class="rtag">Bike as described</span><span class="rtag">Very friendly</span></div>
+              </div>
+              <div class="review-card">
+                <div class="review-top">
+                  <div class="review-av">SL</div>
+                  <div class="review-meta"><div class="review-name">Sarah L.</div><div class="review-date">November 2025</div></div>
+                  <div class="review-stars">★★★★★</div>
+                </div>
+                <div class="review-text">Responded immediately, patiently answered all questions. Everything documented.</div>
+                <div style="display:flex;flex-wrap:wrap;gap:5px;"><span class="rtag">Fast response</span><span class="rtag">All documented</span></div>
+              </div>
+
+              <div class="design-note" style="margin-top:16px;">
+                <div class="design-note-icon">📐</div>
+                <div class="design-note-body">
+                  <div class="design-note-label">TRI-3636 — Star rating → anchor link</div>
+                  <div class="design-note-text">Tapping the star rating row in the profile header scrolls to this Ratings tab. The "(23) →" arrow is the visual affordance.</div>
+                </div>
+              </div>
+              <div class="design-note">
+                <div class="design-note-icon">📐</div>
+                <div class="design-note-body">
+                  <div class="design-note-label">TRI-3636 — Auto-feedback hidden</div>
+                  <div class="design-note-text">buycycle auto-generates a 5★ for completed transactions where the buyer left no review. These entries are NOT shown as review cards. They ARE counted in the total (23 includes auto-entries). Showing them would feel fabricated.<br/><br/>💬 <strong>@jonasjaeger</strong> — Suggestion: consider applying this hiding logic <em>only</em> in the edge case where a seller has exactly 1 review and it is auto-generated. In that scenario it dominates the display and is misleading. For sellers with 2+ real reviews, the auto-entry is already diluted — showing it may be acceptable and reduces engineering scope.</div>
+                  <div class="design-note-rule">Display = real reviews only &nbsp;·&nbsp; Count = real + auto</div>
+                </div>
+              </div>
+              <div style="height:40px;"></div>
+            </div>
+          </div>
+
+        </div></div>
+      </div>
+
+
+      <!-- STATE 2: LOW RATING -->
+      <div class="phone-col">
+        <p class="phone-label">State 2 · Low Rating / Slow Response</p>
+        <div class="phone" style="height:520px;"><div class="screen">
+
+          <div class="status-bar" style="background:transparent;">
+            <span class="status-time">9:41</span>
+            <div class="status-icons"><svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg></div>
+          </div>
+
+          <div class="profile-hero" style="margin-top:-44px;padding-top:0;">
+            <div style="height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 4px;">
+              <div class="nav-btn"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12.5 15L7.5 10L12.5 5" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span style="font-size:16px;font-weight:600;">Profile</span>
+              <div class="nav-btn"></div>
+            </div>
+            <div class="profile-body">
+              <div class="profile-avatar" style="font-size:28px;">MR</div>
+              <div class="profile-info">
+                <div class="profile-name-line">Marco R.</div>
+                <div class="profile-rating-row" style="cursor:default;">
+                  <span class="profile-stars">★★☆☆☆</span>
+                  <span class="profile-rating-val">2.8</span>
+                  <span class="profile-rating-ct">(4)</span>
+                </div>
+                <div class="profile-meta-list">
+                  <div class="profile-meta-row"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1C5 1 3.5 2.3 3.5 4C3.5 6.5 6.5 12 6.5 12C6.5 12 9.5 6.5 9.5 4C9.5 2.3 8 1 6.5 1Z" stroke="#2A2A28" stroke-width="1.2" fill="none"/><circle cx="6.5" cy="4" r="1.3" stroke="#2A2A28" stroke-width="1.2"/></svg>Hamburg</div>
+                  <div class="profile-meta-row"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#2A2A28" stroke-width="1.2"/><line x1="6.5" y1="3" x2="6.5" y2="7" stroke="#2A2A28" stroke-width="1.2" stroke-linecap="round"/><line x1="6.5" y1="7" x2="9" y2="7" stroke="#2A2A28" stroke-width="1.2" stroke-linecap="round"/></svg>Member since June 2024</div>
+                  <!-- Response time HIDDEN — avg 5h, above 3h threshold -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-bar" style="position:relative;top:0;">
+            <button class="tab-btn active">Listings</button>
+            <button class="tab-btn">Ratings (4)</button>
+          </div>
+
+          <div class="edge-note" style="margin-top:12px;">
+            <div class="design-note-icon">📐</div>
+            <div style="flex:1;">
+              <div class="edge-note-label">Logic — Low rating + slow response</div>
+              <div class="edge-note-text"><strong>Rating shown honestly</strong> — buyers deserve accurate info. No softening.<br/><br/><strong>No response time</strong> — Marco's avg is 5h, above the 3h threshold. Pill simply absent. We never show "Slow responder".<br/><br/><strong>No TOP SELLER</strong> — only shown when earned. Absence is the signal.</div>
+            </div>
+          </div>
+
+        </div></div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       WEB MOBILE
+  ════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Platform — Web · Mobile · 2 views</div>
+    <div class="canvas">
+
+      <!-- LISTINGS VIEW -->
+      <div class="phone-col">
+        <p class="phone-label">Web Mobile · Listings tab</p>
+        <div class="phone"><div class="screen">
+
+          <div class="web-app-banner">
+            <div class="web-app-banner-left"><span style="cursor:pointer;opacity:0.6;font-size:16px;">✕</span><div class="app-icon-wrap">b.</div><span>Switch to App</span></div>
+            <button class="web-open-btn">Open</button>
+          </div>
+          <div class="web-header">
+            <div style="display:flex;align-items:center;gap:8px;"><div class="nav-btn" style="width:36px;height:36px;"><svg width="20" height="14" viewBox="0 0 20 14" fill="none"><line x1="0" y1="1" x2="20" y2="1" stroke="#090907" stroke-width="2" stroke-linecap="round"/><line x1="0" y1="7" x2="20" y2="7" stroke="#090907" stroke-width="2" stroke-linecap="round"/><line x1="0" y1="13" x2="20" y2="13" stroke="#090907" stroke-width="2" stroke-linecap="round"/></svg></div><span class="web-logo">buycycle.</span></div>
+            <div class="web-header-btns"><button class="web-btn web-btn-login">Login</button><button class="web-btn web-btn-sell">Sell</button></div>
+          </div>
+
+          <!-- Profile header (web style: gradient band, no gradient full-bleed) -->
+          <div style="background:linear-gradient(150deg,#B8DC32 0%,#D8EE3A 100%);padding:16px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><div class="nav-btn" style="width:32px;height:32px;"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M12.5 15L7.5 10L12.5 5" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span style="font-size:16px;font-weight:700;">Seller profile</span></div>
+            <div style="display:flex;gap:14px;align-items:center;">
+              <div style="width:72px;height:72px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,0.1);flex-shrink:0;">TK</div>
+              <div>
+                <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Thomas K.</div>
+                <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;"><span style="color:#EA580C;font-size:14px;">★★★★★</span><span style="font-size:14px;font-weight:600;">4.9</span><span style="font-size:14px;">(23)</span><span class="top-seller-pill" style="font-size:10px;">TOP SELLER</span></div>
+                <div style="display:flex;flex-direction:column;gap:3px;">
+                  <div style="display:flex;align-items:center;gap:5px;font-size:13px;"><svg width="12" height="12" viewBox="0 0 13 13" fill="none"><path d="M6.5 1C5 1 3.5 2.3 3.5 4C3.5 6.5 6.5 12 6.5 12C6.5 12 9.5 6.5 9.5 4C9.5 2.3 8 1 6.5 1Z" stroke="#090907" stroke-width="1.2" fill="none"/><circle cx="6.5" cy="4" r="1.3" stroke="#090907" stroke-width="1.2"/></svg>Munich</div>
+                  <div style="display:flex;align-items:center;gap:5px;font-size:13px;"><svg width="12" height="12" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#090907" stroke-width="1.2"/><line x1="6.5" y1="3" x2="6.5" y2="7" stroke="#090907" stroke-width="1.2" stroke-linecap="round"/><line x1="6.5" y1="7" x2="9" y2="7" stroke="#090907" stroke-width="1.2" stroke-linecap="round"/></svg>Member since March 2021</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-bar" style="top:0;">
+            <button class="tab-btn active" data-p="wm" data-tab="wm-listings" style="font-weight:700;">Listings</button>
+            <button class="tab-btn" data-p="wm" data-tab="wm-ratings">Ratings</button>
+          </div>
+
+          <div id="wm-listings" class="tab-panel active">
+            <div style="padding:16px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                <span style="font-size:16px;font-weight:700;">17 listings</span>
+                <button style="display:flex;align-items:center;gap:4px;font-size:14px;border:1px solid #D0D0D0;border-radius:6px;padding:6px 12px;background:white;cursor:pointer;font-family:inherit;">Sort by: New to … <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="#090907" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+              </div>
+              <!-- Listing card row (web mobile uses horizontal card) -->
+              <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #EAEAEA;">
+                <div style="width:90px;height:90px;background:linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%);border-radius:8px;flex-shrink:0;position:relative;"><div class="hd-tag" style="font-size:10px;padding:2px 6px;top:4px;left:4px;"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div><div style="position:absolute;bottom:4px;right:4px;background:rgba(255,255,255,0.9);border-radius:6px;padding:2px 6px;font-size:11px;font-weight:600;">♡ 6</div></div>
+                <div style="flex:1;min-width:0;"><div style="font-size:12px;color:#757575;">Specialized</div><div style="font-size:15px;font-weight:700;line-height:1.3;margin-bottom:2px;">Aethos Pro – Ultegra Di2...</div><div style="font-size:12px;color:#757575;margin-bottom:4px;">58 cm · 2023 · Shimano Ultegra Di2</div><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:15px;font-weight:700;">€ 3,450</span><span style="display:flex;align-items:center;gap:2px;font-size:11px;color:#146C43;"><svg width="10" height="10" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" fill="#146C43" opacity="0.2"/><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" stroke="#146C43" stroke-width="1.2"/></svg>incl.</span><span style="font-size:12px;color:#757575;text-decoration:line-through;">€ 9,899 MSRP</span></div></div>
+              </div>
+              <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #EAEAEA;">
+                <div style="width:90px;height:90px;background:linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%);border-radius:8px;flex-shrink:0;position:relative;"><div class="hd-tag" style="font-size:10px;padding:2px 6px;top:4px;left:4px;"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div><div style="position:absolute;bottom:4px;right:4px;background:rgba(255,255,255,0.9);border-radius:6px;padding:2px 6px;font-size:11px;font-weight:600;">♡ 14</div></div>
+                <div style="flex:1;min-width:0;"><div style="font-size:12px;color:#757575;">Trek</div><div style="font-size:15px;font-weight:700;line-height:1.3;margin-bottom:2px;">Émonda SL 7 2022</div><div style="font-size:12px;color:#757575;margin-bottom:4px;">56 cm · 2022</div><div style="font-size:15px;font-weight:700;">€ 2,558</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="wm-ratings" class="tab-panel">
+            <div style="padding:16px;">
+              <div class="review-card" style="border-top:none;">
+                <div class="review-top">
+                  <div class="review-av bc" style="font-size:11px;font-weight:700;font-style:italic;">b.</div>
+                  <div class="review-meta"><div class="review-name">buycycle</div><div class="review-date">21/11/2025</div></div>
+                  <div class="review-stars">★★★★★</div>
+                </div>
+                <div class="review-text">Auto-feedback: Sale completed successfully.</div>
+              </div>
+              <div class="review-card">
+                <div class="review-top">
+                  <div class="review-av">GF</div>
+                  <div class="review-meta"><div class="review-name">Giorgio F.</div><div class="review-date">14/11/2025</div></div>
+                  <div class="review-stars">★★★★★</div>
+                </div>
+                <div class="review-text">Tutto molto bene !!!</div>
+              </div>
+              <div class="design-note" style="margin:16px 0 0;">
+                <div class="design-note-icon">📐</div>
+                <div class="design-note-body">
+                  <div class="design-note-label">TRI-3636 — Web: auto-feedback hidden here too</div>
+                  <div class="design-note-text">Same logic applies on web: auto-feedback rows (shown above in current prod) should be hidden from the list. Fix applies to App AND web.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       WEB DESKTOP
+  ════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Platform — Web · Desktop</div>
+    <div class="canvas" style="flex-direction:column;align-items:center;">
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+        <p class="phone-label">Seller Profile · Web Desktop</p>
+        <div class="desktop-frame">
+
+          <div class="desktop-chrome">
+            <div class="chrome-dots"><div class="chrome-dot r"></div><div class="chrome-dot y"></div><div class="chrome-dot g"></div></div>
+            <div class="chrome-url">buycycle.com/sellers/thomas-k</div>
+          </div>
+
+          <div class="desktop-nav">
+            <span class="desktop-nav-logo">buycycle.</span>
+            <input class="desktop-search" placeholder="Search 100k+ cycling & other sport items" readonly />
+            <button class="desktop-nav-btn" style="background:white;border:1px solid #090907;color:#090907;font-family:inherit;">Login</button>
+            <button class="desktop-nav-btn" style="background:#090907;border:none;color:white;font-family:inherit;">Sell</button>
+          </div>
+
+          <!-- Profile hero (desktop: horizontal, wider) -->
+          <div class="desktop-profile-hero">
+            <div style="display:flex;align-items:center;gap:6px;font-size:14px;color:#535353;cursor:pointer;margin-right:8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8L10 4" stroke="#535353" stroke-width="1.5" stroke-linecap="round"/></svg>Back</div>
+            <div class="desktop-profile-avatar">TK</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                <span style="font-size:24px;font-weight:700;">Thomas K.</span>
+                <span class="top-seller-pill" style="font-size:12px;padding:3px 9px;">TOP SELLER</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                <span style="color:#EA580C;font-size:16px;">★★★★★</span>
+                <span style="font-size:16px;font-weight:700;">4.9</span>
+                <span style="font-size:15px;color:#3A3A38;">(23)</span>
+              </div>
+              <div style="display:flex;gap:16px;">
+                <div style="display:flex;align-items:center;gap:5px;font-size:14px;"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1C5 1 3.5 2.3 3.5 4C3.5 6.5 6.5 12 6.5 12C6.5 12 9.5 6.5 9.5 4C9.5 2.3 8 1 6.5 1Z" stroke="#090907" stroke-width="1.2" fill="none"/><circle cx="6.5" cy="4" r="1.3" stroke="#090907" stroke-width="1.2"/></svg>Munich</div>
+                <div style="display:flex;align-items:center;gap:5px;font-size:14px;"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#090907" stroke-width="1.2"/><line x1="6.5" y1="3" x2="6.5" y2="7" stroke="#090907" stroke-width="1.2" stroke-linecap="round"/><line x1="6.5" y1="7" x2="9" y2="7" stroke="#090907" stroke-width="1.2" stroke-linecap="round"/></svg>Member since April 2025</div>
+                <!-- No "deals completed" — removed per spec -->
+                <div style="display:flex;align-items:center;gap:5px;font-size:14px;"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#090907" stroke-width="1.2"/><line x1="6.5" y1="3.5" x2="6.5" y2="6.8" stroke="#090907" stroke-width="1.2" stroke-linecap="round"/><line x1="6.5" y1="6.8" x2="8.5" y2="6.8" stroke="#090907" stroke-width="1.2" stroke-linecap="round"/></svg>Usually responds within 1h</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="desktop-tabs">
+            <button class="desktop-tab-btn active" data-dtab="dt-listings">Listings</button>
+            <button class="desktop-tab-btn" data-dtab="dt-ratings">Ratings (23)</button>
+          </div>
+
+          <!-- Desktop Listings tab -->
+          <div id="dt-listings" class="desktop-tab-panel active">
+            <div class="desktop-listings-wrap">
+              <div class="desktop-listings-header">
+                <span style="font-size:18px;font-weight:700;">17 listings</span>
+                <button style="display:flex;align-items:center;gap:6px;font-size:14px;border:1px solid #D0D0D0;border-radius:6px;padding:8px 14px;background:white;cursor:pointer;font-family:inherit;">Sort by: New to old <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="#090907" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+              </div>
+              <div class="desktop-grid">
+                <div class="desktop-card">
+                  <div class="desktop-card-img"><div class="hd-tag"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div><div class="desktop-card-heart">♡ 6</div></div>
+                  <div style="font-size:12px;color:#757575;">Specialized</div><div style="font-size:14px;font-weight:700;margin-bottom:2px;">Aethos Pro...</div><div style="font-size:12px;color:#757575;margin-bottom:4px;">58 cm · 2023</div><div style="font-size:15px;font-weight:700;">€ 3,450</div>
+                </div>
+                <div class="desktop-card">
+                  <div class="desktop-card-img"><div class="hd-tag"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div><div class="desktop-card-heart">♡ 14</div></div>
+                  <div style="font-size:12px;color:#757575;">Trek</div><div style="font-size:14px;font-weight:700;margin-bottom:2px;">Émonda SL 7</div><div style="font-size:12px;color:#757575;margin-bottom:4px;">56 cm · 2022</div><div style="font-size:15px;font-weight:700;">€ 2,558</div>
+                </div>
+                <div class="desktop-card">
+                  <div class="desktop-card-img"><div class="hd-tag"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div><div class="desktop-card-heart">♡ 47</div></div>
+                  <div style="font-size:12px;color:#757575;">Cannondale</div><div style="font-size:14px;font-weight:700;margin-bottom:2px;">SuperSix EVO...</div><div style="font-size:12px;color:#757575;margin-bottom:4px;">54 cm · 2022</div><div style="font-size:15px;font-weight:700;">€ 2,487</div>
+                </div>
+                <div class="desktop-card">
+                  <div class="desktop-card-img"><div class="hd-tag"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div><div class="desktop-card-heart">♡ 26</div></div>
+                  <div style="font-size:12px;color:#757575;">Factor</div><div style="font-size:14px;font-weight:700;margin-bottom:2px;">O2 SRAM Red...</div><div style="font-size:12px;color:#757575;margin-bottom:4px;">54 cm · 2024</div><div style="font-size:15px;font-weight:700;">€ 4,669</div>
+                </div>
+                <div class="desktop-card">
+                  <div class="desktop-card-img"><div class="hd-tag"><svg width="9" height="9" viewBox="0 0 16 16" fill="none"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"/></svg>High demand</div><div class="desktop-card-heart">♡ 13</div></div>
+                  <div style="font-size:12px;color:#757575;">BMC</div><div style="font-size:14px;font-weight:700;margin-bottom:2px;">Teammachine SLR01...</div><div style="font-size:12px;color:#757575;margin-bottom:4px;">58 cm · 2021</div><div style="font-size:15px;font-weight:700;">€ 3,350</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Desktop Ratings tab -->
+          <div id="dt-ratings" class="desktop-tab-panel">
+            <div class="desktop-ratings-wrap">
+              <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:16px;">Ratings (23)</div>
+              <!-- Auto-feedback hidden per TRI-3636 -->
+              <div class="desktop-review-card" style="border-top:none;">
+                <div class="desktop-review-av">GF</div>
+                <div style="flex:1;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><div><span style="font-size:14px;font-weight:700;">Giorgio F.</span></div><span style="font-size:12px;color:#757575;">14/11/2025</span></div>
+                  <div style="color:#EA580C;font-size:13px;margin-bottom:6px;">★★★★★</div>
+                  <div style="font-size:14px;color:#333333;line-height:21px;">Tutto molto bene !!!</div>
+                  <div style="margin-top:6px;font-size:12px;color:#535353;display:flex;align-items:center;gap:4px;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#535353" stroke-width="1.2"/><line x1="4" y1="7" x2="10" y2="7" stroke="#535353" stroke-width="1.2"/><line x1="7" y1="4" x2="7" y2="10" stroke="#535353" stroke-width="1.2"/></svg>Translate</div>
+                </div>
+              </div>
+              <div class="desktop-review-card">
+                <div class="desktop-review-av">DL</div>
+                <div style="flex:1;">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;"><span style="font-size:14px;font-weight:700;">Damien L.</span><span style="font-size:12px;color:#757575;">01/10/2025</span></div>
+                  <div style="color:#EA580C;font-size:13px;margin-bottom:6px;">★★★★★</div>
+                  <div style="font-size:14px;color:#333333;line-height:21px;">vendeur au top super réactif et du coup un vélo comme neuf</div>
+                  <div style="margin-top:6px;font-size:12px;color:#535353;display:flex;align-items:center;gap:4px;cursor:pointer;"><svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#535353" stroke-width="1.2"/><line x1="4" y1="7" x2="10" y2="7" stroke="#535353" stroke-width="1.2"/><line x1="7" y1="4" x2="7" y2="10" stroke="#535353" stroke-width="1.2"/></svg>Translate</div>
+                </div>
+              </div>
+              <div class="design-note" style="margin:20px 0 0;">
+                <div class="design-note-icon">📐</div>
+                <div class="design-note-body">
+                  <div class="design-note-label">TRI-3636 — Desktop: auto-feedback hidden</div>
+                  <div class="design-note-text">Auto-feedback rows ("Auto-feedback: Sale completed successfully.") are hidden on desktop too. Fix applies App + Web equally.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    // App tab switching
+    document.querySelectorAll('.tab-btn[data-p]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const p = btn.dataset.p;
+        document.querySelectorAll(`.tab-btn[data-p="${p}"]`).forEach(b => b.classList.remove('active'));
+        document.querySelectorAll(`#profile-app-1 .tab-panel, #wm-listings, #wm-ratings`).forEach(panel => {
+          if (panel.id === btn.dataset.tab) panel.classList.add('active');
+          else if (panel.closest(`[id^="profile"]`) || p === 'wm') panel.classList.remove('active');
+        });
+        // Simpler approach:
+        const screen = btn.closest('.screen');
+        if (screen) {
+          screen.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          screen.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+          btn.classList.add('active');
+          const target = document.getElementById(btn.dataset.tab);
+          if (target) target.classList.add('active');
+        }
+      });
+    });
+
+    // Rating row → jump to Ratings tab (TRI-3636)
+    document.getElementById('app1-rating-row').addEventListener('click', () => {
+      document.querySelectorAll('#profile-app-1 .tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('#profile-app-1 .tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelector('[data-tab="app1-ratings"]').classList.add('active');
+      document.getElementById('app1-ratings').classList.add('active');
+      document.getElementById('profile-app-1').scrollTo({ top: 300, behavior: 'smooth' });
+    });
+
+    // Card view toggle (App listings)
+    document.getElementById('app1-list-btn').addEventListener('click', () => {
+      document.getElementById('app1-list-btn').classList.add('active');
+      document.getElementById('app1-grid-btn').classList.remove('active');
+      document.getElementById('app1-list-view').style.display = 'block';
+      document.getElementById('app1-grid-view').style.display = 'none';
+    });
+    document.getElementById('app1-grid-btn').addEventListener('click', () => {
+      document.getElementById('app1-grid-btn').classList.add('active');
+      document.getElementById('app1-list-btn').classList.remove('active');
+      document.getElementById('app1-grid-view').style.display = 'block';
+      document.getElementById('app1-list-view').style.display = 'none';
+    });
+
+    // Desktop tab switching
+    document.querySelectorAll('.desktop-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.desktop-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.desktop-tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.dtab).classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
