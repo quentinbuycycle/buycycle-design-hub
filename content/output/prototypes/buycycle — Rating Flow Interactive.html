@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>buycycle — Rating Flow Interactive</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #E2E2DF;
+      font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      color: #090907;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 64px;
+      padding: 40px 20px;
+    }
+
+    /* ─── SECTION LABELS ─── */
+    .section-label { font-size: 11px; font-weight: 700; color: #757575; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 20px; text-align: center; }
+
+    /* ─── PHONE FRAME ─── */
+    .phone {
+      width: 390px; height: 844px;
+      background: #fff; border-radius: 50px;
+      border: 8px solid #1A1A1A;
+      box-shadow: 0 0 0 1px #333, 0 32px 64px rgba(0,0,0,0.35);
+      overflow: hidden; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+
+    /* ─── DESKTOP FRAME ─── */
+    .desktop-panel {
+      width: 853px; height: 618px;
+      background: #FCFCFC;
+      border: 1px solid #EAEAEA;
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 -1px 6px rgba(83,83,83,0.15), 0 1px 6px rgba(83,83,83,0.15);
+      overflow: hidden; flex-shrink: 0;
+      display: flex; flex-direction: column;
+      position: relative;
+    }
+
+    /* ─── SCREENS ─── */
+    .screen { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+    .screen.active { display: flex; }
+
+    /* ─── STATUS BAR (mobile only) ─── */
+    .status-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; background: #FCFCFC; }
+    .status-time { font-size: 15px; font-weight: 600; color: #090907; }
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+
+    /* ─── NAV BAR ─── */
+    .nav-bar { height: 54px; display: flex; align-items: center; gap: 16px; padding: 0 16px; border-bottom: 1px solid #EAEAEA; flex-shrink: 0; background: #FCFCFC; }
+    .nav-bar.no-border { border-bottom: none; }
+    .nav-back { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; }
+    .nav-title { font-size: 24px; font-weight: 500; color: #090907; line-height: 32px; }
+
+    /* ─── CHAT SCREEN (shared) ─── */
+    .chat-header { display: flex; align-items: center; gap: 16px; padding: 12px 16px; border-bottom: 1px solid #EAEAEA; flex-shrink: 0; background: #FCFCFC; }
+    .chat-back { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; }
+    .chat-product-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; padding: 0 8px; }
+    .chat-bike-thumb { width: 74px; height: 42px; border-radius: 4px; overflow: hidden; flex-shrink: 0; background: #F3F3F3; }
+    .chat-bike-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .chat-bike-name { font-size: 16px; font-weight: 500; color: #090907; line-height: 24px; }
+    .chat-bike-price { font-size: 14px; font-weight: 400; color: #535353; line-height: 21px; }
+
+    .chat-order-bar { display: flex; align-items: center; padding: 12px 16px; background: #F3F3F3; border-bottom: 1px solid #EAEAEA; flex-shrink: 0; cursor: pointer; }
+    .chat-order-bar p { flex: 1; font-size: 14px; font-weight: 500; color: #090907; line-height: 21px; }
+
+    .chat-body { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+    .chat-body::-webkit-scrollbar { display: none; }
+
+    .chat-protection { display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-bottom: 1px solid #EAEAEA; }
+    .chat-protection-text { font-size: 12px; font-weight: 400; color: #535353; line-height: 18px; flex: 1; }
+    .chat-protection-text u { text-decoration: underline; cursor: pointer; }
+
+    .chat-spacer { flex: 1; }
+
+    .chat-rating-prompt { padding: 16px; border-bottom: 1px solid #EAEAEA; border-top: 1px solid #EAEAEA; }
+    .chat-rating-prompt p { font-size: 16px; font-weight: 500; color: #090907; line-height: 24px; margin-bottom: 8px; }
+    .chat-star-row { display: flex; gap: 8px; }
+    .chat-star {
+      font-size: 30px; cursor: pointer; line-height: 1; color: #EAEAEA;
+      transition: color 0.15s ease, transform 0.15s ease;
+      -webkit-user-select: none; user-select: none;
+    }
+    .chat-star:active { transform: scale(1.15); }
+    .chat-star.filled { color: #EA580C; }
+
+    .chat-cta { padding: 16px; border-bottom: 1px solid #EAEAEA; }
+    .chat-cta-btn {
+      width: 100%; height: 40px; background: #090907; border: none; border-radius: 10px;
+      font-size: 14px; font-weight: 400; color: #FCFCFC; font-family: inherit; cursor: pointer;
+    }
+
+    .chat-input-bar { display: flex; align-items: center; gap: 8px; padding: 16px 16px 0; background: #F3F3F3; flex-shrink: 0; }
+    .chat-input-icon { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .chat-input {
+      flex: 1; background: white; border: 1.5px solid #EAEAEA; border-radius: 12px;
+      padding: 12px 16px; font-size: 14px; font-family: inherit; color: #090907; outline: none;
+    }
+    .chat-input::placeholder { color: #A9A9A9; }
+    .chat-home-indicator { height: 34px; background: #F3F3F3; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; flex-shrink: 0; }
+    .chat-home-indicator div { width: 134px; height: 5px; background: #090907; border-radius: 100px; }
+
+    /* ─── DESKTOP CHAT TWEAKS ─── */
+    .desktop-panel .chat-header { padding: 16px; }
+    .desktop-panel .chat-bike-thumb { width: 80px; height: 45px; border-radius: 3px; }
+    .desktop-panel .chat-bike-price-row { display: flex; flex-direction: column; }
+    .desktop-panel .chat-bp-price { font-size: 12px; font-weight: 400; color: #146C43; line-height: 18px; display: flex; align-items: center; gap: 2px; }
+    .desktop-panel .chat-options { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; margin-left: auto; }
+    .desktop-panel .chat-input-bar { padding: 16px; gap: 16px; }
+    .desktop-panel .chat-input { height: 48px; border-radius: 12px; }
+
+    /* ─── RATING CONTENT ─── */
+    .rating-content { padding: 0 16px 32px; flex: 1; overflow-y: auto; }
+    .rating-content::-webkit-scrollbar { display: none; }
+
+    .seller-ctx { display: flex; align-items: center; gap: 8px; padding: 20px 0 0; }
+    .avatar-sm { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+    .avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+    .seller-bike { font-size: 14px; font-weight: 400; color: #535353; line-height: 21px; }
+    .seller-name-lg { font-size: 16px; font-weight: 500; color: #090907; line-height: 24px; }
+
+    .rating-q { font-size: 24px; font-weight: 700; color: #090907; line-height: 1.3; letter-spacing: -0.5px; margin: 24px 0 8px; }
+    .rating-sub { font-size: 14px; color: #535353; margin-bottom: 24px; }
+
+    .star-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; }
+    .star-btn {
+      font-size: 42px; cursor: pointer; line-height: 1; color: #EAEAEA;
+      transition: color 0.15s ease, transform 0.15s ease;
+      -webkit-user-select: none; user-select: none;
+    }
+    .star-btn:active { transform: scale(1.15); }
+    .star-btn.filled { color: #EA580C; }
+    .star-label { text-align: center; font-size: 14px; font-weight: 600; color: #090907; margin-bottom: 24px; min-height: 21px; }
+    .star-label.empty { color: #A9A9A9; }
+
+    /* ─── DESKTOP RATING CONTENT ─── */
+    .desktop-panel .rating-content { padding: 0 32px 32px; }
+    .desktop-panel .rating-q { font-size: 22px; }
+    .desktop-panel .star-row { margin-bottom: 0; }
+    .desktop-panel .star-label { margin-bottom: 0; }
+    .desktop-panel .star-row-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+
+    /* ─── PROGRESSIVE SECTIONS ─── */
+    .progressive-section {
+      max-height: 0; opacity: 0; overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.3s ease;
+      margin-top: 0;
+    }
+    .progressive-section.visible {
+      max-height: 600px; opacity: 1;
+      margin-top: 0;
+    }
+
+    /* ─── TAGS ─── */
+    .tag-select-label { font-size: 16px; font-weight: 700; color: #090907; margin-bottom: 16px; }
+    .tag-select-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .sel-tag {
+      background: #EAEAEA; border: none; border-radius: 24px; padding: 8px 16px;
+      font-size: 14px; font-weight: 500; color: #333333; cursor: pointer; font-family: inherit;
+      transition: background 0.15s ease, color 0.15s ease;
+      -webkit-user-select: none; user-select: none;
+    }
+    .sel-tag.selected { background: #E8F8F0; color: #146C43; }
+
+    /* ─── FREE TEXT ─── */
+    .free-text-label { font-size: 14px; font-weight: 600; color: #090907; margin-bottom: 8px; }
+    .free-text-optional { font-size: 14px; font-weight: 400; color: #535353; }
+    .free-text-area {
+      width: 100%; min-height: 96px; border: 1.5px solid #EAEAEA; border-radius: 12px;
+      padding: 12px 16px; font-size: 14px; font-family: inherit; color: #090907;
+      background: #FCFCFC; resize: none; outline: none; line-height: 1.5; margin-bottom: 24px;
+    }
+    .free-text-area::placeholder { color: #A9A9A9; }
+    .free-text-area:focus { border-color: #757575; border-width: 2px; }
+
+    /* ─── BUTTONS ─── */
+    .btn-full {
+      width: 100%; height: 52px; border-radius: 12px; font-size: 16px; font-weight: 400;
+      font-family: inherit; cursor: pointer; background: #090907; border: none; color: white;
+      margin-bottom: 12px; transition: background 0.15s ease, color 0.15s ease;
+    }
+    .btn-full:disabled { background: #EAEAEA; color: #535353; cursor: default; }
+
+    /* ─── CONFIRMATION ─── */
+    .confirm-content {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 32px 24px; text-align: center;
+    }
+    .confirm-icon {
+      width: 72px; height: 72px; border-radius: 50%; background: #E8F8F0;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+    }
+    .confirm-title { font-size: 24px; font-weight: 700; color: #090907; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .confirm-sub { font-size: 14px; color: #535353; line-height: 21px; margin-bottom: 32px; }
+
+    /* ─── SCREEN TRANSITIONS (Emil: timing-300ms-max, ease-ios-drawer) ─── */
+    .screen {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      display: flex; flex-direction: column; overflow: hidden;
+      opacity: 0; transform: translateX(100%);
+      transition: transform 250ms cubic-bezier(0.32, 0.72, 0, 1), opacity 200ms ease-out;
+      pointer-events: none; z-index: 0;
+    }
+    .screen.active {
+      opacity: 1; transform: translateX(0);
+      pointer-events: auto; z-index: 1;
+    }
+    .screen.exit-left {
+      opacity: 0; transform: translateX(-30%);
+      pointer-events: none; z-index: 0;
+    }
+    .screen.enter-from-left {
+      transform: translateX(-100%);
+    }
+    .screen.initial {
+      transition: none;
+      transform: translateX(0);
+    }
+
+    /* ─── STAR SPRING ANIMATION (Emil: timing-asymmetric, transform-scale-097) ─── */
+    .star-btn, .chat-star {
+      transition: color 0.15s ease-out, transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .star-btn:active, .chat-star:active { transform: scale(1.2); }
+    .star-btn.pop {
+      animation: starPop 300ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes starPop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    /* Star label crossfade */
+    .star-label {
+      transition: opacity 150ms ease-out, transform 150ms ease-out;
+    }
+    .star-label.switching {
+      opacity: 0; transform: translateY(4px);
+    }
+
+    /* ─── PROGRESSIVE SECTION — clip-path (Emil: props-clip-path-performant) ─── */
+    .progressive-section {
+      max-height: 0; opacity: 1; overflow: hidden;
+      clip-path: inset(0 0 100% 0);
+      transition: clip-path 250ms ease-out, max-height 250ms ease-out, margin 250ms ease-out;
+      margin-top: 0;
+      padding-left: 4px; margin-left: -4px;
+    }
+    .progressive-section.visible {
+      max-height: 600px;
+      clip-path: inset(0 0 0 0);
+      margin-top: 0;
+    }
+
+    /* Tag stagger on reveal */
+    .sel-tag {
+      opacity: 0; transform: translateY(8px);
+      transition: background 0.15s ease-out, color 0.15s ease-out, transform 200ms ease-out, opacity 200ms ease-out, box-shadow 200ms ease-out;
+    }
+    .progressive-section.visible .sel-tag {
+      opacity: 1; transform: translateY(0);
+    }
+    .progressive-section.visible .sel-tag:nth-child(1) { transition-delay: 0ms; }
+    .progressive-section.visible .sel-tag:nth-child(2) { transition-delay: 30ms; }
+    .progressive-section.visible .sel-tag:nth-child(3) { transition-delay: 60ms; }
+    .progressive-section.visible .sel-tag:nth-child(4) { transition-delay: 90ms; }
+    .progressive-section.visible .sel-tag:nth-child(5) { transition-delay: 120ms; }
+    .progressive-section.visible .sel-tag:nth-child(6) { transition-delay: 150ms; }
+    .progressive-section.visible .sel-tag:nth-child(7) { transition-delay: 180ms; }
+    .progressive-section.visible .sel-tag:nth-child(8) { transition-delay: 210ms; }
+
+    /* ─── TAG PRESS FEEDBACK (Emil: transform-scale-097, timing-asymmetric) ─── */
+    .sel-tag:active { transform: scale(0.95) !important; transition-duration: 100ms !important; }
+    .sel-tag.selected { box-shadow: 0 0 0 2px #146C43; }
+
+    /* ─── SUBMIT BUTTON (Emil: strategy-feedback-immediate, transform-scale-097) ─── */
+    .btn-full {
+      transition: background 200ms ease-out, color 200ms ease-out, transform 200ms ease-out, box-shadow 200ms ease-out;
+    }
+    .btn-full:not(:disabled) {
+      box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+    }
+    .btn-full:not(:disabled):hover {
+      transform: translateY(-0.5px);
+      box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4);
+    }
+    .btn-full:not(:disabled):active {
+      transform: scale(0.97);
+      box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3);
+    }
+    .btn-full.pulse {
+      animation: btnPulse 300ms ease-out forwards;
+    }
+    @keyframes btnPulse {
+      0% { transform: scale(1); box-shadow: 0 2px 8px -2px rgba(9,9,7,0); }
+      50% { transform: scale(1.02); box-shadow: 0 4px 16px -4px rgba(9,9,7,0.35); }
+      100% { transform: scale(1); box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3); }
+    }
+
+    /* ─── CONFIRMATION ENTRANCE (Emil: polish-stagger-children) ─── */
+    .confirm-content .confirm-icon,
+    .confirm-content .confirm-title,
+    .confirm-content .confirm-sub,
+    .confirm-content .btn-full {
+      opacity: 0; transform: translateY(12px);
+    }
+    .confirm-content.animate-in .confirm-icon {
+      animation: confirmEnter 300ms ease-out 100ms forwards, checkScale 300ms cubic-bezier(0.34, 1.56, 0.64, 1) 100ms forwards;
+    }
+    .confirm-content.animate-in .confirm-title {
+      animation: confirmEnter 250ms ease-out 250ms forwards;
+    }
+    .confirm-content.animate-in .confirm-sub {
+      animation: confirmEnter 250ms ease-out 330ms forwards;
+    }
+    .confirm-content.animate-in .btn-full {
+      animation: confirmEnter 250ms ease-out 410ms forwards;
+    }
+    @keyframes confirmEnter {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes checkScale {
+      from { transform: scale(0.8) translateY(12px); }
+      to { transform: scale(1) translateY(0); }
+    }
+
+    /* Checkmark draw animation */
+    .confirm-icon svg path {
+      stroke-dasharray: 40;
+      stroke-dashoffset: 40;
+    }
+    .confirm-content.animate-in .confirm-icon svg path {
+      animation: drawCheck 400ms ease-out 200ms forwards;
+    }
+    @keyframes drawCheck {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* ─── REDUCED MOTION (Emil: polish-reduced-motion, polish-opacity-fallback) ─── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      /* Keep opacity as fallback for screen transitions */
+      .screen {
+        transform: none !important;
+        transition: opacity 150ms ease-out !important;
+      }
+      .screen.active { opacity: 1 !important; }
+      .screen.exit-left { opacity: 0 !important; transform: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════
+       MOBILE — App
+  ════════════════════════════════════════════ -->
+  <div>
+    <div class="section-label">App · Mobile</div>
+    <div class="phone">
+
+      <!-- ═══════ SCREEN 1 — Chat Entry Point ═══════ -->
+      <div class="screen active" id="mChatScreen">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"/><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"/><circle cx="8" cy="11" r="1.5" fill="#090907"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg>
+          </div>
+        </div>
+        <div class="chat-header">
+          <div class="chat-back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="chat-product-info">
+            <div class="chat-bike-thumb"><img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=148&h=84&fit=crop" alt="Canyon Aeroad"></div>
+            <div>
+              <div class="chat-bike-name">Canyon Aeroad CF SLX</div>
+              <div class="chat-bike-price">Bought for €4,300</div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-order-bar">
+          <p>View order progress</p>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="chat-body">
+          <div class="chat-protection">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M12 2L4 5.5V11C4 16.5 12 22 12 22C12 22 20 16.5 20 11V5.5L12 2Z" stroke="#535353" stroke-width="1.5" fill="none"/><path d="M8.5 12L11 14.5L15.5 10" stroke="#535353" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="chat-protection-text">buycycle's Buyer Protection guarantees secure transactions, takes care of shipping and offers full insurance for a worry-free purchase. <u>Learn more.</u></div>
+          </div>
+          <div class="chat-spacer"></div>
+          <div class="chat-rating-prompt">
+            <p>Leave a rating to Thomas K.:</p>
+            <div class="chat-star-row" id="mChatStarRow">
+              <span class="chat-star" data-star="1">★</span>
+              <span class="chat-star" data-star="2">★</span>
+              <span class="chat-star" data-star="3">★</span>
+              <span class="chat-star" data-star="4">★</span>
+              <span class="chat-star" data-star="5">★</span>
+            </div>
+          </div>
+          <div class="chat-cta"><button class="chat-cta-btn">List an item</button></div>
+        </div>
+        <div class="chat-input-bar">
+          <div class="chat-input-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#535353" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="1.5" stroke="#535353" stroke-width="1.5"/><path d="M3 16L8 11L13 16" stroke="#535353" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 14L16 11L21 16" stroke="#535353" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <input class="chat-input" type="text" placeholder="Your message..." readonly>
+        </div>
+        <div class="chat-home-indicator"><div></div></div>
+      </div>
+
+      <!-- ═══════ SCREEN 2 — Rating Flow ═══════ -->
+      <div class="screen" id="mRatingScreen">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"/><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"/><circle cx="8" cy="11" r="1.5" fill="#090907"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg>
+          </div>
+        </div>
+        <div class="nav-bar">
+          <div class="nav-back" onclick="showScreen('m','chat')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="nav-title">Leave a rating</span>
+        </div>
+        <div class="rating-content">
+          <div class="seller-ctx">
+            <div class="avatar-sm"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=118&h=118&fit=crop&crop=face" alt="Thomas K."></div>
+            <div>
+              <div class="seller-bike">Canyon Aeroad</div>
+              <div class="seller-name-lg">Thomas K.</div>
+            </div>
+          </div>
+          <div class="rating-q">How was your experience with Thomas?</div>
+          <div class="rating-sub">Your review helps other buyers.</div>
+          <div class="star-row" id="mStarRow">
+            <span class="star-btn" data-star="1">★</span>
+            <span class="star-btn" data-star="2">★</span>
+            <span class="star-btn" data-star="3">★</span>
+            <span class="star-btn" data-star="4">★</span>
+            <span class="star-btn" data-star="5">★</span>
+          </div>
+          <div class="star-label empty" id="mStarLabel">Tap to rate</div>
+          <div class="progressive-section" id="mLowSection">
+            <div class="free-text-label">What went wrong? <span class="free-text-optional">(optional)</span></div>
+            <textarea class="free-text-area" placeholder="Tell us what happened…"></textarea>
+          </div>
+          <div class="progressive-section" id="mHighSection">
+            <div class="tag-select-label">What was particularly good?</div>
+            <div class="tag-select-wrap" id="mTagWrap">
+              <span class="sel-tag" data-tag>Bike as described</span>
+              <span class="sel-tag" data-tag>Very friendly</span>
+              <span class="sel-tag" data-tag>Fast response</span>
+              <span class="sel-tag" data-tag>Easy handover</span>
+              <span class="sel-tag" data-tag>Honest photos</span>
+              <span class="sel-tag" data-tag>All documented</span>
+              <span class="sel-tag" data-tag>Great packaging</span>
+              <span class="sel-tag" data-tag>Something else</span>
+            </div>
+            <div class="free-text-label">Anything else you'd like to add? <span class="free-text-optional">(optional)</span></div>
+            <textarea class="free-text-area" placeholder="Share more about your experience…"></textarea>
+          </div>
+          <button class="btn-full" id="mSubmitBtn" disabled onclick="showScreen('m','confirm')">Submit Review</button>
+        </div>
+      </div>
+
+      <!-- ═══════ SCREEN 3 — Confirmation ═══════ -->
+      <div class="screen" id="mConfirmScreen">
+        <div class="status-bar">
+          <span class="status-time">9:41</span>
+          <div class="status-icons">
+            <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="#090907"/><rect x="9" y="0" width="3" height="12" rx="1" fill="#090907"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"/></svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"/><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"/><circle cx="8" cy="11" r="1.5" fill="#090907"/></svg>
+            <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"/><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"/></svg>
+          </div>
+        </div>
+        <div class="nav-bar no-border">
+          <div class="nav-back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="nav-title">Leave a rating</span>
+        </div>
+        <div class="confirm-content">
+          <div class="confirm-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M7 16L13 22L25 10" stroke="#146C43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="confirm-title">Thanks for your review!</div>
+          <div class="confirm-sub">Your feedback helps Thomas build trust with future buyers. Reviews are published within 24h.</div>
+          <button class="btn-full" onclick="resetFlow('m')">Back to purchases</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════
+       DESKTOP — Web
+  ════════════════════════════════════════════ -->
+  <div>
+    <div class="section-label">Web · Desktop</div>
+    <div class="desktop-panel">
+
+      <!-- ═══════ SCREEN 1 — Chat Entry Point ═══════ -->
+      <div class="screen active" id="dChatScreen">
+        <!-- Desktop chat header: bike thumb + name + price + BP price + options -->
+        <div class="chat-header" style="padding:0;">
+          <div style="display:flex;align-items:center;gap:12px;padding:16px;flex:1;border-bottom:1px solid #EAEAEA;">
+            <div class="chat-bike-thumb" style="width:80px;height:45px;border-radius:3px;"><img src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=160&h=90&fit=crop" alt="Canyon Aeroad"></div>
+            <div style="flex:1;min-width:0;">
+              <div class="chat-bike-name">Canyon Aeroad CF SLX</div>
+              <div style="font-size:14px;font-weight:400;color:#333;line-height:21px;">€4,300</div>
+              <div class="chat-bp-price">
+                <span>€4,515 incl. Buyer Protection</span>
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" fill="#146C43" opacity="0.2"/><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" stroke="#146C43" stroke-width="1.2"/></svg>
+              </div>
+            </div>
+            <div class="chat-options">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5" r="1.5" fill="#090907"/><circle cx="12" cy="12" r="1.5" fill="#090907"/><circle cx="12" cy="19" r="1.5" fill="#090907"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-order-bar">
+          <p>View order progress</p>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 5L16 12L9 19" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+
+        <div class="chat-body">
+          <div class="chat-protection">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M12 2L4 5.5V11C4 16.5 12 22 12 22C12 22 20 16.5 20 11V5.5L12 2Z" stroke="#535353" stroke-width="1.5" fill="none"/><path d="M8.5 12L11 14.5L15.5 10" stroke="#535353" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="chat-protection-text">buycycle's Buyer Protection guarantees secure transactions, takes care of shipping and offers full insurance for a worry-free purchase. <u>Learn more.</u></div>
+          </div>
+          <div class="chat-spacer"></div>
+          <div class="chat-rating-prompt">
+            <p>Leave a rating to Thomas K.:</p>
+            <div class="chat-star-row" id="dChatStarRow">
+              <span class="chat-star" data-star="1">★</span>
+              <span class="chat-star" data-star="2">★</span>
+              <span class="chat-star" data-star="3">★</span>
+              <span class="chat-star" data-star="4">★</span>
+              <span class="chat-star" data-star="5">★</span>
+            </div>
+          </div>
+          <div class="chat-cta"><button class="chat-cta-btn">List an item</button></div>
+        </div>
+
+        <div class="chat-input-bar">
+          <input class="chat-input" type="text" placeholder="Your message..." readonly>
+          <div class="chat-input-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#535353" stroke-width="1.5"/><circle cx="8.5" cy="8.5" r="1.5" stroke="#535353" stroke-width="1.5"/><path d="M3 16L8 11L13 16" stroke="#535353" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 14L16 11L21 16" stroke="#535353" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </div>
+      </div>
+
+      <!-- ═══════ SCREEN 2 — Rating Flow ═══════ -->
+      <div class="screen" id="dRatingScreen">
+        <div class="nav-bar">
+          <div class="nav-back" onclick="showScreen('d','chat')"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="nav-title">Leave a rating</span>
+        </div>
+        <div class="rating-content">
+          <div class="seller-ctx">
+            <div class="avatar-sm"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=118&h=118&fit=crop&crop=face" alt="Thomas K."></div>
+            <div>
+              <div class="seller-bike">Canyon Aeroad</div>
+              <div class="seller-name-lg">Thomas K.</div>
+            </div>
+          </div>
+          <div class="rating-q">How was your experience with Thomas?</div>
+          <div class="rating-sub">Your review helps other buyers.</div>
+          <div class="star-row-wrap">
+            <div class="star-row" id="dStarRow">
+              <span class="star-btn" data-star="1">★</span>
+              <span class="star-btn" data-star="2">★</span>
+              <span class="star-btn" data-star="3">★</span>
+              <span class="star-btn" data-star="4">★</span>
+              <span class="star-btn" data-star="5">★</span>
+            </div>
+            <div class="star-label empty" id="dStarLabel">Tap to rate</div>
+          </div>
+          <div class="progressive-section" id="dLowSection">
+            <div class="free-text-label">What went wrong? <span class="free-text-optional">(optional)</span></div>
+            <textarea class="free-text-area" placeholder="Tell us what happened…"></textarea>
+          </div>
+          <div class="progressive-section" id="dHighSection">
+            <div class="tag-select-label">What was particularly good?</div>
+            <div class="tag-select-wrap" id="dTagWrap">
+              <span class="sel-tag" data-tag>Bike as described</span>
+              <span class="sel-tag" data-tag>Very friendly</span>
+              <span class="sel-tag" data-tag>Fast response</span>
+              <span class="sel-tag" data-tag>Easy handover</span>
+              <span class="sel-tag" data-tag>Honest photos</span>
+              <span class="sel-tag" data-tag>All documented</span>
+              <span class="sel-tag" data-tag>Great packaging</span>
+              <span class="sel-tag" data-tag>Something else</span>
+            </div>
+            <div class="free-text-label">Anything else you'd like to add? <span class="free-text-optional">(optional)</span></div>
+            <textarea class="free-text-area" placeholder="Share more about your experience…"></textarea>
+          </div>
+          <button class="btn-full" id="dSubmitBtn" disabled onclick="showScreen('d','confirm')">Submit Review</button>
+        </div>
+      </div>
+
+      <!-- ═══════ SCREEN 3 — Confirmation ═══════ -->
+      <div class="screen" id="dConfirmScreen">
+        <div class="nav-bar no-border">
+          <div class="nav-back"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 5L8 12L15 19" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="nav-title">Leave a rating</span>
+        </div>
+        <div class="confirm-content">
+          <div class="confirm-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M7 16L13 22L25 10" stroke="#146C43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div class="confirm-title">Thanks for your review!</div>
+          <div class="confirm-sub">Your feedback helps Thomas build trust with future buyers. Reviews are published within 24h.</div>
+          <button class="btn-full" style="max-width:320px;" onclick="resetFlow('d')">Back to purchases</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <script>
+    // ─── SHARED STATE PER DEVICE ───
+    const state = { m: { stars: 0, currentScreen: 'chat' }, d: { stars: 0, currentScreen: 'chat' } };
+    const starLabels = { 0: 'Tap to rate', 1: 'Terrible', 2: 'Could be better', 3: 'Okay', 4: 'Good', 5: 'Excellent' };
+    const screenOrder = ['chat', 'rating', 'confirm'];
+
+    // ─── SCREEN NAVIGATION (animated) ───
+    function showScreen(device, screen) {
+      const prefix = device;
+      const ids = { chat: `${prefix}ChatScreen`, rating: `${prefix}RatingScreen`, confirm: `${prefix}ConfirmScreen` };
+      const current = state[device].currentScreen;
+      if (current === screen) return;
+
+      const currentEl = document.getElementById(ids[current]);
+      const nextEl = document.getElementById(ids[screen]);
+      const goingForward = screenOrder.indexOf(screen) > screenOrder.indexOf(current);
+
+      // Exit current screen
+      currentEl.classList.remove('active');
+      currentEl.classList.add(goingForward ? 'exit-left' : '');
+      if (!goingForward) {
+        // Going back: next enters from left
+        nextEl.classList.add('enter-from-left');
+        void nextEl.offsetWidth; // force reflow
+        nextEl.classList.remove('enter-from-left');
+      }
+
+      // Enter next screen
+      nextEl.classList.add('active');
+
+      // Clean up exit classes after transition
+      setTimeout(() => {
+        currentEl.classList.remove('exit-left');
+      }, 280);
+
+      state[device].currentScreen = screen;
+
+      // Trigger confirmation entrance animation
+      if (screen === 'confirm') {
+        const confirmContent = nextEl.querySelector('.confirm-content');
+        confirmContent.classList.remove('animate-in');
+        void confirmContent.offsetWidth;
+        confirmContent.classList.add('animate-in');
+      }
+    }
+
+    // ─── UPDATE STARS + SECTIONS (with cascade animation) ───
+    function updateRating(device, animate = false) {
+      const s = state[device];
+      const starRow = document.getElementById(`${device}StarRow`);
+      const label = document.getElementById(`${device}StarLabel`);
+      const submitBtn = document.getElementById(`${device}SubmitBtn`);
+      const lowSection = document.getElementById(`${device}LowSection`);
+      const highSection = document.getElementById(`${device}HighSection`);
+      const wasDisabled = submitBtn.disabled;
+
+      // Staggered star fill with pop animation
+      starRow.querySelectorAll('.star-btn').forEach((btn, i) => {
+        const starNum = parseInt(btn.dataset.star);
+        const shouldFill = starNum <= s.stars;
+        if (animate && shouldFill && !btn.classList.contains('filled')) {
+          setTimeout(() => {
+            btn.classList.add('filled', 'pop');
+            btn.addEventListener('animationend', () => btn.classList.remove('pop'), { once: true });
+          }, i * 40);
+        } else {
+          btn.classList.toggle('filled', shouldFill);
+          btn.classList.remove('pop');
+        }
+      });
+
+      // Animated label switch
+      if (animate) {
+        label.classList.add('switching');
+        setTimeout(() => {
+          label.textContent = starLabels[s.stars];
+          label.classList.toggle('empty', s.stars === 0);
+          label.classList.remove('switching');
+        }, 150);
+      } else {
+        label.textContent = starLabels[s.stars];
+        label.classList.toggle('empty', s.stars === 0);
+      }
+
+      submitBtn.disabled = s.stars === 0;
+
+      // Button activation pulse
+      if (wasDisabled && !submitBtn.disabled) {
+        submitBtn.classList.remove('pulse');
+        void submitBtn.offsetWidth;
+        submitBtn.classList.add('pulse');
+        submitBtn.addEventListener('animationend', () => submitBtn.classList.remove('pulse'), { once: true });
+      }
+
+      if (s.stars >= 1 && s.stars <= 2) {
+        lowSection.classList.add('visible');
+        highSection.classList.remove('visible');
+      } else if (s.stars >= 3) {
+        lowSection.classList.remove('visible');
+        highSection.classList.add('visible');
+      } else {
+        lowSection.classList.remove('visible');
+        highSection.classList.remove('visible');
+      }
+    }
+
+    // ─── CHAT STAR CLICK → ENTER RATING FLOW (with cascade) ───
+    function initChatStars(device) {
+      document.getElementById(`${device}ChatStarRow`).addEventListener('click', (e) => {
+        const star = e.target.closest('.chat-star');
+        if (!star) return;
+        const val = parseInt(star.dataset.star);
+
+        // Staggered highlight of chat stars
+        document.querySelectorAll(`#${device}ChatStarRow .chat-star`).forEach((s, i) => {
+          const sNum = parseInt(s.dataset.star);
+          if (sNum <= val) {
+            setTimeout(() => s.classList.add('filled'), i * 40);
+          } else {
+            s.classList.remove('filled');
+          }
+        });
+
+        // Set state and transition after cascade completes
+        state[device].stars = val;
+        const cascadeTime = val * 40 + 150;
+        setTimeout(() => {
+          updateRating(device, true);
+          showScreen(device, 'rating');
+        }, cascadeTime);
+      });
+    }
+
+    // ─── RATING SCREEN STAR CLICK (with animation) ───
+    function initRatingStars(device) {
+      document.getElementById(`${device}StarRow`).addEventListener('click', (e) => {
+        const btn = e.target.closest('.star-btn');
+        if (!btn) return;
+        state[device].stars = parseInt(btn.dataset.star);
+        updateRating(device, true);
+      });
+    }
+
+    // ─── TAG TOGGLING ───
+    function initTags(device) {
+      document.getElementById(`${device}TagWrap`).addEventListener('click', (e) => {
+        const tag = e.target.closest('.sel-tag');
+        if (tag) tag.classList.toggle('selected');
+      });
+    }
+
+    // ─── RESET ───
+    function resetFlow(device) {
+      state[device].stars = 0;
+      updateRating(device);
+      // Clear tags + text
+      const panel = document.getElementById(`${device}RatingScreen`);
+      panel.querySelectorAll('.sel-tag').forEach(t => t.classList.remove('selected'));
+      panel.querySelectorAll('.free-text-area').forEach(t => t.value = '');
+      // Reset chat stars
+      document.querySelectorAll(`#${device}ChatStarRow .chat-star`).forEach(s => s.classList.remove('filled'));
+      // Reset confirmation animation
+      const confirmContent = document.getElementById(`${device}ConfirmScreen`).querySelector('.confirm-content');
+      if (confirmContent) confirmContent.classList.remove('animate-in');
+      showScreen(device, 'chat');
+    }
+
+    // ─── INIT ───
+    ['m', 'd'].forEach(device => {
+      // Mark initial screens so they don't animate on load
+      document.getElementById(`${device}ChatScreen`).classList.add('initial');
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          document.getElementById(`${device}ChatScreen`).classList.remove('initial');
+        });
+      });
+      initChatStars(device);
+      initRatingStars(device);
+      initTags(device);
+    });
+  </script>
+
+</body></html>
