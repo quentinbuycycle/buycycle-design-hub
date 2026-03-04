@@ -23,7 +23,7 @@ A merged sell entry funnels into a new Step 1 where sellers choose "Complete Bik
 - ~9% of bike sales are framesets — structured component data improves listing quality and buyer confidence for this segment
 
 ## System Limitations
-- No DS pattern for selection cards (radio-card / option-card) — had to compose from primitives (border states, checkmark icon, card container)
-- Toggle component spec in DS lacks explicit guidance on label placement (left-aligned label vs. right toggle row pattern)
-- No DS pattern for checklist/toggle-list groups — built a custom component-list layout from spacing tokens
-- Missing guidance on progressive disclosure animations (expand/collapse) in the DS
+- No DS pattern for selection cards (radio-card / option-card) — had to compose from primitives
+- Toggle component spec in DS lacks explicit guidance on label placement
+- No DS pattern for checklist/toggle-list groups
+- Missing guidance on progressive disclosure animations in the DS
