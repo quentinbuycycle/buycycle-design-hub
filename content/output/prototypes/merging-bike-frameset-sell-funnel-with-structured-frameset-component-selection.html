@@ -1,0 +1,1034 @@
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create your bike listing — buycycle</title>
+    <style>
+        /* ========== DESIGN TOKENS ========== */
+        :root {
+            --bg-primary: #FCFCFC;
+            --bg-secondary: #F3F3F3;
+            --bg-tertiary: #FFFFFF;
+            --bg-quartenary: #EAEAEA;
+            --bg-positive: #E8F8F0;
+
+            --content-primary: #090907;
+            --content-secondary: #333333;
+            --content-tertiary: #535353;
+            --content-quartenary: #A9A9A9;
+            --content-positive: #146C43;
+            --content-warning: #EA580C;
+
+            --bg-accent-green: #DAFDA0;
+
+            --border-primary: #090907;
+            --border-secondary: #757575;
+            --border-tertiary: #EAEAEA;
+            --border-quartenary: #D0D0D0;
+
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-11: 44px;
+            --space-12: 48px;
+
+            --text-xs: 12px;
+            --text-sm: 14px;
+            --text-base: 16px;
+            --text-lg: 18px;
+            --text-xl: 20px;
+            --text-2xl: 24px;
+
+            --leading-base: 24px;
+            --leading-sm: 21px;
+            --leading-xs: 18px;
+
+            --font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* ========== RESET & BASE ========== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-primary);
+            color: var(--content-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ========== TOP BAR ========== */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-3) var(--space-6);
+            border-bottom: 1px solid var(--border-tertiary);
+            background: var(--bg-tertiary);
+            height: 56px;
+        }
+
+        .topbar-logo {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--content-primary);
+        }
+
+        .topbar-flag {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        /* ========== MAIN LAYOUT ========== */
+        .main-layout {
+            display: flex;
+            height: calc(100vh - 56px);
+        }
+
+        /* ========== LEFT PANEL ========== */
+        .form-panel {
+            width: 50%;
+            padding: var(--space-8) var(--space-12);
+            overflow-y: auto;
+            background: var(--bg-tertiary);
+        }
+
+        .form-heading {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--content-primary);
+            margin-bottom: var(--space-6);
+        }
+
+        /* Quick Import Banner */
+        .quick-import {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-tertiary);
+            border-radius: 8px;
+            margin-bottom: var(--space-8);
+            cursor: pointer;
+            transition: border-color 0.15s ease;
+        }
+
+        .quick-import:hover {
+            border-color: var(--border-quartenary);
+        }
+
+        .quick-import-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-positive);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .quick-import-text {
+            flex: 1;
+        }
+
+        .quick-import-title {
+            font-size: var(--text-sm);
+            font-weight: 700;
+            color: var(--content-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .quick-import-badge {
+            font-size: var(--text-xs);
+            font-weight: 500;
+            color: var(--content-positive);
+            background: var(--bg-positive);
+            padding: var(--space-1) var(--space-2);
+            border-radius: 4px;
+        }
+
+        .quick-import-desc {
+            font-size: var(--text-xs);
+            color: var(--content-tertiary);
+            margin-top: var(--space-1);
+        }
+
+        .quick-import-arrow {
+            color: var(--content-tertiary);
+            flex-shrink: 0;
+        }
+
+        /* ========== STEP SECTIONS ========== */
+        .step-section {
+            margin-bottom: var(--space-6);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-4);
+        }
+
+        .step-header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--content-primary);
+            color: var(--bg-tertiary);
+            font-size: var(--text-xs);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-title {
+            font-size: var(--text-base);
+            font-weight: 500;
+            color: var(--content-primary);
+        }
+
+        .step-status {
+            font-size: var(--text-sm);
+            color: var(--content-positive);
+            font-weight: 500;
+        }
+
+        .step-status--incomplete {
+            color: var(--content-warning);
+        }
+
+        .step-chevron {
+            color: var(--content-tertiary);
+            transition: transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .step-chevron.collapsed {
+            transform: rotate(180deg);
+        }
+
+        /* ========== SELECTION CARDS ========== */
+        .selection-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+        }
+
+        .selection-card {
+            position: relative;
+            border: 2px solid var(--border-tertiary);
+            border-radius: 8px;
+            padding: var(--space-6) var(--space-4);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            background: var(--bg-tertiary);
+        }
+
+        .selection-card:hover {
+            border-color: var(--border-secondary);
+        }
+
+        .selection-card.selected {
+            border-color: var(--border-primary);
+        }
+
+        .selection-card-check {
+            position: absolute;
+            top: var(--space-3);
+            right: var(--space-3);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--border-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .selection-card.selected .selection-card-check {
+            background: var(--content-primary);
+            border-color: var(--content-primary);
+        }
+
+        .selection-card-illustration {
+            width: 100%;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .selection-card-illustration svg {
+            width: 120px;
+            height: 100px;
+        }
+
+        .selection-card-label {
+            font-size: var(--text-base);
+            font-weight: 500;
+            color: var(--content-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .selection-card-desc {
+            font-size: var(--text-sm);
+            color: var(--content-tertiary);
+            line-height: var(--leading-sm);
+        }
+
+        /* ========== FIND YOUR BIKE (Step 2) ========== */
+        .step2-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+        }
+
+        .step2-content.visible {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: var(--space-4);
+        }
+
+        .form-label {
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--content-primary);
+            margin-bottom: var(--space-1);
+            display: block;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            border: 1px solid var(--border-tertiary);
+            border-radius: 6px;
+            font-family: var(--font-family);
+            font-size: var(--text-base);
+            color: var(--content-quartenary);
+            background: var(--bg-tertiary);
+            appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23535353' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--border-primary);
+        }
+
+        /* ========== RIGHT PANEL (PREVIEW) ========== */
+        .preview-panel {
+            width: 50%;
+            background: var(--bg-secondary);
+            padding: var(--space-8);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-card {
+            width: 100%;
+            max-width: 560px;
+            background: var(--bg-tertiary);
+            border: 1px dashed var(--border-quartenary);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .preview-image-area {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-3);
+        }
+
+        .preview-image-area svg {
+            width: 80px;
+            height: 60px;
+            color: var(--content-quartenary);
+        }
+
+        .preview-title {
+            font-size: var(--text-base);
+            font-weight: 500;
+            color: var(--content-tertiary);
+            text-align: center;
+        }
+
+        .preview-subtitle {
+            font-size: var(--text-sm);
+            color: var(--content-quartenary);
+            text-align: center;
+            max-width: 320px;
+        }
+
+        .preview-details {
+            padding: var(--space-4) var(--space-6);
+        }
+
+        .preview-brand {
+            font-size: var(--text-xs);
+            color: var(--content-quartenary);
+            margin-bottom: var(--space-1);
+        }
+
+        .preview-model {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: var(--space-4);
+        }
+
+        .preview-model-name {
+            font-size: var(--text-lg);
+            font-weight: 500;
+            color: var(--content-primary);
+        }
+
+        .preview-model-price {
+            font-size: var(--text-sm);
+            color: var(--content-quartenary);
+        }
+
+        .preview-specs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border: 1px solid var(--border-tertiary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .preview-spec {
+            padding: var(--space-3) var(--space-4);
+            border-right: 1px solid var(--border-tertiary);
+            border-bottom: 1px solid var(--border-tertiary);
+        }
+
+        .preview-spec:nth-child(3n) {
+            border-right: none;
+        }
+
+        .preview-spec:nth-child(n+4) {
+            border-bottom: none;
+        }
+
+        .preview-spec-label {
+            font-size: var(--text-xs);
+            color: var(--content-tertiary);
+            font-weight: 500;
+        }
+
+        .preview-spec-value {
+            font-size: var(--text-sm);
+            color: var(--content-quartenary);
+            margin-top: var(--space-1);
+        }
+
+        /* ========== COMPONENT CHECKLIST ========== */
+        .components-section {
+            display: none;
+            margin-top: var(--space-4);
+            padding: var(--space-4);
+            background: var(--bg-primary);
+            border: 1px solid var(--border-tertiary);
+            border-radius: 8px;
+        }
+
+        .components-section.visible {
+            display: block;
+        }
+
+        .components-label {
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--content-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .components-hint {
+            font-size: var(--text-xs);
+            color: var(--content-tertiary);
+            margin-bottom: var(--space-4);
+        }
+
+        .component-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .component-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid var(--border-tertiary);
+        }
+
+        .component-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .component-item:first-child {
+            padding-top: 0;
+        }
+
+        .component-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .component-name {
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--content-primary);
+        }
+
+        .component-desc {
+            font-size: var(--text-xs);
+            color: var(--content-tertiary);
+            margin-top: var(--space-1);
+        }
+
+        /* Toggle switch — DS controls/toggle */
+        .toggle {
+            position: relative;
+            width: 56px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-quartenary);
+            border-radius: 100px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 24px;
+            height: 24px;
+            background: var(--content-primary);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle input:checked + .toggle-track {
+            background: var(--bg-accent-green);
+        }
+
+        .toggle input:checked + .toggle-track::after {
+            transform: translateX(24px);
+        }
+
+        .toggle input:focus-visible + .toggle-track {
+            outline: 2px solid var(--content-primary);
+            outline-offset: 2px;
+        }
+
+        .components-counter {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: var(--space-4);
+            padding-top: var(--space-3);
+            border-top: 1px solid var(--border-tertiary);
+        }
+
+        .components-counter-text {
+            font-size: var(--text-xs);
+            color: var(--content-tertiary);
+        }
+
+        .components-counter-count {
+            font-size: var(--text-sm);
+            font-weight: 500;
+            color: var(--content-primary);
+        }
+
+        /* ========== FOCUS STATES ========== */
+        .selection-card:focus-visible,
+        .form-select:focus-visible,
+        .quick-import:focus-visible {
+            outline: 2px solid var(--content-primary);
+            outline-offset: 2px;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column;
+                height: auto;
+            }
+
+            body {
+                overflow: auto;
+            }
+
+            .form-panel {
+                width: 100%;
+                padding: var(--space-6) var(--space-4);
+            }
+
+            .preview-panel {
+                width: 100%;
+                padding: var(--space-6) var(--space-4);
+            }
+
+            .selection-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+        <div class="topbar-logo">buycycle.</div>
+        <div class="topbar-flag">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+                <rect y="0" width="24" height="8" fill="#000"/>
+                <rect y="8" width="24" height="8" fill="#DD0000"/>
+                <rect y="16" width="24" height="8" fill="#FFCC00"/>
+            </svg>
+        </div>
+    </header>
+
+    <!-- MAIN SPLIT LAYOUT -->
+    <div class="main-layout">
+
+        <!-- LEFT: FORM PANEL -->
+        <div class="form-panel">
+            <h1 class="form-heading">Create your bike listing</h1>
+
+            <!-- Quick Import Banner -->
+            <div class="quick-import" role="button" tabindex="0" aria-label="Save time with quick import">
+                <div class="quick-import-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 3L13 7H11V13H9V7H7L10 3Z" fill="#146C43"/>
+                        <path d="M4 15H16V17H4V15Z" fill="#146C43"/>
+                    </svg>
+                </div>
+                <div class="quick-import-text">
+                    <div class="quick-import-title">
+                        Save time with quick import
+                        <span class="quick-import-badge">Optional</span>
+                    </div>
+                    <div class="quick-import-desc">Already have a listing? Import from eBay, Kleinanzeigen, ...</div>
+                </div>
+                <div class="quick-import-arrow">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M7.5 5L12.5 10L7.5 15"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Step 1: What are you selling? -->
+            <div class="step-section">
+                <div class="step-header">
+                    <div class="step-header-left">
+                        <div class="step-number">1</div>
+                        <span class="step-title">What are you selling?</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-3);">
+                        <span class="step-status step-status--incomplete" id="step1-status">Incomplete</span>
+                        <svg class="step-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12.5L10 7.5L15 12.5"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="selection-cards">
+                    <!-- Complete Bike -->
+                    <div class="selection-card" role="button" tabindex="0" aria-label="Complete Bike" onclick="selectType('bike')" id="card-bike">
+                        <div class="selection-card-check" id="check-bike">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="selection-card-illustration">
+                            <svg viewBox="0 0 120 100" fill="none">
+                                <!-- Complete bike -->
+                                <circle cx="30" cy="70" r="22" stroke="#090907" stroke-width="2"/>
+                                <circle cx="90" cy="70" r="22" stroke="#090907" stroke-width="2"/>
+                                <circle cx="30" cy="70" r="3" fill="#090907"/>
+                                <circle cx="90" cy="70" r="3" fill="#090907"/>
+                                <!-- Frame -->
+                                <path d="M30 70 L50 35 L70 70 L90 70" stroke="#090907" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M50 35 L60 25" stroke="#090907" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- Handlebars -->
+                                <path d="M58 23 L65 20 L68 25" stroke="#090907" stroke-width="2" stroke-linecap="round"/>
+                                <!-- Seat post + saddle -->
+                                <path d="M70 70 L65 40" stroke="#090907" stroke-width="2.5" stroke-linecap="round"/>
+                                <path d="M58 38 L72 38" stroke="#090907" stroke-width="3" stroke-linecap="round"/>
+                                <!-- Pedals -->
+                                <circle cx="50" cy="70" r="5" stroke="#090907" stroke-width="1.5" fill="none"/>
+                                <line x1="46" y1="66" x2="54" y2="74" stroke="#090907" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+                        <div class="selection-card-label">Complete Bike</div>
+                    </div>
+
+                    <!-- Frameset Only -->
+                    <div class="selection-card" role="button" tabindex="0" aria-label="Frameset Only" onclick="selectType('frameset')" id="card-frameset">
+                        <div class="selection-card-check" id="check-frameset">
+                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M2 6L5 9L10 3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="selection-card-illustration">
+                            <svg viewBox="0 0 120 100" fill="none">
+                                <!-- Frame only (no wheels, no groupset) -->
+                                <path d="M30 75 L50 35 L75 75" stroke="#090907" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <!-- Top tube -->
+                                <path d="M50 35 L75 40" stroke="#090907" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- Seat tube -->
+                                <path d="M75 75 L75 40" stroke="#090907" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- Head tube -->
+                                <path d="M50 35 L48 28" stroke="#090907" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- Chain stays (dashed to show frame-only) -->
+                                <path d="M30 75 L55 75" stroke="#090907" stroke-width="2" stroke-linecap="round"/>
+                                <!-- Fork -->
+                                <path d="M48 28 L42 75" stroke="#090907" stroke-width="2.5" stroke-linecap="round"/>
+                                <!-- Seat post -->
+                                <path d="M75 40 L75 32" stroke="#090907" stroke-width="2" stroke-linecap="round"/>
+                                <!-- Ghost wheels (dashed) -->
+                                <circle cx="30" cy="75" r="18" stroke="#D0D0D0" stroke-width="1.5" stroke-dasharray="4 4"/>
+                                <circle cx="82" cy="75" r="18" stroke="#D0D0D0" stroke-width="1.5" stroke-dasharray="4 4"/>
+                            </svg>
+                        </div>
+                        <div class="selection-card-label">Frameset Only</div>
+                    </div>
+                </div>
+
+                <!-- Component checklist (frameset only) -->
+                <div class="components-section" id="components-section">
+                    <div class="components-label">What's included with your frameset?</div>
+                    <div class="components-hint">Toggle on any components that come with the frame and fork.</div>
+                    <div class="component-list">
+                        <div class="component-item">
+                            <div class="component-info">
+                                <span class="component-name">Fork</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" data-component="fork" onchange="updateComponents()">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="component-item">
+                            <div class="component-info">
+                                <span class="component-name">Headset</span>
+                                <span class="component-desc">Bearings and cups installed in head tube</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" data-component="headset" onchange="updateComponents()">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="component-item">
+                            <div class="component-info">
+                                <span class="component-name">Seatpost</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" data-component="seatpost" onchange="updateComponents()">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="component-item">
+                            <div class="component-info">
+                                <span class="component-name">Stem</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" data-component="stem" onchange="updateComponents()">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="component-item">
+                            <div class="component-info">
+                                <span class="component-name">Handlebar/Cockpit</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" data-component="handlebars" onchange="updateComponents()">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="component-item">
+                            <div class="component-info">
+                                <span class="component-name">Seatclamp integrated</span>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" data-component="seat-clamp" onchange="updateComponents()">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="components-counter">
+                        <span class="components-counter-text">Components included</span>
+                        <span class="components-counter-count" id="components-count">0 selected</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Find your bike/frameset (hidden until selection) -->
+            <div class="step-section" id="step2-section" style="display: none;">
+                <div class="step-header">
+                    <div class="step-header-left">
+                        <div class="step-number">2</div>
+                        <span class="step-title" id="step2-title">Find your bike</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-3);">
+                        <span class="step-status step-status--incomplete">Incomplete</span>
+                        <svg class="step-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M5 12.5L10 7.5L15 12.5"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="step2-content visible">
+                    <label class="form-label">Brand</label>
+                    <select class="form-select" aria-label="Select brand">
+                        <option value="" disabled selected>Type or select the brand first</option>
+                        <option>Canyon</option>
+                        <option>Specialized</option>
+                        <option>Trek</option>
+                        <option>Giant</option>
+                        <option>Cervélo</option>
+                        <option>Scott</option>
+                        <option>Bianchi</option>
+                        <option>Cannondale</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: PREVIEW PANEL -->
+        <div class="preview-panel">
+            <div class="preview-card">
+                <div class="preview-image-area">
+                    <!-- Bike preview illustration -->
+                    <svg id="preview-illustration" viewBox="0 0 120 80" fill="none">
+                        <circle cx="30" cy="55" r="18" stroke="#D0D0D0" stroke-width="1.5"/>
+                        <circle cx="90" cy="55" r="18" stroke="#D0D0D0" stroke-width="1.5"/>
+                        <path d="M30 55 L48 28 L65 55 L90 55" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M48 28 L56 20" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M65 55 L62 30" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M55 28 L69 28" stroke="#D0D0D0" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    <div class="preview-title" id="preview-title">This is a preview of your bike listing</div>
+                    <div class="preview-subtitle">By completing the form on the left, you can preview how your listing will appear to buyers.</div>
+                </div>
+                <div class="preview-details">
+                    <div class="preview-brand">Brand name</div>
+                    <div class="preview-model">
+                        <span class="preview-model-name">Model name</span>
+                        <span class="preview-model-price">xxxxx undefined</span>
+                    </div>
+                    <div class="preview-specs">
+                        <div class="preview-spec">
+                            <div class="preview-spec-label">Year</div>
+                            <div class="preview-spec-value"></div>
+                        </div>
+                        <div class="preview-spec">
+                            <div class="preview-spec-label">Frame size</div>
+                            <div class="preview-spec-value"></div>
+                        </div>
+                        <div class="preview-spec">
+                            <div class="preview-spec-label">Frame material</div>
+                            <div class="preview-spec-value"></div>
+                        </div>
+                        <div class="preview-spec" id="spec-groupset">
+                            <div class="preview-spec-label">Groupset</div>
+                            <div class="preview-spec-value"></div>
+                        </div>
+                        <div class="preview-spec" id="spec-braketype">
+                            <div class="preview-spec-label">Brake type</div>
+                            <div class="preview-spec-value"></div>
+                        </div>
+                        <div class="preview-spec">
+                            <div class="preview-spec-label">Condition</div>
+                            <div class="preview-spec-value"></div>
+                        </div>
+                    </div>
+
+                    <!-- Included components (frameset only) -->
+                    <div id="preview-included" style="display: none; margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--border-tertiary);">
+                        <div style="font-size: var(--text-xs); font-weight: 500; color: var(--content-tertiary); margin-bottom: var(--space-2);">Included with frameset</div>
+                        <div id="included-items">
+                            <span style="color: var(--content-quartenary); font-size: var(--text-xs);">Frame + Fork only</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedType = null;
+
+        function selectType(type) {
+            selectedType = type;
+
+            // Update card states
+            document.getElementById('card-bike').classList.toggle('selected', type === 'bike');
+            document.getElementById('card-frameset').classList.toggle('selected', type === 'frameset');
+
+            // Show/hide component checklist
+            const componentsSection = document.getElementById('components-section');
+            if (type === 'frameset') {
+                componentsSection.classList.add('visible');
+            } else {
+                componentsSection.classList.remove('visible');
+                // Reset toggles when switching to bike
+                componentsSection.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+                updateComponents();
+            }
+
+            // Update step 1 status
+            document.getElementById('step1-status').textContent = type === 'bike' ? 'Complete Bike' : 'Frameset';
+            document.getElementById('step1-status').classList.remove('step-status--incomplete');
+            document.getElementById('step1-status').style.color = 'var(--content-positive)';
+
+            // Show step 2
+            const step2 = document.getElementById('step2-section');
+            step2.style.display = 'block';
+            document.getElementById('step2-title').textContent = type === 'bike' ? 'Find your bike' : 'Find your frameset';
+
+            // Update preview
+            updatePreview(type);
+
+            // Smooth scroll to next visible section
+            setTimeout(() => {
+                const scrollTarget = type === 'frameset' ? componentsSection : step2;
+                scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        function updatePreview(type) {
+            const previewTitle = document.getElementById('preview-title');
+            const previewIllustration = document.getElementById('preview-illustration');
+            const includedList = document.getElementById('preview-included');
+
+            if (type === 'bike') {
+                previewTitle.textContent = 'This is a preview of your bike listing';
+                previewIllustration.innerHTML = `
+                    <circle cx="30" cy="55" r="18" stroke="#D0D0D0" stroke-width="1.5"/>
+                    <circle cx="90" cy="55" r="18" stroke="#D0D0D0" stroke-width="1.5"/>
+                    <path d="M30 55 L48 28 L65 55 L90 55" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M48 28 L56 20" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M65 55 L62 30" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M55 28 L69 28" stroke="#D0D0D0" stroke-width="2.5" stroke-linecap="round"/>
+                `;
+                document.getElementById('spec-groupset').querySelector('.preview-spec-label').textContent = 'Groupset';
+                document.getElementById('spec-braketype').querySelector('.preview-spec-label').textContent = 'Brake type';
+                includedList.style.display = 'none';
+            } else {
+                previewTitle.textContent = 'This is a preview of your frameset listing';
+                previewIllustration.innerHTML = `
+                    <path d="M30 60 L48 28 L70 60" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M48 28 L70 33" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M70 60 L70 33" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M48 28 L45 20" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M45 20 L38 60" stroke="#D0D0D0" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="30" cy="60" r="16" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="4 4"/>
+                    <circle cx="78" cy="60" r="16" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="4 4"/>
+                `;
+                document.getElementById('spec-groupset').querySelector('.preview-spec-label').textContent = 'Fork type';
+                document.getElementById('spec-braketype').querySelector('.preview-spec-label').textContent = 'Headset';
+                includedList.style.display = 'block';
+                updateIncludedPreview();
+            }
+        }
+
+        function updateComponents() {
+            const checkboxes = document.querySelectorAll('#components-section input[type="checkbox"]');
+            const checked = Array.from(checkboxes).filter(cb => cb.checked);
+            const count = checked.length;
+            document.getElementById('components-count').textContent = count === 0 ? 'None selected' : `${count} selected`;
+
+            if (selectedType === 'frameset') {
+                updateIncludedPreview();
+            }
+        }
+
+        function updateIncludedPreview() {
+            const checkboxes = document.querySelectorAll('#components-section input[type="checkbox"]');
+            const checked = Array.from(checkboxes).filter(cb => cb.checked);
+            const listEl = document.getElementById('included-items');
+
+            if (checked.length === 0) {
+                listEl.innerHTML = '<span style="color: var(--content-quartenary); font-size: var(--text-xs);">Frame + Fork only</span>';
+            } else {
+                const names = checked.map(cb => {
+                    const item = cb.closest('.component-item');
+                    return item.querySelector('.component-name').textContent;
+                });
+                listEl.innerHTML = names.map(n =>
+                    `<span style="display: inline-block; padding: 4px 8px; background: var(--bg-secondary); border-radius: 4px; font-size: var(--text-xs); color: var(--content-secondary); margin: 4px 4px 4px 0;">${n}</span>`
+                ).join('');
+            }
+        }
+
+        // Keyboard support for selection cards
+        document.querySelectorAll('.selection-card').forEach(card => {
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.click();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
