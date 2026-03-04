@@ -11,6 +11,7 @@ prototypes:
   - "/prototypes/seller-profile.html"
   - "/prototypes/post-transaction-rating-flow-seller-trust-badges.html"
 finalPrototypes:
+  - "/prototypes/buycycle — PDP · Trust & Badges.html"
   - "/prototypes/buycycle — Seller Profile · Trust & Badges.html"
   - "/prototypes/buycycle — Rating Flow Interactive.html"
 ---
