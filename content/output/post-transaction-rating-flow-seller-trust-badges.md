@@ -10,7 +10,8 @@ prototypes:
   - "/prototypes/rating-flow.html"
   - "/prototypes/seller-profile.html"
   - "/prototypes/post-transaction-rating-flow-seller-trust-badges.html"
-finalPrototypes: []
+finalPrototypes:
+  - "/prototypes/buycycle — Rating Flow Interactive.html"
 ---
 
 ## Problem
