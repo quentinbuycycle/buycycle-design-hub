@@ -10,13 +10,13 @@ finalPrototypes: []
 ---
 
 ## Problem
-Sellers face two separate funnel entries for bikes and framesets, creating confusion about which path to choose — especially when selling a frame with some components attached. On the buyer side, frameset PDPs lack structured data about included parts, forcing buyers to parse free-text descriptions.
+The sell landing page has 4 entry cards, leaving little room to give prominence to the new allsports card — reducing to 3 by merging bike and frameset makes space. On the buyer side, frameset PDPs lack structured data about included parts, forcing buyers to parse free-text seller descriptions.
 
 ## Solution
 A merged sell entry funnels into a new Step 1 where sellers choose "Complete Bike" or "Frameset Only," with a toggle checklist capturing exactly which components are included. This structured data then surfaces on the frameset PDP as a clear included/not-included grid, replacing ambiguous seller descriptions.
 
 ## UX & UI Rationale
-- Hick's Law: Reducing landing page from 4 to 3 cards lowers decision complexity for sellers entering the funnel
+- Hick's Law: Reducing landing page from 4 to 3 cards lowers decision complexity and frees space for the allsports card
 - Progressive disclosure: Component checklist only appears when "Frameset Only" is selected, keeping the bike path clean
 - Recognition over recall: Toggle switches with named components (Fork, Headset, Stem, etc.) eliminate guesswork vs. free-text input
 - Structured data over free text: Seller input maps directly to buyer-facing UI, closing the information gap on frameset PDPs
