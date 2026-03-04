@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<!-- saved from url=(0110)https://buycycle-design-hub.vercel.app/output/prototypes/post-transaction-rating-flow-seller-trust-badges.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>buycycle — PDP · Trust &amp; Badges</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #E2E2DF; font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; color: #090907; min-height: 100vh; }
+
+    /* ─── PROTO BAR ─── */
+    .proto-bar { position: fixed; top: 0; left: 0; right: 0; background: #090907; color: white; display: flex; align-items: center; gap: 12px; padding: 10px 20px; z-index: 1000; font-size: 12px; font-weight: 500; }
+    .proto-logo { font-size: 14px; font-weight: 700; letter-spacing: -0.3px; }
+    .proto-sep { opacity: 0.2; }
+    .proto-label { opacity: 0.5; font-weight: 400; }
+    .proto-tag { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.6); padding: 3px 10px; border-radius: 20px; font-size: 11px; }
+    .proto-nav { margin-left: auto; display: flex; gap: 8px; }
+    .proto-nav a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); }
+    .proto-nav a.active { color: white; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+
+    /* ─── LAYOUT ─── */
+    .section-group { padding: 72px 32px 0; }
+    .section-group + .section-group { padding-top: 48px; }
+    .section-group-label { font-size: 11px; font-weight: 700; color: #757575; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 20px; padding-left: 4px; }
+    .canvas { display: flex; justify-content: center; align-items: flex-start; gap: 40px; flex-wrap: wrap; padding-bottom: 64px; }
+    .phone-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .phone-label { font-size: 11px; font-weight: 600; color: #535353; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ─── PHONE FRAME ─── */
+    .phone { width: 390px; height: 844px; background: #FCFCFC; border-radius: 50px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.05), inset 0 0 0 1px rgba(255,255,255,0.5); }
+    .screen { height: 100%; overflow-y: scroll; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .screen::-webkit-scrollbar { display: none; }
+
+    /* ─── DESKTOP FRAME ─── */
+    .desktop-frame { width: 1100px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.05); }
+    .desktop-chrome { background: #F5F5F5; border-bottom: 1px solid #E0E0E0; padding: 8px 16px; display: flex; align-items: center; gap: 10px; }
+    .chrome-dots { display: flex; gap: 6px; }
+    .chrome-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .chrome-dot.r { background: #FF5F57; } .chrome-dot.y { background: #FEBC2E; } .chrome-dot.g { background: #28C840; }
+    .chrome-url { flex: 1; background: white; border-radius: 6px; padding: 4px 12px; font-size: 12px; color: #757575; text-align: center; border: 1px solid #E0E0E0; max-width: 520px; margin: 0 auto; }
+
+    /* ─── STATUS BAR ─── */
+    .status-bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 28px 0 24px; position: sticky; top: 0; z-index: 50; background: #FCFCFC; }
+    .status-time { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+    .status-icons { display: flex; align-items: center; gap: 5px; }
+
+    /* ─── NAV BAR ─── */
+    .nav-bar { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 4px; background: #FCFCFC; border-bottom: 1px solid #EAEAEA; }
+    .nav-btn { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px; cursor: pointer; flex-shrink: 0; }
+    .nav-actions { display: flex; gap: 2px; }
+
+    /* ─── WEB APP BANNER ─── */
+    .web-app-banner { background: #090907; color: white; display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; font-size: 12px; flex-shrink: 0; }
+    .web-app-banner-left { display: flex; align-items: center; gap: 8px; }
+    .app-icon-wrap { width: 28px; height: 28px; background: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #090907; font-style: italic; }
+    .web-open-btn { background: white; color: #090907; border: none; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+    /* ─── WEB HEADER ─── */
+    .web-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #EAEAEA; background: white; flex-shrink: 0; }
+    .web-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; font-style: italic; }
+    .web-header-btns { display: flex; gap: 8px; }
+    .web-btn { padding: 6px 14px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+    .web-btn-login { background: white; border: 1px solid #090907; color: #090907; }
+    .web-btn-sell { background: #090907; border: none; color: white; }
+
+    /* ─── DESKTOP NAV ─── */
+    .desktop-nav { height: 58px; display: flex; align-items: center; padding: 0 32px; border-bottom: 1px solid #EAEAEA; gap: 20px; background: white; }
+    .desktop-nav-logo { font-size: 20px; font-weight: 700; font-style: italic; letter-spacing: -0.5px; }
+    .desktop-search { flex: 1; background: #F3F3F3; border-radius: 6px; padding: 8px 16px; font-size: 14px; color: #757575; border: none; font-family: inherit; }
+    .desktop-nav-btn { padding: 8px 18px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; }
+
+    /* ─── SHARED COMPONENT TOKENS ─── */
+    .price { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+    .price-orig { font-size: 14px; color: #535353; text-decoration: line-through; }
+    .listing-brand { font-size: 14px; color: #535353; margin-bottom: 2px; }
+    .listing-title { font-size: 20px; font-weight: 700; line-height: 1.3; letter-spacing: -0.5px; margin-bottom: 12px; }
+    .chip { background: #EAEAEA; border-radius: 20px; padding: 5px 11px; font-size: 12px; font-weight: 500; color: #333333; display: inline-flex; align-items: center; gap: 4px; }
+    .stars { color: #EA580C; letter-spacing: 0.5px; }
+    .top-seller-pill { background: #090907; color: white; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.02em; }
+    .meta-pill { background: #EAEAEA; color: #535353; font-size: 12px; font-weight: 500; padding: 3px 8px; border-radius: 20px; display: inline-flex; align-items: center; gap: 3px; }
+    .p-divider { height: 1px; background: #EAEAEA; margin: 12px 16px; }
+    .thick-div { height: 6px; background: #F3F3F3; }
+    .section-title { font-size: 14px; font-weight: 700; color: #090907; margin-bottom: 8px; }
+
+    /* ─── HIGH DEMAND BANNER ─── */
+    .hd-banner { background: #FFF7ED; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #EA580C; }
+
+    /* ─── BUYER PROTECTION ─── */
+    .bp-price { font-size: 14px; color: #146C43; display: flex; align-items: center; gap: 4px; margin-bottom: 12px; }
+    .bp-box { background: #E8F8F0; border-radius: 8px; padding: 10px 12px; display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: #146C43; }
+
+    /* ─── SELLER TRUST CARD (App) ─── */
+    .trust-card { background: #FFFFFF; border: 1px solid #EAEAEA; border-radius: 16px; overflow: hidden; cursor: pointer; transition: opacity 0.15s; }
+    .trust-card:active { opacity: 0.72; }
+    .trust-card-header { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; }
+    .avatar-sm { width: 42px; height: 42px; border-radius: 50%; background: #090907; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+    .seller-info-col { flex: 1; min-width: 0; }
+    .seller-name-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }
+    .seller-name { font-size: 16px; font-weight: 700; color: #090907; }
+    .seller-rating-row { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
+    .rating-val { font-size: 12px; font-weight: 700; color: #090907; }
+    .rating-ct { font-size: 12px; color: #535353; }
+    .seller-meta-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .trust-card-footer { border-top: 1px solid #EAEAEA; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .trust-card-footer span { font-size: 14px; font-weight: 600; color: #090907; }
+
+    /* ─── DOC PILLS ─── */
+    .doc-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; padding-top: 12px; border-top: 1px solid #EAEAEA; }
+    .doc-item { display: inline-flex; align-items: center; gap: 5px; background: #EAEAEA; border-radius: 20px; padding: 5px 11px; font-size: 12px; font-weight: 500; color: #333333; }
+
+    /* ─── STICKY BOTTOM ─── */
+    .sticky-bottom { position: sticky; bottom: 0; background: linear-gradient(179.636deg, rgba(252,252,252,0) 0.95%, #FCFCFC 39.17%); padding: 12px 16px 0; display: flex; gap: 10px; }
+    .home-indicator { height: 34px; background: #FCFCFC; display: flex; align-items: center; justify-content: center; }
+    .home-indicator-pill { width: 134px; height: 5px; background: #090907; border-radius: 20px; }
+    .btn { height: 52px; border-radius: 12px; font-size: 16px; font-weight: 400; font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-outline { flex: 1; background: white; border: 1.5px solid #757575; color: #090907; }
+    .btn-solid { flex: 2; background: #090907; border: none; color: white; }
+    .bottom-spacer { height: 100px; }
+
+    /* ─── DESIGN ANNOTATIONS ─── */
+    .design-note { margin: 10px 16px 16px; background: #FFFBEB; border: 1px dashed #D97706; border-radius: 10px; padding: 10px 12px; display: flex; gap: 8px; align-items: flex-start; }
+    .design-note-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+    .design-note-body { flex: 1; }
+    .design-note-label { font-size: 10px; font-weight: 700; color: #D97706; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+    .design-note-text { font-size: 12px; color: #78350F; line-height: 17px; }
+    .design-note-rule { font-size: 11px; font-weight: 600; color: #92400E; margin-top: 6px; background: rgba(217,119,6,0.1); padding: 4px 8px; border-radius: 6px; display: inline-block; }
+
+    /* ─── DESKTOP PDP LAYOUT ─── */
+    .pdp-body { display: flex; }
+    .pdp-left { flex: 1; padding: 24px 32px 32px; border-right: 1px solid #EAEAEA; }
+    .pdp-sidebar { width: 368px; flex-shrink: 0; padding: 20px 24px; overflow-y: auto; max-height: 680px; }
+    .pdp-sidebar::-webkit-scrollbar { display: none; }
+    .desktop-img { background: linear-gradient(160deg,#DEDEDE 0%,#C8C8C8 100%); border-radius: 12px; height: 340px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; position: relative; }
+    .desktop-thumbs { display: flex; gap: 8px; margin-bottom: 20px; }
+    .desktop-thumb { width: 76px; height: 57px; background: linear-gradient(160deg,#DADADA 0%,#C4C4C4 100%); border-radius: 6px; border: 2px solid transparent; cursor: pointer; }
+    .desktop-thumb.active { border-color: #090907; }
+    .back-link { display: flex; align-items: center; gap: 5px; font-size: 14px; color: #757575; margin-bottom: 16px; cursor: pointer; }
+    .sidebar-brand { font-size: 14px; color: #757575; margin-bottom: 4px; }
+    .sidebar-title { font-size: 22px; font-weight: 700; line-height: 1.3; letter-spacing: -0.5px; margin-bottom: 12px; }
+    .sidebar-price { font-size: 28px; font-weight: 700; letter-spacing: -0.6px; }
+    .sidebar-msrp { font-size: 14px; color: #757575; text-decoration: line-through; margin-bottom: 4px; }
+    .sidebar-btn-primary { width: 100%; height: 52px; background: #090907; border: none; color: white; border-radius: 12px; font-size: 16px; font-weight: 400; cursor: pointer; font-family: inherit; margin-bottom: 8px; }
+    .sidebar-btn-secondary { width: 100%; height: 52px; background: white; border: 1.5px solid #757575; color: #090907; border-radius: 12px; font-size: 16px; font-weight: 400; cursor: pointer; font-family: inherit; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .sidebar-divider { height: 1px; background: #EAEAEA; margin: 16px 0; }
+    .desktop-seller-card { border: 1px solid #EAEAEA; border-radius: 12px; padding: 14px; margin-bottom: 12px; cursor: pointer; }
+    .desktop-seller-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+    .desktop-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg,#1a1a18,#3a3a38); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+    .desktop-contact-btn { width: 100%; height: 40px; background: white; border: 1.5px solid #757575; color: #090907; border-radius: 10px; font-size: 14px; font-weight: 400; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .good-price-bars { display: flex; gap: 3px; align-items: center; }
+    .gp-bar { height: 6px; width: 14px; border-radius: 3px; background: #146C43; }
+    .gp-bar.off { background: #EAEAEA; }
+  </style>
+<style id="fusion-selection-styles">
+  .fusion-element-highlight {
+    outline: 2px solid rgb(26, 115, 235) !important;
+    outline-style: solid !important;
+  }
+
+  .fusion-element-selected {
+    outline: 4px solid rgb(26, 115, 235) !important;
+    outline-style: solid !important;
+    outline-offset: 0px !important;
+  }
+  
+  .fusion-selection-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+    z-index: 2147483647 !important;
+    cursor: crosshair !important;
+    pointer-events: none !important;
+  }
+  
+  .fusion-selection-tooltip {
+    position: fixed !important;
+    background: #1f2937 !important;
+    color: white !important;
+    padding: 8px 12px !important;
+    border-radius: 6px !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    z-index: 2147483648 !important;
+    pointer-events: none !important;
+    transform: translate(-50%, -100%) translateY(-10px) !important;
+    white-space: nowrap !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .fusion-selection-tooltip::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    border: 5px solid transparent !important;
+    border-top-color: #1f2937 !important;
+  }
+  
+  
+  @keyframes fusion-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes fusion-label-bounce {
+    0% { 
+      opacity: 0;
+      transform: translateY(-10px) scale(0.9);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(0) scale(1.05);
+    }
+    100% { 
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+</style></head>
+<body>
+
+  <div class="proto-bar">
+    <span class="proto-logo">buycycle</span>
+    <span class="proto-sep">|</span>
+    <span class="proto-label">Trust &amp; Badges</span>
+    <span class="proto-tag">Design Review · Mar 2026</span>
+    <div class="proto-nav">
+      <a href="https://buycycle-design-hub.vercel.app/output/prototypes/pdp.html" class="active">PDP</a>
+      <a href="https://buycycle-design-hub.vercel.app/output/prototypes/seller-profile.html">Seller Profile</a>
+      <a href="https://buycycle-design-hub.vercel.app/output/prototypes/rating-flow.html">Rating Flow</a>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       APP
+  ════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Platform — App</div>
+    <div class="canvas">
+
+      <div class="phone-col">
+        <p class="phone-label">PDP · App</p>
+        <div class="phone"><div class="screen">
+
+          <!-- Photo (status bar + back button overlaid) -->
+          <div style="width:100%;height:292px;background:#e8e8e4;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+            <!-- Top gradient overlay -->
+            <div style="position:absolute;top:0;left:0;right:0;height:72px;background:linear-gradient(to bottom,rgba(0,0,0,0.2),transparent);z-index:3;"></div>
+            <!-- Status bar -->
+            <div style="position:absolute;top:14px;left:0;right:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:0 16px;">
+              <span style="font-size:17px;font-weight:600;letter-spacing:-0.408px;color:#090907;">9:41</span>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <svg width="18" height="12" viewBox="0 0 18 12" fill="none"><rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"></rect><rect x="5" y="2" width="3" height="10" rx="1" fill="#090907"></rect><rect x="10" y="0" width="3" height="12" rx="1" fill="#090907"></rect><rect x="15" y="0" width="3" height="12" rx="1" fill="#090907" opacity=".3"></rect></svg>
+                <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 2.4C10.4 2.4 12.6 3.4 14.1 5L15.5 3.5C13.6 1.3 10.9 0 8 0C5.1 0 2.4 1.3 0.5 3.5L1.9 5C3.4 3.4 5.6 2.4 8 2.4Z" fill="#090907"></path><path d="M8 5.6C9.6 5.6 11.1 6.3 12.1 7.4L13.5 5.9C12.1 4.4 10.2 3.5 8 3.5C5.8 3.5 3.9 4.4 2.5 5.9L3.9 7.4C4.9 6.3 6.4 5.6 8 5.6Z" fill="#090907"></path><circle cx="8" cy="11" r="1.5" fill="#090907"></circle></svg>
+                <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#090907" stroke-opacity=".35"></rect><rect x="2" y="2" width="16" height="8" rx="2" fill="#090907"></rect><path d="M23 4.5V7.5C23.8 7.2 24.5 6.4 24.5 6C24.5 5.6 23.8 4.8 23 4.5Z" fill="#090907" opacity=".4"></path></svg>
+              </div>
+            </div>
+            <!-- Back button -->
+            <div style="position:absolute;top:47px;left:16px;z-index:5;width:32px;height:32px;background:rgba(9,9,7,0.7);border-radius:4px;display:flex;align-items:center;justify-content:center;">
+              <svg width="20" height="18" viewBox="0 0 20 18" fill="none"><path d="M12.5 15L7.5 10L12.5 5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </div>
+            <img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=780&h=640&fit=crop" alt="Canyon Aeroad" style="width:100%;height:100%;object-fit:cover;">
+            <!-- Bottom gradient overlay -->
+            <div style="position:absolute;bottom:0;left:0;right:0;height:43px;background:linear-gradient(to top,rgba(0,0,0,0.4),transparent);z-index:3;"></div>
+            <!-- Photo counter -->
+            <div style="position:absolute;bottom:8px;left:8px;z-index:4;background:rgba(9,9,7,0.7);color:#FCFCFC;font-size:12px;font-weight:400;padding:6px 12px;border-radius:4px;letter-spacing:0.24px;line-height:16px;">1 / 8</div>
+            <!-- Action buttons -->
+            <div style="position:absolute;bottom:8px;right:8px;z-index:4;display:flex;gap:12px;align-items:center;">
+              <div style="background:rgba(252,252,252,0.9);height:32px;border-radius:6px;display:flex;align-items:center;padding:0 6px;gap:4px;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="#090907"/><path d="M1 10C1 10 5 4 10 4C15 4 19 10 19 10C19 10 15 16 10 16C5 16 1 10 1 10Z" stroke="#090907" stroke-width="1.5" fill="none"/></svg><span style="font-size:12px;font-weight:400;color:black;line-height:18px;">500</span></div>
+              <div style="background:rgba(252,252,252,0.9);height:32px;border-radius:6px;display:flex;align-items:center;padding:0 6px;gap:4px;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 17C10 17 2 12 2 7.5C2 4.5 4.5 2.5 7 2.5C8.5 2.5 9.5 3.2 10 4C10.5 3.2 11.5 2.5 13 2.5C15.5 2.5 18 4.5 18 7.5C18 12 10 17 10 17Z" fill="#EA580C"/></svg><span style="font-size:12px;font-weight:400;color:black;line-height:18px;">43</span></div>
+              <div style="background:rgba(252,252,252,0.9);width:32px;height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M9 3V13M9 3L5.5 6.5M9 3L12.5 6.5M3 17H17" stroke="#090907" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+            </div>
+          </div>
+
+          <!-- ★ SELLER SECTION ★ -->
+          <div style="padding:16px;display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:42px;height:42px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=118&h=118&fit=crop&crop=face" alt="Nina" style="width:100%;height:100%;object-fit:cover;"></div>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
+                <div style="font-size:16px;font-weight:500;line-height:24px;color:#090907;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Sold by Nina</div>
+                <div style="display:flex;align-items:flex-end;gap:4px;">
+                  <span class="stars" style="font-size:12px;">★★★★<span style="color:#D0D0D0;">★</span></span>
+                  <span style="font-size:12px;font-weight:700;color:#090907;line-height:12px;">4.3</span>
+                  <span style="font-size:12px;font-weight:400;color:#535353;line-height:12px;">(23)</span>
+                </div>
+                <div style="font-size:14px;font-weight:400;line-height:21px;color:#090907;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Munich, Germany</div>
+              </div>
+              <button style="height:36px;padding:0 12px;border-radius:10px;border:1px solid #757575;background:white;font-size:14px;font-weight:400;line-height:21px;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;color:#090907;">Ask a question</button>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <span style="display:inline-flex;align-items:center;gap:4px;background:#F3F3F3;color:#535353;font-size:12px;font-weight:500;padding:4px 8px;border-radius:24px;line-height:18px;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.2" stroke="#535353" stroke-width="1.4" fill="none"/><path d="M9 4.5V9.75L12 12" stroke="#535353" stroke-width="1.4" stroke-linecap="round"/></svg>45min. response</span>
+              <span style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(90deg,#DAFDA0 0%,#FDFDA0 100%);color:#090907;font-size:12px;font-weight:500;padding:4px 8px;border-radius:24px;line-height:18px;"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 4.1L11 4.6L8.5 7L9.1 10.5L6 8.9L2.9 10.5L3.5 7L1 4.6L4.5 4.1L6 1Z" fill="#090907"/></svg>TOP SELLER</span>
+            </div>
+          </div>
+
+          <div style="height:1px;background:#EAEAEA;margin:0 16px;"></div>
+
+          <!-- Listing info -->
+          <div style="padding:16px;display:flex;flex-direction:column;gap:24px;">
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div>
+                <div style="font-size:16px;font-weight:400;line-height:24px;color:#090907;">Canyon</div>
+                <div style="font-size:24px;font-weight:500;line-height:32px;color:#090907;">Aeroad CF SLX DB 9.0 Disc</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:baseline;gap:8px;">
+                  <span style="font-size:24px;font-weight:700;line-height:22px;color:#090907;">€6.750</span>
+                  <span style="font-size:12px;font-weight:400;color:#535353;text-decoration:line-through;line-height:12px;">€ 10.999 MSRP</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:4px;font-size:14px;line-height:21px;color:#146C43;"><span style="font-weight:500;text-decoration:underline;">€7,087</span><span style="font-weight:400;"> incl. Buyer Protection</span><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" fill="#146C43" opacity="0.2"></path><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" stroke="#146C43" stroke-width="1.2"></path><path d="M5 7L6.5 8.5L9 6" stroke="#146C43" stroke-width="1.2" stroke-linecap="round"></path></svg></div>
+              </div>
+              <div style="background:#FFF7ED;border-radius:6px;padding:8px;display:flex;gap:4px;align-items:flex-start;">
+                <svg width="21" height="21" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"></path><path d="M4 7C4 10.3 6.3 13 9 14C11.7 13 14 10.3 14 7H4Z" fill="#EA580C" opacity="0.4"></path></svg>
+                <span style="flex:1;font-size:14px;font-weight:500;line-height:21px;color:#EA580C;">In high demand! X buyers made offers in 7 days.</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px 8px;"><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;display:inline-flex;align-items:center;gap:4px;">Very good condition<svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;"><circle cx="9" cy="9" r="7.5" stroke="#535353" stroke-width="1"></circle><line x1="9" y1="8" x2="9" y2="13" stroke="#535353" stroke-width="1.2" stroke-linecap="round"></line><circle cx="9" cy="5.5" r="0.8" fill="#535353"></circle></svg></span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">2019</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">M</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;display:inline-flex;align-items:center;gap:4px;">Fits to height 185-195 cm<svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;"><circle cx="9" cy="9" r="7.5" stroke="#535353" stroke-width="1"></circle><line x1="9" y1="8" x2="9" y2="13" stroke="#535353" stroke-width="1.2" stroke-linecap="round"></line><circle cx="9" cy="5.5" r="0.8" fill="#535353"></circle></svg></span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">Shimano Dura Ace Di2</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">Carbon frame</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">Disc brakes</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">Black</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">Receipt available: No</span></div>
+          </div>
+
+          <div class="bottom-spacer"></div>
+          <div style="position:sticky;bottom:0;background:#FCFCFC;border-top:1px solid #757575;padding:12px 16px 0;display:flex;flex-direction:column;gap:8px;align-items:center;">
+            <div style="display:flex;gap:8px;width:100%;">
+              <button style="flex:1;height:52px;border-radius:12px;border:1.5px solid #757575;background:white;font-size:16px;font-weight:400;font-family:inherit;cursor:pointer;color:#090907;">Make an offer</button>
+              <button style="flex:1;height:52px;border-radius:12px;border:none;background:#090907;font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;color:#FCFCFC;box-shadow:0 2px 8px rgba(9,9,7,0.3);">Buy</button>
+            </div>
+            <div class="home-indicator"><div class="home-indicator-pill"></div></div>
+          </div>
+
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       WEB MOBILE
+  ════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Platform — Web · Mobile</div>
+    <div class="canvas">
+
+      <div class="phone-col">
+        <p class="phone-label">PDP · Web Mobile</p>
+        <div class="phone"><div class="screen">
+
+          <!-- Switch to App banner -->
+          <div class="web-app-banner">
+            <div class="web-app-banner-left">
+              <span style="cursor:pointer;font-size:16px;line-height:1;opacity:0.6;">✕</span>
+              <div class="app-icon-wrap">b.</div>
+              <span>Switch to App</span>
+            </div>
+            <button class="web-open-btn">Open</button>
+          </div>
+
+          <!-- buycycle header -->
+          <div class="web-header">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="nav-btn" style="width:36px;height:36px;"><svg width="20" height="14" viewBox="0 0 20 14" fill="none"><line x1="0" y1="1" x2="20" y2="1" stroke="#090907" stroke-width="2" stroke-linecap="round"></line><line x1="0" y1="7" x2="20" y2="7" stroke="#090907" stroke-width="2" stroke-linecap="round"></line><line x1="0" y1="13" x2="20" y2="13" stroke="#090907" stroke-width="2" stroke-linecap="round"></line></svg></div>
+              <span class="web-logo">buycycle.</span>
+            </div>
+            <div class="web-header-btns">
+              <button class="web-btn web-btn-login">Login</button>
+              <button class="web-btn web-btn-sell">Sell</button>
+            </div>
+          </div>
+
+          <!-- Photo -->
+          <div style="width:100%;height:292px;background:#e8e8e4;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+            <!-- Top gradient overlay -->
+            <div style="position:absolute;top:0;left:0;right:0;height:72px;background:linear-gradient(to bottom,rgba(0,0,0,0.2),transparent);z-index:3;"></div>
+            <img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=780&h=640&fit=crop" alt="Canyon Aeroad" style="width:100%;height:100%;object-fit:cover;">
+            <!-- Bottom gradient overlay -->
+            <div style="position:absolute;bottom:0;left:0;right:0;height:43px;background:linear-gradient(to top,rgba(0,0,0,0.4),transparent);z-index:3;"></div>
+            <!-- Photo counter -->
+            <div style="position:absolute;bottom:8px;left:8px;z-index:4;background:rgba(9,9,7,0.7);color:#FCFCFC;font-size:12px;font-weight:400;padding:6px 12px;border-radius:4px;letter-spacing:0.24px;line-height:16px;">1 / 8</div>
+            <!-- Action buttons -->
+            <div style="position:absolute;bottom:8px;right:8px;z-index:4;display:flex;gap:12px;align-items:center;">
+              <div style="background:rgba(252,252,252,0.9);height:32px;border-radius:6px;display:flex;align-items:center;padding:0 6px;gap:4px;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="#090907"/><path d="M1 10C1 10 5 4 10 4C15 4 19 10 19 10C19 10 15 16 10 16C5 16 1 10 1 10Z" stroke="#090907" stroke-width="1.5" fill="none"/></svg><span style="font-size:12px;font-weight:400;color:black;line-height:18px;">500</span></div>
+              <div style="background:rgba(252,252,252,0.9);height:32px;border-radius:6px;display:flex;align-items:center;padding:0 6px;gap:4px;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 17C10 17 2 12 2 7.5C2 4.5 4.5 2.5 7 2.5C8.5 2.5 9.5 3.2 10 4C10.5 3.2 11.5 2.5 13 2.5C15.5 2.5 18 4.5 18 7.5C18 12 10 17 10 17Z" fill="#EA580C"/></svg><span style="font-size:12px;font-weight:400;color:black;line-height:18px;">43</span></div>
+              <div style="background:rgba(252,252,252,0.9);width:32px;height:32px;border-radius:4px;display:flex;align-items:center;justify-content:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M9 3V13M9 3L5.5 6.5M9 3L12.5 6.5M3 17H17" stroke="#090907" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+            </div>
+          </div>
+
+          <!-- ★ SELLER SECTION — Web Mobile ★ -->
+          <div style="padding:16px;display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:42px;height:42px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=118&h=118&fit=crop&crop=face" alt="Nina" style="width:100%;height:100%;object-fit:cover;"></div>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
+                <div style="font-size:16px;font-weight:500;line-height:24px;color:#090907;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Sold by Nina</div>
+                <div style="display:flex;align-items:flex-end;gap:4px;">
+                  <span class="stars" style="font-size:12px;">★★★★<span style="color:#D0D0D0;">★</span></span>
+                  <span style="font-size:12px;font-weight:700;color:#090907;line-height:12px;">4.3</span>
+                  <span style="font-size:12px;font-weight:400;color:#535353;line-height:12px;">(23)</span>
+                </div>
+                <div style="font-size:14px;font-weight:400;line-height:21px;color:#090907;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Munich, Germany</div>
+              </div>
+              <button style="height:36px;padding:0 12px;border-radius:10px;border:1px solid #757575;background:white;font-size:14px;font-weight:400;line-height:21px;font-family:inherit;cursor:pointer;white-space:nowrap;flex-shrink:0;color:#090907;">Ask a question</button>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <span style="display:inline-flex;align-items:center;gap:4px;background:#F3F3F3;color:#535353;font-size:12px;font-weight:500;padding:4px 8px;border-radius:24px;line-height:18px;"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.2" stroke="#535353" stroke-width="1.4" fill="none"/><path d="M9 4.5V9.75L12 12" stroke="#535353" stroke-width="1.4" stroke-linecap="round"/></svg>45min. response</span>
+              <span style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(90deg,#DAFDA0 0%,#FDFDA0 100%);color:#090907;font-size:12px;font-weight:500;padding:4px 8px;border-radius:24px;line-height:18px;"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 4.1L11 4.6L8.5 7L9.1 10.5L6 8.9L2.9 10.5L3.5 7L1 4.6L4.5 4.1L6 1Z" fill="#090907"/></svg>TOP SELLER</span>
+            </div>
+          </div>
+
+          <div style="height:1px;background:#EAEAEA;margin:0 16px;"></div>
+
+          <!-- Listing info -->
+          <div style="padding:16px;display:flex;flex-direction:column;gap:24px;">
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div>
+                <div style="font-size:16px;font-weight:400;line-height:24px;color:#090907;">Canyon</div>
+                <div style="font-size:24px;font-weight:500;line-height:32px;color:#090907;">Aeroad CF SLX DB 9.0 Disc</div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;align-items:baseline;gap:8px;">
+                  <span style="font-size:24px;font-weight:700;line-height:22px;color:#090907;">€6.750</span>
+                  <span style="font-size:12px;font-weight:400;color:#535353;text-decoration:line-through;line-height:12px;">€ 10.999 MSRP</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:4px;font-size:14px;line-height:21px;color:#146C43;"><span style="font-weight:500;text-decoration:underline;">€7,087</span><span style="font-weight:400;"> incl. Buyer Protection</span><svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" fill="#146C43" opacity="0.2"></path><path d="M7 1L2 3.5V7C2 10 7 13 7 13C7 13 12 10 12 7V3.5L7 1Z" stroke="#146C43" stroke-width="1.2"></path><path d="M5 7L6.5 8.5L9 6" stroke="#146C43" stroke-width="1.2" stroke-linecap="round"></path></svg></div>
+              </div>
+              <div style="background:#FFF7ED;border-radius:6px;padding:8px;display:flex;gap:4px;align-items:flex-start;">
+                <svg width="21" height="21" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"></path><path d="M4 7C4 10.3 6.3 13 9 14C11.7 13 14 10.3 14 7H4Z" fill="#EA580C" opacity="0.4"></path></svg>
+                <span style="flex:1;font-size:14px;font-weight:500;line-height:21px;color:#EA580C;">In high demand! X buyers made offers in 7 days.</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:12px 8px;"><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;display:inline-flex;align-items:center;gap:4px;">Very good condition<svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;"><circle cx="9" cy="9" r="7.5" stroke="#535353" stroke-width="1"></circle><line x1="9" y1="8" x2="9" y2="13" stroke="#535353" stroke-width="1.2" stroke-linecap="round"></line><circle cx="9" cy="5.5" r="0.8" fill="#535353"></circle></svg></span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">2019</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">M</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;display:inline-flex;align-items:center;gap:4px;">Fits to height 185-195 cm<svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;"><circle cx="9" cy="9" r="7.5" stroke="#535353" stroke-width="1"></circle><line x1="9" y1="8" x2="9" y2="13" stroke="#535353" stroke-width="1.2" stroke-linecap="round"></line><circle cx="9" cy="5.5" r="0.8" fill="#535353"></circle></svg></span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">Shimano Dura Ace Di2</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">Carbon frame</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">Disc brakes</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">Black</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 8px;font-size:14px;font-weight:400;line-height:21px;color:#333;">Receipt available: No</span></div>
+          </div>
+
+          <div class="bottom-spacer"></div>
+          <div style="position:sticky;bottom:0;background:#FCFCFC;border-top:1px solid #757575;padding:12px 16px 0;display:flex;flex-direction:column;gap:8px;align-items:center;">
+            <div style="display:flex;gap:8px;width:100%;">
+              <button style="flex:1;height:52px;border-radius:12px;border:1.5px solid #757575;background:white;font-size:16px;font-weight:400;font-family:inherit;cursor:pointer;color:#090907;">Make an offer</button>
+              <button style="flex:1;height:52px;border-radius:12px;border:none;background:#090907;font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;color:#FCFCFC;box-shadow:0 2px 8px rgba(9,9,7,0.3);">Buy</button>
+            </div>
+            <div class="home-indicator"><div class="home-indicator-pill"></div></div>
+          </div>
+
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════
+       WEB DESKTOP
+  ════════════════════════════════ -->
+  <div class="section-group">
+    <div class="section-group-label">Platform — Web · Desktop</div>
+    <div class="canvas" style="flex-direction:column;align-items:center;">
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+        <p class="phone-label">PDP · Web Desktop</p>
+        <div class="desktop-frame">
+
+          <div class="desktop-chrome">
+            <div class="chrome-dots"><div class="chrome-dot r"></div><div class="chrome-dot y"></div><div class="chrome-dot g"></div></div>
+            <div class="chrome-url">buycycle.com/listings/canyon-aeroad-cf-slx-db-9-disc</div>
+          </div>
+
+          <div class="desktop-nav">
+            <span class="desktop-nav-logo">buycycle.</span>
+            <input class="desktop-search" placeholder="Search 100k+ cycling &amp; other sport items" readonly="">
+            <button class="desktop-nav-btn" style="background:white;border:1px solid #090907;color:#090907;font-family:inherit;">Login</button>
+            <button class="desktop-nav-btn" style="background:#090907;border:none;color:white;font-family:inherit;">Sell</button>
+          </div>
+
+          <div class="pdp-body">
+
+            <!-- Left: image + details -->
+            <div class="pdp-left">
+              <div class="back-link"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 11L5 7L9 3" stroke="#757575" stroke-width="1.6" stroke-linecap="round"></path></svg>Back to search</div>
+              <div class="desktop-img" style="overflow:hidden;">
+                <img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=1200&h=680&fit=crop" alt="Canyon Aeroad" style="width:100%;height:100%;object-fit:cover;">
+              </div>
+              <div class="desktop-thumbs">
+                <div class="desktop-thumb active" style="overflow:hidden;"><img src="https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=152&h=114&fit=crop" style="width:100%;height:100%;object-fit:cover;"></div>
+                <div class="desktop-thumb" style="overflow:hidden;background:#e8e8e4;"></div>
+                <div class="desktop-thumb" style="overflow:hidden;background:#e8e8e4;"></div>
+                <div class="desktop-thumb" style="overflow:hidden;background:#e8e8e4;"></div>
+              </div>
+              <div style="font-size:16px;font-weight:700;margin-bottom:12px;">General information</div>
+              <div style="display:flex;flex-wrap:wrap;gap:8px;"><span style="background:#F3F3F3;border-radius:24px;padding:4px 12px;font-size:14px;font-weight:400;color:#333;">Condition: Very good</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 12px;font-size:14px;font-weight:400;color:#333;">Year: 2019</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 12px;font-size:14px;font-weight:400;color:#333;">Frame size: M</span><span style="background:#F3F3F3;border-radius:24px;padding:4px 12px;font-size:14px;font-weight:400;color:#333;">Fits to height: 185–195 cm</span></div>
+            </div>
+
+            <!-- Right: sidebar island -->
+            <div style="width:416px;flex-shrink:0;position:sticky;top:0;align-self:flex-start;padding:20px 24px;">
+              <div style="border:1px solid #EAEAEA;border-radius:12px;box-shadow:0 1px 6px rgba(83,83,83,0.15),0 -1px 6px rgba(83,83,83,0.15);overflow:hidden;background:#FCFCFC;">
+
+                <!-- Product info -->
+                <div style="padding:24px;display:flex;flex-direction:column;gap:16px;border-bottom:1px solid #EAEAEA;">
+
+                  <!-- Brand + Model + Tags + Price -->
+                  <div style="display:flex;flex-direction:column;gap:24px;">
+                    <div style="display:flex;flex-direction:column;gap:8px;position:relative;">
+                      <!-- Share icon -->
+                      <div style="position:absolute;top:-4px;right:0;background:#F3F3F3;border-radius:4px;padding:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4V16M12 4L8 8M12 4L16 8M4 20H20" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                      </div>
+                      <!-- Brand + Title -->
+                      <div>
+                        <div style="font-size:16px;font-weight:400;line-height:24px;color:#333;">Canyon</div>
+                        <div style="font-size:24px;font-weight:500;line-height:32px;color:#090907;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:40px;">Aeroad CF SLX DB 9.0 Disc</div>
+                      </div>
+                      <!-- Product tags -->
+                      <div style="display:flex;gap:4px;align-items:center;">
+                        <span style="background:#F3F3F3;border-radius:24px;padding:4px 12px;font-size:12px;font-weight:400;line-height:18px;color:#333;">2019</span>
+                        <span style="background:#F3F3F3;border-radius:24px;padding:4px 12px;font-size:12px;font-weight:400;line-height:18px;color:#333;">M</span>
+                        <span style="background:#F3F3F3;border-radius:24px;padding:4px 12px;font-size:12px;font-weight:400;line-height:18px;color:#333;">Shimano Dura Ace Di2</span>
+                      </div>
+                    </div>
+
+                    <!-- Price -->
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="font-size:24px;font-weight:500;line-height:27px;color:#090907;">€6.750</span>
+                        <span style="font-size:12px;font-weight:400;color:#535353;text-decoration:line-through;line-height:18px;">€ 10.999</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- High demand -->
+                  <div style="background:#FFF7ED;border-radius:8px;padding:8px;display:flex;gap:4px;align-items:flex-start;">
+                    <svg width="21" height="21" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;"><path d="M9 2C9 2 7 5 7 7C7 8.1 7.9 9 9 9C10.1 9 11 8.1 11 7C11 5 9 2 9 2Z" fill="#EA580C"></path><path d="M4 7C4 10.3 6.3 13 9 14C11.7 13 14 10.3 14 7H4Z" fill="#EA580C" opacity="0.4"></path></svg>
+                    <span style="flex:1;font-size:14px;font-weight:500;line-height:21px;color:#EA580C;">In high demand! X buyers made offers in 7 days.</span>
+                  </div>
+
+                  <!-- CTA Buttons -->
+                  <div style="display:flex;flex-direction:column;gap:8px;">
+                    <button style="width:100%;height:52px;background:#090907;border:none;color:#FCFCFC;border-radius:12px;font-size:16px;font-weight:400;font-family:inherit;cursor:pointer;box-shadow:0 2px 8px rgba(9,9,7,0.3);">Buy now</button>
+                    <button style="width:100%;height:52px;background:white;border:1.5px solid #757575;color:#090907;border-radius:12px;font-size:16px;font-weight:400;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4L15 10H20L16 14L17.5 20L12 16.5L6.5 20L8 14L4 10H9L12 4Z" stroke="#090907" stroke-width="1.5" stroke-linejoin="round" fill="none"></path></svg>Make an offer</button>
+                  </div>
+
+                  <!-- Divider -->
+                  <div style="height:1px;background:#EAEAEA;"></div>
+
+                  <!-- ★ SELLER CARD (Desktop) ★ -->
+                  <div style="display:flex;flex-direction:column;gap:12px;">
+                    <!-- Profile row: avatar + name + rating -->
+                    <div style="display:flex;gap:8px;align-items:center;">
+                      <div style="width:42px;height:42px;border-radius:50%;overflow:hidden;flex-shrink:0;"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=118&h=118&fit=crop&crop=face" alt="Nina" style="width:100%;height:100%;object-fit:cover;"></div>
+                      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;">
+                        <div style="font-size:16px;font-weight:500;line-height:24px;color:#090907;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Sold by <span style="text-decoration:underline;cursor:pointer;">Nina</span></div>
+                        <div style="display:flex;align-items:flex-end;gap:4px;">
+                          <span class="stars" style="font-size:12px;">★★★★<span style="color:#D0D0D0;">★</span></span>
+                          <span style="font-size:12px;font-weight:700;color:#090907;line-height:12px;">4.3</span>
+                          <span style="font-size:12px;font-weight:400;color:#535353;line-height:12px;">(23)</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Location + Last active -->
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                      <div style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:400;line-height:21px;color:#535353;"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1C4.5 1 2.5 3 2.5 5.5C2.5 9 7 13 7 13C7 13 11.5 9 11.5 5.5C11.5 3 9.5 1 7 1Z" stroke="#535353" stroke-width="1.3" fill="none"/><circle cx="7" cy="5.5" r="1.5" stroke="#535353" stroke-width="1.3" fill="none"/></svg>Munich, Germany</div>
+                      <div style="display:flex;align-items:center;gap:4px;font-size:14px;font-weight:400;line-height:21px;color:#535353;"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.6" stroke="#535353" stroke-width="1.3" fill="none"/><path d="M7 3.5V7.5L9.5 9.5" stroke="#535353" stroke-width="1.3" stroke-linecap="round"/></svg>Last active: 1h ago</div>
+                    </div>
+                    <!-- Badges -->
+                    <div style="display:flex;gap:8px;">
+                      <span style="display:inline-flex;align-items:center;gap:4px;background:#F3F3F3;color:#535353;font-size:12px;font-weight:500;padding:4px 8px;border-radius:24px;line-height:18px;">45min. response</span>
+                      <span style="display:inline-flex;align-items:center;gap:4px;background:linear-gradient(90deg,#DAFDA0 0%,#FDFDA0 100%);color:#090907;font-size:12px;font-weight:500;padding:4px 8px;border-radius:24px;line-height:18px;"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L7.5 4.1L11 4.6L8.5 7L9.1 10.5L6 8.9L2.9 10.5L3.5 7L1 4.6L4.5 4.1L6 1Z" fill="#090907"/></svg>TOP SELLER</span>
+                    </div>
+                    <!-- Message button -->
+                    <button style="width:100%;height:46px;background:white;border:1.5px solid #757575;color:#090907;border-radius:12px;font-size:16px;font-weight:400;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 4H20L21 4V16H7L3 20V4Z" stroke="#090907" stroke-width="1.5" stroke-linejoin="round" fill="none"></path></svg>Message</button>
+                  </div>
+
+                  <!-- Buyer Protection -->
+                  <div style="background:#E8F8F0;border-radius:8px;padding:12px 16px;display:flex;gap:12px;align-items:center;">
+                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" style="flex-shrink:0;"><path d="M15 2L4 7V14C4 21.5 15 28 15 28C15 28 26 21.5 26 14V7L15 2Z" fill="#E8F8F0"></path><path d="M15 2L4 7V14C4 21.5 15 28 15 28C15 28 26 21.5 26 14V7L15 2Z" stroke="#146C43" stroke-width="1.8"></path><path d="M10.5 15L13.5 18L19.5 12" stroke="#146C43" stroke-width="1.8" stroke-linecap="round"></path></svg>
+                    <div style="flex:1;font-size:12px;font-weight:400;line-height:18px;color:#146C43;"><span style="font-weight:500;">Buyer Protection:</span> The seller is only paid once you have received and approved your item. <span style="font-weight:500;text-decoration:underline;cursor:pointer;">Learn more</span></div>
+                  </div>
+                </div>
+
+                <!-- Divider + Trustpilot -->
+                <div style="padding:8px 40px;display:flex;align-items:center;justify-content:space-between;">
+                  <div style="display:flex;align-items:center;gap:4px;font-size:12px;line-height:18px;">
+                    <span style="font-weight:500;color:black;">3,283</span>
+                    <span style="font-weight:400;color:black;">reviews on</span>
+                    <svg width="14" height="13" viewBox="0 0 14 13" fill="none" style="flex-shrink:0;"><path d="M7 0L8.8 4.7L14 5.2L10.2 8.5L11.2 13L7 10.5L2.8 13L3.8 8.5L0 5.2L5.2 4.7L7 0Z" fill="#219653"/></svg>
+                    <span style="font-weight:700;color:black;font-family:Roboto,sans-serif;">Trustpilot</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div style="display:flex;gap:2px;">
+                      <div style="width:15px;height:16px;background:#00B67A;display:flex;align-items:center;justify-content:center;"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 0L6.1 3.5H10L7 5.6L8 9L5 7L2 9L3 5.6L0 3.5H3.9L5 0Z" fill="white"/></svg></div>
+                      <div style="width:15px;height:16px;background:#00B67A;display:flex;align-items:center;justify-content:center;"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 0L6.1 3.5H10L7 5.6L8 9L5 7L2 9L3 5.6L0 3.5H3.9L5 0Z" fill="white"/></svg></div>
+                      <div style="width:15px;height:16px;background:#00B67A;display:flex;align-items:center;justify-content:center;"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 0L6.1 3.5H10L7 5.6L8 9L5 7L2 9L3 5.6L0 3.5H3.9L5 0Z" fill="white"/></svg></div>
+                      <div style="width:15px;height:16px;background:#00B67A;display:flex;align-items:center;justify-content:center;"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 0L6.1 3.5H10L7 5.6L8 9L5 7L2 9L3 5.6L0 3.5H3.9L5 0Z" fill="white"/></svg></div>
+                      <div style="width:15px;height:16px;background:#00B67A;display:flex;align-items:center;justify-content:center;"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 0L6.1 3.5H10L7 5.6L8 9L5 7L2 9L3 5.6L0 3.5H3.9L5 0Z" fill="white"/></svg></div>
+                    </div>
+                    <span style="font-size:12px;font-weight:500;line-height:18px;color:black;">Excellent</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+</body></html>
