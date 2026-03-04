@@ -2,7 +2,7 @@
 title: "Merging Bike & Frameset Sell Funnel with Structured Frameset Component Selection"
 author: "Sophie Schoen"
 date: "2026-03-04"
-team: "Product Design"
+team: "Design"
 tags: ["Seller","Seller XP"]
 prototypes:
   - "/prototypes/merging-bike-frameset-sell-funnel-with-structured-frameset-component-selection.html"
@@ -10,20 +10,20 @@ finalPrototypes: []
 ---
 
 ## Problem
-The sell landing page has 4 entry cards, leaving little room to give prominence to the new allsports card — reducing to 3 by merging bike and frameset makes space. On the buyer side, frameset PDPs lack structured data about included parts, forcing buyers to parse free-text seller descriptions.
+The sell landing page has 4 entry cards, leaving insufficient space for the allsports card. Reducing to 3 cards by merging bike and frameset entries gives the allsports card more prominence while streamlining the seller experience.
 
 ## Solution
-A merged sell entry funnels into a new Step 1 where sellers choose "Complete Bike" or "Frameset Only," with a toggle checklist capturing exactly which components are included. This structured data then surfaces on the frameset PDP as a clear included/not-included grid, replacing ambiguous seller descriptions.
+A unified sell funnel entry merges bike and frameset into one card, with a new Step 1 selection that reveals a structured component toggle checklist for framesets. The frameset PDP gains a clear "Included with frameset" section showing which components the buyer will receive.
 
 ## UX & UI Rationale
-- Hick's Law: Reducing landing page from 4 to 3 cards lowers decision complexity and frees space for the allsports card
-- Progressive disclosure: Component checklist only appears when "Frameset Only" is selected, keeping the bike path clean
-- Recognition over recall: Toggle switches with named components (Fork, Headset, Stem, etc.) eliminate guesswork vs. free-text input
-- Structured data over free text: Seller input maps directly to buyer-facing UI, closing the information gap on frameset PDPs
-- ~9% of bike sales are framesets — structured component data improves listing quality and buyer confidence for this segment
+- Reducing cognitive load by merging related categories (Hick’s Law)
+- Progressive disclosure: component checklist only appears for frameset sellers
+- Visual differentiation on PDP (green checkmarks vs gray X) leverages preattentive processing
+- Toggle pattern familiar from settings UIs, reducing learning curve
+- 3-column grid on PDP matches existing spec chip layout for visual consistency
 
 ## System Limitations
-- No DS pattern for selection cards (radio-card / option-card) — had to compose from primitives
-- Toggle component spec in DS lacks explicit guidance on label placement
-- No DS pattern for checklist/toggle-list groups
-- Missing guidance on progressive disclosure animations in the DS
+- No DS component for selection cards with illustrations — had to custom-build
+- Toggle component exists in DS but has no documented "label + description" compound pattern
+- No DS pattern for included/excluded item grids — created a new visual language
+- Filter chips used for display-only specs on PDP are not semantically interactive, but DS only documents interactive chip variants
