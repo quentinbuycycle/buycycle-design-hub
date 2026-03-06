@@ -13,7 +13,7 @@ import Link from "next/link";
 const sections = [
   { id: "step-1", title: "Install Claude Code", number: 1 },
   { id: "step-2", title: "Authenticate", number: 2 },
-  { id: "step-3", title: "Install Cursor", number: 3 },
+  { id: "step-3", title: "Install VS Code", number: 3 },
   { id: "step-4", title: "Add Extension", number: 4 },
   { id: "step-5", title: "Workspace Layout", number: 5 },
   { id: "step-6", title: "Design System", number: 6 },
@@ -42,7 +42,7 @@ export default function SetupPage() {
             <span>buycycle internal tooling</span>
           </div>
           <h1 className={styles.heroTitle}>
-            Claude Code + Cursor
+            Claude Code + VS Code
             <span className={styles.heroTitleAccent}> Setup</span>
           </h1>
           <p className={styles.heroSubtitle}>
@@ -116,11 +116,11 @@ export default function SetupPage() {
               </p>
             </StepCard>
 
-            {/* Step 3: Install Cursor */}
+            {/* Step 3: Install VS Code */}
             <StepCard
               number={3}
-              title="Install Cursor"
-              description="The AI-first code editor"
+              title="Install VS Code"
+              description="The code editor"
               icon={
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
@@ -130,18 +130,15 @@ export default function SetupPage() {
               }
             >
               <p>
-                Download Cursor from{" "}
-                <a href="https://cursor.com" target="_blank" rel="noopener noreferrer" className={styles.link}>
-                  cursor.com
+                Download VS Code from{" "}
+                <a href="https://code.visualstudio.com" target="_blank" rel="noopener noreferrer" className={styles.link}>
+                  code.visualstudio.com
                 </a>
               </p>
               <ul>
                 <li>Open the downloaded .dmg file</li>
-                <li>Drag Cursor to your Applications folder</li>
-                <li>Launch Cursor and complete the initial setup</li>
-                <li>
-                  <strong>Skip VS Code import</strong> if you don&apos;t use VS Code — it&apos;s not required
-                </li>
+                <li>Drag VS Code to your Applications folder</li>
+                <li>Launch VS Code and complete the initial setup</li>
               </ul>
             </StepCard>
 
@@ -167,7 +164,7 @@ export default function SetupPage() {
                 </li>
               </ol>
               <p className={styles.tip}>
-                <strong>Tip:</strong> If you don&apos;t see the extension, make sure you&apos;re on the latest version of Cursor.
+                <strong>Tip:</strong> If you don&apos;t see the extension, make sure you&apos;re on the latest version of VS Code.
               </p>
             </StepCard>
 
@@ -302,7 +299,7 @@ export default function SetupPage() {
               <ol>
                 <li>Make sure the command files are in <code>~/.claude/commands/</code> (not a subfolder)</li>
                 <li>Each command should be a <code>.md</code> file</li>
-                <li>Restart Cursor after adding new commands</li>
+                <li>Restart VS Code after adding new commands</li>
                 <li>Verify Claude Code extension is installed and enabled</li>
               </ol>
             </Accordion>
@@ -317,10 +314,10 @@ export default function SetupPage() {
                 <li>Clear your browser cookies and try the login again</li>
               </ol>
             </Accordion>
-            <Accordion title="Claude Code extension not working in Cursor">
+            <Accordion title="Claude Code extension not working in VS Code">
               <p>Check these common issues:</p>
               <ul>
-                <li>Make sure you&apos;re using the latest version of Cursor</li>
+                <li>Make sure you&apos;re using the latest version of VS Code</li>
                 <li>Try disabling and re-enabling the extension</li>
                 <li>Check the Output panel (View → Output) for error messages</li>
                 <li>Reinstall the extension from the marketplace</li>

@@ -17,11 +17,11 @@ const workflowSteps = [
   },
   {
     number: 2,
-    title: "Open it in Cursor",
+    title: "Open it in VS Code",
     content: (
       <>
         <p>
-          Open Cursor → <strong>File</strong> → <strong>Open Folder</strong> → Select your new folder.
+          Open VS Code → <strong>File</strong> → <strong>Open Folder</strong> → Select your new folder.
         </p>
         <p className={styles.subtle}>Everything Claude creates will live here.</p>
       </>
