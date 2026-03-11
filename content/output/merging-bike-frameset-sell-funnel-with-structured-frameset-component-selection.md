@@ -9,6 +9,7 @@ prototypes:
   - "/prototypes/index.html"
   - "/prototypes/merging-bike-frameset-sell-funnel-with-structured-frameset-component-selection.html"
 finalPrototypes:
+  - "/prototypes/Mobile Listing Flow.html"
   - "/prototypes/Desktop Listing Flow.html"
   - "/prototypes/PDP - Frameset - Mobile.html"
   - "/prototypes/PDP - Frameset - Desktop.html"
