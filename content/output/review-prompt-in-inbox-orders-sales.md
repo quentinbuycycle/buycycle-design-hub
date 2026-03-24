@@ -5,6 +5,7 @@ date: "2026-03-24"
 team: "Transaction Experience"
 tags: ["Buyer & Seller","Post-transaction XP"]
 prototypes:
+  - "/prototypes/review-prompt-prototype.html"
   - "/prototypes/review-prompt-in-inbox-orders-sales.html"
 finalPrototypes: []
 ---
