@@ -6,7 +6,8 @@ team: "Product Design"
 tags: ["Buyer & Seller","Seller XP"]
 prototypes:
   - "/prototypes/new-app-profile-navigation.html"
-finalPrototypes: []
+finalPrototypes:
+  - "/prototypes/Profile Menu.html"
 ---
 
 ## Problem
