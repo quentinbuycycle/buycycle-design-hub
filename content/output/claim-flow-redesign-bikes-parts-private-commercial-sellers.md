@@ -5,6 +5,7 @@ date: "2026-04-07"
 team: "Product"
 tags: ["Buyer & Seller","Post-transaction XP"]
 prototypes:
+  - "/prototypes/Claim form bikes commercial sale.html"
   - "/prototypes/Claim form bikes private sale.html"
   - "/prototypes/claim-summary.html"
   - "/prototypes/claim-form-parts-commercial.html"
