@@ -24,6 +24,15 @@
 .DS_Store
 *.pem
 
+# macOS Finder duplicates
+* 2.*
+*copy*.png
+
+# local release staging (releases live on GitHub)
+buycycle-v*.zip
+buycycle-v*/
+commands-v*.zip
+
 # debug
 npm-debug.log*
 yarn-debug.log*
