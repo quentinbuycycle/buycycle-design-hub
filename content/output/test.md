@@ -1,22 +1,22 @@
 ---
-title: "test"
-author: "test"
-date: "2026-03-24"
-team: "test"
-tags: ["test"]
+title: "Test"
+author: "Lena Wittmann"
+date: "2026-04-24"
+team: "Product Design"
+tags: ["Buyer","Pre-transactional XP"]
 prototypes:
   - "/prototypes/test.html"
 finalPrototypes: []
 ---
 
 ## Problem
-test
+Test.
 
 ## Solution
-test
+Test.
 
 ## UX & UI Rationale
-test
+- test
 
 ## System Limitations
-test
+- test
