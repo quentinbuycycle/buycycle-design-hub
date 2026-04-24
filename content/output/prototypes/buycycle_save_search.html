@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>buycycle — AI Save Search</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:     #f2f2f2;
+  --card:   #ffffff;
+  --bdr:    rgba(0,0,0,0.07);
+  --t1:     #111111;
+  --t2:     #6b6b6b;
+  --t3:     #aaaaaa;
+  --blue:   #378ADD;
+  --green:  #0F6E56;
+  --ai-bg:  #EDFAF4;
+  --font:   -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  background: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 16px 80px;
+  font-family: var(--font);
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+/* ── phone shell ── */
+.col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.col-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: #666;
+}
+.phone {
+  width: 375px; height: 812px;
+  background: var(--bg);
+  border-radius: 48px;
+  overflow: hidden;
+  box-shadow: 0 20px 56px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.09);
+  display: flex; flex-direction: column;
+  position: relative; flex-shrink: 0;
+}
+.scroll {
+  flex: 1; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 24px;
+}
+.scroll::-webkit-scrollbar { display: none; }
+
+/* ── status bar ── */
+.sbar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 24px 8px;
+  font-size: 15px; font-weight: 600; flex-shrink: 0;
+  background: var(--bg);
+}
+.sbar-icons { display: flex; align-items: center; gap: 5px; }
+
+/* ── nav ── */
+.nav {
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px 16px 12px; background: var(--bg);
+  position: relative; flex-shrink: 0;
+}
+.nav-back {
+  position: absolute; left: 16px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+  display: flex; align-items: center;
+}
+.nav-back svg { width: 22px; height: 22px; color: var(--t1); }
+.nav-title { font-size: 17px; font-weight: 700; color: var(--t1); }
+
+/* ── search bar ── */
+.search-wrap { padding: 0 16px 8px; background: var(--bg); flex-shrink: 0; }
+.search-pill {
+  display: flex; align-items: center; gap: 9px;
+  background: var(--card); border: 1px solid rgba(0,0,0,0.13);
+  border-radius: 24px; padding: 10px 16px;
+}
+.search-pill span { font-size: 15px; color: var(--t3); }
+
+/* ── hint ── */
+.hint {
+  padding: 6px 16px 10px;
+  font-size: 13px; color: var(--t2);
+  background: var(--bg); flex-shrink: 0;
+}
+
+/* ── list cards ── */
+.card-list { padding: 0 16px; display: flex; flex-direction: column; gap: 1px; }
+.card-group {
+  background: var(--card); border-radius: 14px;
+  overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+}
+.w-row {
+  display: flex; align-items: flex-start;
+  gap: 13px; padding: 12px 14px;
+  background: var(--card); border-bottom: 0.5px solid var(--bdr);
+  position: relative;
+}
+.w-row:last-child { border-bottom: none; }
+
+/* photo */
+.w-photo {
+  width: 108px; height: 82px; border-radius: 10px;
+  flex-shrink: 0; position: relative; overflow: hidden;
+}
+.w-photo.ph-focus      { background: linear-gradient(145deg,#c8d8c0,#90b088); }
+.w-photo.ph-canyon     { background: linear-gradient(145deg,#1a2840,#2d4a70); }
+.w-photo.ph-trek       { background: linear-gradient(145deg,#1c1c2e,#2d2d50); }
+.w-photo.ph-garmin     { background: linear-gradient(145deg,#28303e,#3a4557); }
+.w-photo svg.bk { position: absolute; inset: 0; margin: auto; width: 36px; height: 36px; opacity: 0.45; }
+.w-photo.ph-focus   svg.bk { color:#3a6030; }
+.w-photo.ph-canyon  svg.bk { color:#5080b0; }
+.w-photo.ph-trek    svg.bk { color:#7070a8; }
+.w-photo.ph-garmin  svg.bk { color:#8aa0b8; }
+
+.hrt {
+  position: absolute; bottom: 6px; right: 6px;
+  background: #fff; border-radius: 20px;
+  font-size: 11px; font-weight: 700; padding: 3px 7px;
+  display: flex; align-items: center; gap: 3px; color: var(--t1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+.hrt svg { width: 10px; height: 10px; fill: #e03030; }
+
+.w-inf { flex: 1; min-width: 0; padding-top: 1px; }
+.w-brand { font-size: 12px; color: var(--t2); }
+.w-name  { font-size: 15px; font-weight: 700; color: var(--t1); line-height: 1.25; margin-top: 1px; }
+.w-meta  { font-size: 12px; color: var(--t2); margin-top: 3px; line-height: 1.4; }
+.w-pr    { display: flex; align-items: baseline; gap: 7px; margin-top: 7px; }
+.w-price { font-size: 16px; font-weight: 700; color: var(--t1); }
+.w-msrp  { font-size: 12px; color: var(--t3); text-decoration: line-through; }
+
+/* ── AI nudge row (bottom of list) ── */
+.ai-row {
+  margin: 8px 16px 0;
+  background: var(--ai-bg);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.ai-row:active { background: #d6f5e8; }
+.ai-icon {
+  width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+  background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+}
+.ai-icon svg { width: 18px; height: 18px; color: #fff; }
+.ai-row-text { flex: 1; min-width: 0; }
+.ai-row-title { font-size: 14px; font-weight: 700; color: var(--t1); }
+.ai-row-sub { font-size: 12px; color: var(--t2); margin-top: 2px; }
+.ai-chev { width: 16px; height: 16px; color: var(--t3); flex-shrink: 0; }
+
+/* Confirmed row */
+.ai-row.confirmed {
+  background: var(--green); cursor: default;
+}
+.ai-row.confirmed .ai-row-title { color: #fff; }
+.ai-row.confirmed .ai-row-sub { color: rgba(255,255,255,0.7); }
+.ai-saved-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: rgba(255,255,255,0.75); margin-bottom: 3px;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BOTTOM SHEET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.28); z-index: 40;
+  opacity: 0; pointer-events: none; transition: opacity 0.26s;
+}
+.backdrop.open { opacity: 1; pointer-events: all; }
+
+.sheet {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: var(--card); border-radius: 20px 20px 0 0;
+  z-index: 50; padding-bottom: 34px;
+  transform: translateY(100%);
+  transition: transform 0.30s cubic-bezier(0.32,0.72,0,1);
+}
+.sheet.open { transform: translateY(0); }
+
+.sheet-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: #e0e0e0; margin: 12px auto 0;
+}
+
+/* Sheet header */
+.sheet-head { padding: 18px 20px 0; display: flex; align-items: center; gap: 12px; }
+.sheet-head-icon {
+  width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0;
+  background: var(--green);
+  display: flex; align-items: center; justify-content: center;
+}
+.sheet-head-icon svg { width: 18px; height: 18px; color: #fff; }
+.sheet-title { font-size: 19px; font-weight: 700; color: var(--t1); }
+.sheet-sub   { font-size: 13px; color: var(--t2); margin-top: 2px; }
+
+/* Chips */
+.sheet-sec { padding: 16px 20px 0; }
+.sec-label {
+  font-size: 11px; font-weight: 600; color: var(--t3);
+  letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 10px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: flex; align-items: center; gap: 5px;
+  background: #EBF3FC; border: 1px solid #C2DCF5;
+  border-radius: 20px; padding: 6px 10px 6px 13px;
+  font-size: 13px; font-weight: 500; color: #1a4e7a;
+}
+.chip.removed {
+  background: #f2f2f2; border-color: rgba(0,0,0,0.1);
+  color: var(--t3); text-decoration: line-through;
+}
+.chip-x {
+  width: 17px; height: 17px; border-radius: 50%;
+  background: rgba(55,138,221,0.18); border: none;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #1a4e7a;
+  font-size: 12px; font-weight: 700; line-height: 1;
+  font-family: var(--font); padding: 0; flex-shrink: 0;
+}
+.chip.removed .chip-x { background: #e0e0e0; color: var(--t3); }
+.chip-undo {
+  display: none; font-size: 11px; color: var(--blue);
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--font); text-decoration: underline; text-underline-offset: 2px;
+}
+.chip.removed .chip-undo { display: inline; }
+
+.chip-hint {
+  margin-top: 8px; font-size: 12px; color: var(--t3);
+  display: flex; align-items: center; gap: 5px;
+}
+.chip-hint svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+.brand-note {
+  margin-top: 9px; font-size: 12px; color: var(--t2);
+  display: flex; align-items: center; gap: 5px;
+}
+.brand-note svg { width: 13px; height: 13px; color: var(--t3); flex-shrink: 0; }
+
+/* CTAs */
+.sheet-cta {
+  margin: 20px 20px 0;
+  background: #0d0d0d; color: #fff; border: none; border-radius: 14px;
+  width: calc(100% - 40px); padding: 15px;
+  font-size: 15px; font-weight: 700; font-family: var(--font);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.sheet-cta:active { background: #2a2a2a; }
+.sheet-dismiss {
+  margin: 12px 20px 0; background: none; border: none;
+  width: calc(100% - 40px); padding: 10px;
+  font-size: 14px; font-weight: 500; color: var(--t2);
+  font-family: var(--font); cursor: pointer; text-align: center;
+}
+
+/* model quick-add */
+.sheet-div { height: 0.5px; background: var(--bdr); margin: 14px 20px 0; }
+.model-sec { padding: 12px 20px 0; }
+.model-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.model-chip {
+  background: none; border: 1.5px solid rgba(0,0,0,0.14);
+  border-radius: 20px; padding: 6px 14px;
+  font-size: 13px; font-weight: 500; color: var(--t2);
+  cursor: pointer; font-family: var(--font);
+  transition: background 0.13s, border-color 0.13s, color 0.13s;
+}
+.model-chip.selected { background: #0d0d0d; border-color: #0d0d0d; color: #fff; }
+.model-hint { font-size: 11px; color: var(--t3); margin-top: 8px; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<!-- shared SVG symbols -->
+<svg style="display:none">
+  <symbol id="s-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></symbol>
+  <symbol id="s-search" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="#aaa" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="s-bike" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M8 17.5h7M15 17.5l-3-9-2 4H6"/></symbol>
+  <symbol id="s-watch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></symbol>
+  <symbol id="s-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></symbol>
+  <symbol id="s-spark" viewBox="0 0 24 24" fill="currentColor"><path d="M9 4.5a.75.75 0 01.721.544l.813 2.846a3.75 3.75 0 002.576 2.576l2.846.813a.75.75 0 010 1.442l-2.846.813a3.75 3.75 0 00-2.576 2.576l-.813 2.846a.75.75 0 01-1.442 0l-.813-2.846a3.75 3.75 0 00-2.576-2.576l-2.846-.813a.75.75 0 010-1.442l2.846-.813A3.75 3.75 0 007.466 7.89l.813-2.846A.75.75 0 019 4.5zm9-3a.75.75 0 01.728.568l.258 1.036a2.625 2.625 0 001.91 1.91l1.036.258a.75.75 0 010 1.456l-1.036.258a2.625 2.625 0 00-1.91 1.91l-.258 1.036a.75.75 0 01-1.456 0l-.258-1.036a2.625 2.625 0 00-1.91-1.91l-1.036-.258a.75.75 0 010-1.456l1.036-.258a2.625 2.625 0 001.91-1.91l.258-1.036A.75.75 0 0118 1.5zm-3.5 13.5a.75.75 0 01.712.513l.394 1.183c.15.447.5.799.948.948l1.183.395a.75.75 0 010 1.422l-1.183.395a1.5 1.5 0 00-.948.948l-.395 1.183a.75.75 0 01-1.422 0l-.395-1.183a1.5 1.5 0 00-.948-.948l-1.183-.395a.75.75 0 010-1.422l1.183-.395a1.5 1.5 0 00.948-.948l.395-1.183A.75.75 0 0114.5 15z"/></symbol>
+  <symbol id="s-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="s-chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></symbol>
+  <symbol id="s-chev-d" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></symbol>
+  <symbol id="s-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
+  <symbol id="s-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+</svg>
+
+<!-- status bar snippet reused -->
+<template id="sbar-tpl">
+  <div class="sbar">
+    <span>13:35</span>
+    <div class="sbar-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="4.5" y="5.5" width="3" height="6.5" rx="0.5"/><rect x="9" y="3" width="3" height="9" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="currentColor"/><path d="M4.5 7.5C5.7 6.3 6.8 5.5 8 5.5s2.3.8 3.5 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1.5 4.5C3.5 2.5 5.7 1.5 8 1.5s4.5 1 6.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="currentColor" stroke-width="1"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill="currentColor"/><path d="M22.5 4v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+</template>
+
+
+<!-- ════════════════════════════
+     PHONE 1 — Pattern detected
+════════════════════════════ -->
+<div class="col">
+  <div class="col-label">1 · Pattern detected</div>
+  <div class="phone">
+    <div class="sbar"><span>13:35</span><div class="sbar-icons"><svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="4.5" y="5.5" width="3" height="6.5" rx="0.5"/><rect x="9" y="3" width="3" height="9" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="currentColor"/><path d="M4.5 7.5C5.7 6.3 6.8 5.5 8 5.5s2.3.8 3.5 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1.5 4.5C3.5 2.5 5.7 1.5 8 1.5s4.5 1 6.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="currentColor" stroke-width="1"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill="currentColor"/><path d="M22.5 4v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></div>
+    <div class="nav">
+      <button class="nav-back"><svg><use href="#s-back"/></svg></button>
+      <span class="nav-title">Wishlist</span>
+    </div>
+    <div class="search-wrap">
+      <div class="search-pill"><svg width="16" height="16"><use href="#s-search"/></svg><span>Search favorites</span></div>
+    </div>
+    <div class="hint">Swipe left to remove items from your wishlist.</div>
+
+    <div class="scroll">
+      <div class="card-list">
+        <div class="card-group">
+          <!-- Focus -->
+          <div class="w-row">
+            <div class="w-photo ph-focus"><svg class="bk"><use href="#s-bike"/></svg><div class="hrt"><svg><use href="#s-heart"/></svg>65</div></div>
+            <div class="w-inf">
+              <div class="w-brand">Focus</div>
+              <div class="w-name">IZALCO MAX 8.9 2024</div>
+              <div class="w-meta">MD · 2024 · Shimano 105 Di2</div>
+              <div class="w-pr"><span class="w-price">€ 1.888</span><span class="w-msrp">€ 4,499</span></div>
+            </div>
+          </div>
+          <!-- Canyon -->
+          <div class="w-row">
+            <div class="w-photo ph-canyon"><svg class="bk"><use href="#s-bike"/></svg><div class="hrt"><svg><use href="#s-heart"/></svg>44</div></div>
+            <div class="w-inf">
+              <div class="w-brand">Canyon</div>
+              <div class="w-name">Endurace CF SL 8 2023</div>
+              <div class="w-meta">MD · 2023 · Shimano 105 Di2</div>
+              <div class="w-pr"><span class="w-price">€ 2.100</span></div>
+            </div>
+          </div>
+          <!-- Trek -->
+          <div class="w-row">
+            <div class="w-photo ph-trek"><svg class="bk"><use href="#s-bike"/></svg><div class="hrt"><svg><use href="#s-heart"/></svg>31</div></div>
+            <div class="w-inf">
+              <div class="w-brand">Trek</div>
+              <div class="w-name">Domane SL 6 2023</div>
+              <div class="w-meta">MD · 2023 · Shimano 105 Di2</div>
+              <div class="w-pr"><span class="w-price">€ 2.490</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI nudge row — below the list -->
+      <div class="ai-row" style="margin-top:8px;">
+        <div class="ai-icon"><svg><use href="#s-spark"/></svg></div>
+        <div class="ai-row-text">
+          <div class="ai-row-title">Road bike · MD · up to €2,490</div>
+          <div class="ai-row-sub">Save as search?</div>
+        </div>
+        <svg class="ai-chev"><use href="#s-chev-r"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════
+     PHONE 2 — Sheet open
+════════════════════════════ -->
+<div class="col">
+  <div class="col-label">2 · Save as search</div>
+  <div class="phone" id="ph2">
+    <div class="sbar"><span>13:35</span><div class="sbar-icons"><svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="4.5" y="5.5" width="3" height="6.5" rx="0.5"/><rect x="9" y="3" width="3" height="9" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="currentColor"/><path d="M4.5 7.5C5.7 6.3 6.8 5.5 8 5.5s2.3.8 3.5 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1.5 4.5C3.5 2.5 5.7 1.5 8 1.5s4.5 1 6.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="currentColor" stroke-width="1"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill="currentColor"/><path d="M22.5 4v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></div>
+    <div class="nav">
+      <button class="nav-back"><svg><use href="#s-back"/></svg></button>
+      <span class="nav-title">Wishlist</span>
+    </div>
+    <div class="search-wrap">
+      <div class="search-pill"><svg width="16" height="16"><use href="#s-search"/></svg><span>Search favorites</span></div>
+    </div>
+    <div class="hint">Swipe left to remove items from your wishlist.</div>
+
+    <!-- list dimmed behind sheet -->
+    <div class="scroll" style="opacity:0.45;pointer-events:none;">
+      <div class="card-list">
+        <div class="card-group">
+          <div class="w-row"><div class="w-photo ph-focus"><svg class="bk"><use href="#s-bike"/></svg><div class="hrt"><svg><use href="#s-heart"/></svg>65</div></div><div class="w-inf"><div class="w-brand">Focus</div><div class="w-name">IZALCO MAX 8.9 2024</div><div class="w-meta">MD · 2024 · Shimano 105 Di2</div><div class="w-pr"><span class="w-price">€ 1.888</span><span class="w-msrp">€ 4,499</span></div></div></div>
+          <div class="w-row"><div class="w-photo ph-canyon"><svg class="bk"><use href="#s-bike"/></svg><div class="hrt"><svg><use href="#s-heart"/></svg>44</div></div><div class="w-inf"><div class="w-brand">Canyon</div><div class="w-name">Endurace CF SL 8 2023</div><div class="w-meta">MD · 2023 · Shimano 105 Di2</div><div class="w-pr"><span class="w-price">€ 2.100</span></div></div></div>
+          <div class="w-row"><div class="w-photo ph-trek"><svg class="bk"><use href="#s-bike"/></svg><div class="hrt"><svg><use href="#s-heart"/></svg>31</div></div><div class="w-inf"><div class="w-brand">Trek</div><div class="w-name">Domane SL 6 2023</div><div class="w-meta">MD · 2023 · Shimano 105 Di2</div><div class="w-pr"><span class="w-price">€ 2.490</span></div></div></div>
+        </div>
+      </div>
+      <div class="ai-row" style="margin-top:8px;opacity:0.5;">
+        <div class="ai-icon"><svg><use href="#s-spark"/></svg></div>
+        <div class="ai-row-text"><div class="ai-row-title">Road bike · MD · up to €2,490</div><div class="ai-row-sub">Save as search?</div></div>
+        <svg class="ai-chev"><use href="#s-chev-r"/></svg>
+      </div>
+    </div>
+
+    <!-- Backdrop -->
+    <div class="backdrop open" onclick="closeSheet()"></div>
+
+    <!-- Sheet -->
+    <div class="sheet open" id="sheet2">
+      <div class="sheet-handle"></div>
+
+      <div class="sheet-head">
+        <div class="sheet-head-icon"><svg><use href="#s-spark"/></svg></div>
+        <div>
+          <div class="sheet-title">Save as search?</div>
+          <div class="sheet-sub">Based on your favorited items</div>
+        </div>
+      </div>
+
+      <div class="sheet-sec">
+        <div class="sec-label">Search criteria</div>
+        <div class="chips">
+          <div class="chip" id="c-cat">
+            Road bike
+            <button class="chip-x" onclick="rmChip('c-cat')">×</button>
+            <button class="chip-undo" id="u-cat" onclick="undoChip('c-cat')">undo</button>
+          </div>
+          <div class="chip" id="c-size">
+            MD
+            <button class="chip-x" onclick="rmChip('c-size')">×</button>
+            <button class="chip-undo" id="u-size" onclick="undoChip('c-size')">undo</button>
+          </div>
+          <div class="chip" id="c-frame">
+            Carbon
+            <button class="chip-x" onclick="rmChip('c-frame')">×</button>
+            <button class="chip-undo" id="u-frame" onclick="undoChip('c-frame')">undo</button>
+          </div>
+          <div class="chip" id="c-shift">
+            Di2
+            <button class="chip-x" onclick="rmChip('c-shift')">×</button>
+            <button class="chip-undo" id="u-shift" onclick="undoChip('c-shift')">undo</button>
+          </div>
+          <div class="chip" id="c-price">
+            up to €2,490
+            <button class="chip-x" onclick="rmChip('c-price')">×</button>
+            <button class="chip-undo" id="u-price" onclick="undoChip('c-price')">undo</button>
+          </div>
+        </div>
+        <div class="chip-hint">
+          <svg><use href="#s-pencil"/></svg>
+          Tap any tag to edit or remove
+        </div>
+      </div>
+
+      <div class="sheet-div"></div>
+      <div class="model-sec">
+        <div class="sec-label">Save for a specific brand?</div>
+        <div class="model-chips" id="brand-chips2">
+          <button class="model-chip" onclick="toggleBrand(this)">Focus</button>
+          <button class="model-chip" onclick="toggleBrand(this)">Canyon</button>
+          <button class="model-chip" onclick="toggleBrand(this)">Trek</button>
+        </div>
+      </div>
+
+      <div class="sheet-div" id="model-div2" style="display:none;"></div>
+      <div class="model-sec" id="model-sec2" style="display:none;">
+        <div class="sec-label">Also save for a specific model?</div>
+        <div class="model-chips" id="model-chips2">
+          <button class="model-chip" onclick="toggleModel(this)">Focus IZALCO MAX</button>
+          <button class="model-chip" onclick="toggleModel(this)">Canyon Endurace</button>
+          <button class="model-chip" onclick="toggleModel(this)">Trek Domane</button>
+        </div>
+        <div class="model-hint">Creates a separate alert per selected model</div>
+      </div>
+
+      <button class="sheet-cta" id="cta2" onclick="doSave()">Save search</button>
+      <button class="sheet-dismiss" onclick="closeSheet()">No thanks</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════
+     PHONE 3 — Confirmed
+════════════════════════════ -->
+<div class="col">
+  <div class="col-label">3 · Confirmed</div>
+  <div class="phone">
+    <div class="sbar"><span>13:35</span><div class="sbar-icons"><svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="4.5" y="5.5" width="3" height="6.5" rx="0.5"/><rect x="9" y="3" width="3" height="9" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg><svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" fill="currentColor"/><path d="M4.5 7.5C5.7 6.3 6.8 5.5 8 5.5s2.3.8 3.5 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M1.5 4.5C3.5 2.5 5.7 1.5 8 1.5s4.5 1 6.5 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="currentColor" stroke-width="1"/><rect x="2" y="2" width="16" height="8" rx="1.5" fill="currentColor"/><path d="M22.5 4v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></div>
+    <div class="nav">
+      <button class="nav-back"><svg><use href="#s-back"/></svg></button>
+      <span class="nav-title">Wishlist</span>
+    </div>
+    <div class="search-wrap">
+      <div class="search-pill"><svg width="16" height="16"><use href="#s-search"/></svg><span>Search favorites</span></div>
+    </div>
+    <div class="hint">Swipe left to remove items from your wishlist.</div>
+
+    <div class="scroll">
+      <div class="card-list">
+        <div class="card-group">
+          <div class="w-row"><div class="w-photo ph-focus"><svg class="bk"><use href="#s-bike"/></svg><div class="hrt"><svg><use href="#s-heart"/></svg>65</div></div><div class="w-inf"><div class="w-brand">Focus</div><div class="w-name">IZALCO MAX 8.9 2024</div><div class="w-meta">MD · 2024 · Shimano 105 Di2</div><div class="w-pr"><span class="w-price">€ 1.888</span><span class="w-msrp">€ 4,499</span></div></div></div>
+          <div class="w-row"><div class="w-photo ph-canyon"><svg class="bk"><use href="#s-bike"/></svg><div class="hrt"><svg><use href="#s-heart"/></svg>44</div></div><div class="w-inf"><div class="w-brand">Canyon</div><div class="w-name">Endurace CF SL 8 2023</div><div class="w-meta">MD · 2023 · Shimano 105 Di2</div><div class="w-pr"><span class="w-price">€ 2.100</span></div></div></div>
+          <div class="w-row"><div class="w-photo ph-trek"><svg class="bk"><use href="#s-bike"/></svg><div class="hrt"><svg><use href="#s-heart"/></svg>31</div></div><div class="w-inf"><div class="w-brand">Trek</div><div class="w-name">Domane SL 6 2023</div><div class="w-meta">MD · 2023 · Shimano 105 Di2</div><div class="w-pr"><span class="w-price">€ 2.490</span></div></div></div>
+          <div class="w-row"><div class="w-photo ph-garmin"><svg class="bk"><use href="#s-watch"/></svg><div class="hrt"><svg><use href="#s-heart"/></svg>2</div></div><div class="w-inf"><div class="w-brand">Garmin</div><div class="w-name">Venu 4</div><div class="w-meta">2025 · Sportwatches</div><div class="w-pr"><span class="w-price">€ 372</span></div></div></div>
+        </div>
+      </div>
+
+      <!-- AI confirmed row -->
+      <div class="ai-row confirmed" style="margin-top:8px;">
+        <div class="ai-icon" style="background:rgba(255,255,255,0.25);">
+          <svg><use href="#s-check"/></svg>
+        </div>
+        <div class="ai-row-text">
+          <div class="ai-saved-label">Search saved</div>
+          <div class="ai-row-title">Road bike · MD · up to €2,490</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function closeSheet() {
+  document.querySelector('#ph2 .backdrop').classList.remove('open');
+  document.querySelector('#ph2 .sheet').classList.remove('open');
+}
+function rmChip(id) { document.getElementById(id).classList.add('removed'); }
+function undoChip(id) { document.getElementById(id).classList.remove('removed'); }
+function toggleBrand(btn) {
+  btn.classList.toggle('selected');
+  const anyBrand = document.querySelectorAll('#brand-chips2 .model-chip.selected').length > 0;
+  document.getElementById('model-div2').style.display = anyBrand ? 'block' : 'none';
+  document.getElementById('model-sec2').style.display = anyBrand ? 'block' : 'none';
+  updateCTA();
+}
+function toggleModel(btn) {
+  btn.classList.toggle('selected');
+  updateCTA();
+}
+function updateCTA() {
+  const brands = document.querySelectorAll('#brand-chips2 .model-chip.selected').length;
+  const models = document.querySelectorAll('#model-chips2 .model-chip.selected').length;
+  const extras = brands + models;
+  const cta = document.getElementById('cta2');
+  cta.textContent = extras > 0 ? 'Save ' + (extras + 1) + ' searches' : 'Save search';
+}
+function doSave() { closeSheet(); }
+</script>
+</body>
+</html>
