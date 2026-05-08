@@ -1,0 +1,2126 @@
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>buycycle - Unmanaged: Pack and Send Order (v2)</title>
+  <style>
+    /* buycycle Design System Tokens */
+    :root {
+      /* Background */
+      --bg-primary: #FCFCFC;
+      --bg-secondary: #F3F3F3;
+      --bg-tertiary: #FFFFFF;
+      --bg-quartenary: #EAEAEA;
+      --bg-primary-reverse: #090907;
+      --bg-positive: #E8F8F0;
+      --bg-attention: #FFFBEB;
+      --bg-warning: #FFF7ED;
+      --bg-information: #EFF6FF;
+      --bg-alert: #FFEBEB;
+      --bg-accent-green: #DAFDA0;
+      --bg-accent-yellow: #FDFDA0;
+
+      /* Content */
+      --content-primary: #090907;
+      --content-secondary: #333333;
+      --content-tertiary: #535353;
+      --content-quartenary: #A9A9A9;
+      --content-primary-reverse: #FCFCFC;
+      --content-positive: #146C43;
+      --content-attention: #92400E;
+      --content-warning: #EA580C;
+      --content-information: #1D4ED8;
+      --content-alert: #B91C1C;
+      --content-accent-green: #2F4B02;
+
+      /* Border */
+      --border-primary: #090907;
+      --border-secondary: #757575;
+      --border-tertiary: #EAEAEA;
+      --border-quartenary: #D0D0D0;
+      --border-primary-reverse: #FCFCFC;
+      --border-positive: #146C43;
+      --border-attention: #92400E;
+      --border-alert: #B91C1C;
+
+      /* Font */
+      --font-primary: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-regular: 400;
+      --font-medium: 500;
+      --font-bold: 700;
+
+      /* Font Sizes */
+      --text-xs: 12px;
+      --text-sm: 14px;
+      --text-base: 16px;
+      --text-lg: 18px;
+      --text-xl: 20px;
+      --text-2xl: 24px;
+
+      /* Line Heights */
+      --leading-xs: 18px;
+      --leading-sm: 21px;
+      --leading-base: 24px;
+      --leading-lg: 27px;
+      --leading-xl: 28px;
+      --leading-2xl: 32px;
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-11: 44px;
+      --space-12: 48px;
+
+      /* Motion */
+      --bc-transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+      --bc-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      --bc-transition-slow: 320ms cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Radius */
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --radius-xl: 10px;
+      --radius-2xl: 12px;
+      --radius-3xl: 16px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-quartenary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Focus ring ─── */
+    :focus-visible {
+      outline: 2px solid var(--content-primary);
+      outline-offset: 2px;
+    }
+
+    /* ─── Subflow wrapper ─── */
+    .subflow-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 853px;
+      height: 860px;
+      overflow: hidden;
+    }
+
+    /* ─── Chat Container ─── */
+    .chat-container {
+      width: 100%;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0px -1px 6px 0px rgba(83, 83, 83, 0.15), 0px 1px 6px 0px rgba(83, 83, 83, 0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 860px;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    }
+
+    .subflow-wrapper.subflow-active .chat-container {
+      transform: translateX(-30%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Chat Header */
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+    }
+
+    .chat-header-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .product-image-container {
+      position: relative;
+      width: 80px;
+      height: 45px;
+    }
+
+    .product-image {
+      width: 80px;
+      height: 45px;
+      border-radius: 3px;
+      object-fit: cover;
+      background: var(--bg-secondary);
+    }
+
+    .user-avatar-small {
+      position: absolute;
+      bottom: -7px;
+      right: -2px;
+      width: 21px;
+      height: 21px;
+      border-radius: 100px;
+      object-fit: cover;
+      background: var(--bg-quartenary);
+    }
+
+    .product-info h2 {
+      font-size: var(--text-base);
+      font-weight: var(--font-medium);
+      line-height: var(--leading-base);
+      color: var(--content-primary);
+    }
+
+    .product-info .price {
+      font-size: var(--text-sm);
+      font-weight: var(--font-regular);
+      line-height: var(--leading-sm);
+      color: var(--content-secondary);
+    }
+
+    .options-icon {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* View Order Progress */
+    .order-progress-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+      cursor: pointer;
+    }
+
+    .order-progress-bar:hover { background: var(--bg-secondary); }
+
+    .order-progress-text {
+      font-size: var(--text-sm);
+      font-weight: var(--font-regular);
+      color: var(--content-primary);
+      text-decoration: underline;
+    }
+
+    /* Chat Body */
+    .chat-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* Protection Banner */
+    .protection-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--border-tertiary);
+    }
+
+    .protection-icon { width: 24px; height: 24px; flex-shrink: 0; }
+
+    .protection-text {
+      font-size: var(--text-xs);
+      font-weight: var(--font-regular);
+      line-height: var(--leading-xs);
+      color: var(--content-tertiary);
+    }
+
+    /* Admin Messages */
+    .admin-messages-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 100%;
+    }
+
+    .admin-message {
+      padding: 16px;
+      border-top: 1px solid var(--border-tertiary);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .admin-message:first-child { border-top: none; }
+
+    .admin-message.inactive .admin-message-title { color: var(--content-tertiary); }
+    .admin-message.inactive .admin-message-body { color: var(--content-tertiary); }
+    .admin-message.active .admin-message-title { color: var(--content-primary); }
+    .admin-message.active .admin-message-body { color: var(--content-secondary); }
+
+    .admin-message-title { font-size: var(--text-base); font-weight: var(--font-medium); line-height: var(--leading-base); }
+    .admin-message-body { font-size: var(--text-sm); font-weight: var(--font-regular); line-height: var(--leading-sm); }
+    .admin-message-time { font-size: var(--text-xs); font-weight: var(--font-regular); line-height: var(--leading-xs); color: var(--content-tertiary); }
+
+    /* Action Buttons */
+    .action-buttons { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+    /* ─── Button: Primary Small (32px) for inline chat CTA ─── */
+    .btn-primary-sm {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 32px;
+      padding: 6px 14px;
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-primary);
+      font-size: 13px;
+      font-weight: var(--font-regular);
+      cursor: pointer;
+      box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+      transition: box-shadow var(--bc-transition-normal), transform var(--bc-transition-normal);
+    }
+    .btn-primary-sm::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+      opacity: 0;
+      transition: opacity var(--bc-transition-normal);
+    }
+    .btn-primary-sm:hover {
+      box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4);
+      transform: translateY(-0.5px);
+    }
+    .btn-primary-sm:hover::before { opacity: 1; }
+    .btn-primary-sm:active {
+      box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3);
+      transform: translateY(0) scale(0.97);
+    }
+    .btn-primary-sm svg { width: 18px; height: 18px; }
+
+    /* ─── Button: Primary Large (44px) for full-width CTAs ─── */
+    .btn-primary-lg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      height: 52px;
+      padding: 14px 24px;
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      border: none;
+      border-radius: var(--radius-2xl);
+      font-family: var(--font-primary);
+      font-size: var(--text-base);
+      font-weight: var(--font-regular);
+      cursor: pointer;
+      box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+      transition: box-shadow var(--bc-transition-normal), transform var(--bc-transition-normal);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-primary-lg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+      opacity: 0;
+      transition: opacity var(--bc-transition-normal);
+    }
+    .btn-primary-lg:hover {
+      box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4);
+      transform: translateY(-0.5px);
+    }
+    .btn-primary-lg:hover::before { opacity: 1; }
+    .btn-primary-lg:active {
+      box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3);
+      transform: translateY(0) scale(0.97);
+    }
+    .btn-primary-lg svg { width: 24px; height: 24px; }
+    .btn-primary-lg:disabled {
+      background: var(--bg-quartenary);
+      color: var(--content-tertiary);
+      box-shadow: none;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-primary-lg:disabled::before { display: none; }
+    .btn-primary-lg:disabled:hover {
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* ─── Button: Secondary (link-style) ─── */
+    .btn-tertiary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-primary);
+      font-size: var(--text-xs);
+      color: var(--content-tertiary);
+      padding: 4px 0;
+      transition: color var(--bc-transition-normal);
+    }
+    .btn-tertiary::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      width: calc(100% - 16px);
+      height: 1px;
+      background: rgba(9,9,7,0.3);
+      transform: translateX(-50%);
+      transition: background var(--bc-transition-normal), transform var(--bc-transition-normal);
+    }
+    .btn-tertiary:hover { color: var(--content-primary); }
+    .btn-tertiary:hover::after { height: 1.5px; background: var(--content-primary); }
+
+    /* Comment Input */
+    .comment-section {
+      background: var(--bg-secondary);
+      padding: 16px;
+      margin-top: auto;
+    }
+
+    .comment-input-container { display: flex; align-items: center; gap: 16px; }
+    .input-wrapper { flex: 1; height: 48px; }
+
+    .message-input {
+      width: 100%;
+      height: 48px;
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border: 1.5px solid var(--border-tertiary);
+      border-radius: 12px;
+      font-family: var(--font-primary);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      color: var(--content-primary);
+      outline: none;
+      transition: border-color var(--bc-transition-normal), box-shadow var(--bc-transition-normal);
+    }
+
+    .message-input::placeholder { color: var(--content-quartenary); }
+    .message-input:hover { border-color: var(--content-quartenary); }
+    .message-input:focus {
+      border-width: 2px;
+      border-color: var(--border-secondary);
+      box-shadow: 0 0 0 3px rgba(9,9,7,0.08);
+      outline: none;
+    }
+
+    .send-button {
+      width: 24px;
+      height: 24px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ─── Subflow Panel ─── */
+    .subflow-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 860px;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0px -1px 6px 0px rgba(83, 83, 83, 0.15), 0px 1px 6px 0px rgba(83, 83, 83, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateX(100%);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .subflow-panel.active {
+      transform: translateX(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+      flex-shrink: 0;
+    }
+
+    .panel-back {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-primary);
+      font-size: var(--text-xl);
+      font-weight: var(--font-medium);
+      color: var(--content-primary);
+    }
+
+    .panel-back svg { width: 24px; height: 24px; }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-6) var(--space-8);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+    .panel-content > * {
+      flex-shrink: 0;
+    }
+
+    .panel-footer {
+      padding: var(--space-4) var(--space-8);
+      border-top: 1px solid var(--border-tertiary);
+      background: var(--bg-secondary);
+      flex-shrink: 0;
+    }
+
+    .panel-footer-hint {
+      font-size: var(--text-xs);
+      color: var(--content-tertiary);
+      line-height: var(--leading-xs);
+      text-align: center;
+      margin-bottom: var(--space-2);
+      display: none;
+    }
+
+    .panel-footer-hint.visible {
+      display: block;
+    }
+
+    /* ─── Urgency Banner ─── */
+    .urgency-banner {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      background: linear-gradient(135deg, var(--bg-primary-reverse) 0%, #1a1a1a 100%);
+      border-radius: var(--radius-2xl);
+      color: var(--content-primary-reverse);
+      position: relative;
+      overflow: hidden;
+    }
+    .urgency-banner::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, var(--content-accent-green) 0%, transparent 60%);
+      opacity: 0.8;
+      filter: blur(20px);
+      pointer-events: none;
+    }
+    .urgency-banner > * {
+      position: relative;
+      z-index: 1;
+    }
+    .urgency-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
+    .urgency-date {
+      font-size: var(--text-lg);
+      font-weight: var(--font-bold);
+      line-height: var(--leading-lg);
+    }
+    .urgency-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-2);
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-xs);
+      font-weight: var(--font-medium);
+      line-height: var(--leading-xs);
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background var(--bc-transition-normal), color var(--bc-transition-normal);
+    }
+    .urgency-badge.ready {
+      background: var(--bg-accent-green);
+      color: var(--content-primary);
+    }
+    .urgency-body {
+      font-size: var(--text-sm);
+      line-height: var(--leading-sm);
+      color: rgba(255, 255, 255, 0.75);
+    }
+    .urgency-body strong {
+      color: var(--content-primary-reverse);
+      font-weight: var(--font-medium);
+    }
+
+    /* ─── Context Header ─── */
+    .context-header {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .context-header h2 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-medium);
+      color: var(--content-primary);
+      line-height: var(--leading-xl);
+    }
+    .context-header p {
+      font-size: var(--text-sm);
+      line-height: var(--leading-sm);
+      color: var(--content-tertiary);
+    }
+
+    /* ─── Progress bar ─── */
+    .progress-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .progress-bar-track {
+      height: 4px;
+      background: var(--bg-quartenary);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--content-primary);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .progress-bar-fill.complete {
+      background: var(--content-positive);
+    }
+    .progress-label {
+      font-size: var(--text-sm);
+      color: var(--content-tertiary);
+      line-height: var(--leading-sm);
+    }
+
+    /* ─── Step rows (checklist) ─── */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .step-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-6) 0;
+      border-bottom: 1px solid var(--border-tertiary);
+      cursor: pointer;
+      transition: background var(--bc-transition-fast);
+      margin: 0 calc(-1 * var(--space-2));
+      padding-left: var(--space-2);
+      padding-right: var(--space-2);
+      border-radius: var(--radius-lg);
+    }
+    .step-row:last-child {
+      border-bottom: none;
+    }
+    .step-row:hover {
+      background: var(--bg-secondary);
+    }
+
+    /* Step status indicator */
+    .step-indicator {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: var(--text-sm);
+      font-weight: var(--font-bold);
+      color: var(--content-primary);
+      transition: background var(--bc-transition-normal), color var(--bc-transition-normal);
+    }
+    .step-row.complete .step-indicator {
+      background: var(--content-positive);
+      color: white;
+    }
+
+    /* Step text content */
+    .step-text {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .step-name {
+      font-size: var(--text-lg);
+      font-weight: var(--font-medium);
+      color: var(--content-primary);
+      line-height: var(--leading-lg);
+    }
+    .step-desc {
+      font-size: var(--text-sm);
+      color: var(--content-tertiary);
+      line-height: var(--leading-sm);
+    }
+    .step-row.complete .step-name {
+      color: var(--content-tertiary);
+    }
+
+    /* Thumbnail strip */
+    .step-thumbs {
+      display: flex;
+      gap: var(--space-1);
+      flex-shrink: 0;
+    }
+    .step-thumbs:empty {
+      display: none;
+    }
+    .step-thumb {
+      width: 36px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      background: var(--bg-quartenary);
+      flex-shrink: 0;
+    }
+    .step-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Step action button */
+    .step-action {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+    .step-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-2) var(--space-4);
+      border: 1.5px solid var(--border-primary);
+      border-radius: var(--radius-xl);
+      background: transparent;
+      font-family: var(--font-primary);
+      font-size: var(--text-sm);
+      font-weight: var(--font-medium);
+      line-height: var(--leading-sm);
+      color: var(--content-primary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--bc-transition-fast), color var(--bc-transition-fast), border-color var(--bc-transition-fast);
+    }
+    .step-action-btn:hover {
+      background: var(--content-primary);
+      color: var(--content-primary-reverse);
+    }
+    .step-row.complete .step-action-btn {
+      border-color: var(--border-quartenary);
+      color: var(--content-tertiary);
+      font-weight: var(--font-regular);
+    }
+    .step-row.complete .step-action-btn:hover {
+      background: var(--bg-secondary);
+      color: var(--content-primary);
+    }
+
+    /* Optional extra photos step */
+    .step-row.optional {
+      border-bottom: none;
+    }
+    .step-row.optional .step-indicator {
+      background: transparent;
+      border: 2px dashed var(--border-quartenary);
+      color: var(--content-quartenary);
+      font-weight: var(--font-medium);
+    }
+    .step-row.optional .step-name {
+      color: var(--content-tertiary);
+      font-weight: var(--font-regular);
+    }
+    .step-row.optional .step-desc {
+      color: var(--content-quartenary);
+    }
+    .step-row.optional .step-action-btn {
+      border-color: var(--border-quartenary);
+      color: var(--content-tertiary);
+    }
+    .step-row.optional .step-action-btn:hover {
+      border-color: var(--border-secondary);
+      background: var(--bg-secondary);
+      color: var(--content-primary);
+    }
+    .optional-thumbs {
+      display: flex;
+      gap: var(--space-1);
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .optional-thumbs:empty {
+      display: none;
+    }
+
+    /* Send the order section */
+    .send-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      border: 1px solid var(--border-tertiary);
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+    }
+    .send-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      cursor: pointer;
+      transition: background var(--bc-transition-fast);
+    }
+    .send-section-header:hover {
+      background: var(--bg-secondary);
+    }
+    .send-section-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+    .send-section-title h3 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-medium);
+      color: var(--content-primary);
+      line-height: var(--leading-lg);
+    }
+    .send-section-title span {
+      font-size: var(--text-sm);
+      color: var(--content-tertiary);
+      line-height: var(--leading-sm);
+    }
+    .send-section-chevron {
+      flex-shrink: 0;
+      color: var(--content-quartenary);
+      transition: transform var(--bc-transition-normal);
+    }
+    .send-section-chevron.open {
+      transform: rotate(90deg);
+    }
+    .send-section-body {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-3);
+      padding: 0 var(--space-4) var(--space-4);
+    }
+    .send-section-body.visible {
+      display: flex;
+    }
+    .carrier-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-sm);
+      color: var(--content-secondary);
+      line-height: var(--leading-sm);
+    }
+    .carrier-row img {
+      height: 20px;
+      width: auto;
+    }
+    .branches-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      width: 100%;
+      height: 40px;
+      padding: var(--space-2) var(--space-4);
+      background: var(--bg-tertiary);
+      color: var(--content-primary);
+      border: 1.5px solid var(--border-secondary);
+      border-radius: var(--radius-xl);
+      font-family: var(--font-primary);
+      font-size: var(--text-sm);
+      font-weight: var(--font-regular);
+      cursor: pointer;
+      transition: background var(--bc-transition-normal), border-color var(--bc-transition-normal);
+    }
+    .branches-btn:hover {
+      background: var(--bg-secondary);
+      border-color: var(--border-primary);
+    }
+    .branches-btn svg { width: 18px; height: 18px; }
+    .send-deadline {
+      font-size: var(--text-sm);
+      color: var(--content-secondary);
+      line-height: var(--leading-sm);
+    }
+    .send-deadline strong {
+      font-weight: var(--font-medium);
+    }
+
+    /* ─── Terms & Conditions ─── */
+    .terms-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+    .terms-title {
+      font-size: var(--text-lg);
+      font-weight: var(--font-medium);
+      color: var(--content-secondary);
+      line-height: var(--leading-lg);
+    }
+    .checkbox-row {
+      display: flex;
+      gap: var(--space-2);
+      align-items: flex-start;
+    }
+    .checkbox-row input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--border-secondary);
+      border-radius: var(--radius-sm);
+      background: var(--bg-tertiary);
+      flex-shrink: 0;
+      cursor: pointer;
+      position: relative;
+      margin-top: 2px;
+      transition: background var(--bc-transition-normal), border-color var(--bc-transition-normal);
+    }
+    .checkbox-row input[type="checkbox"]:checked {
+      background: var(--content-primary);
+      border-color: var(--border-primary);
+    }
+    .checkbox-row input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 6px; top: 2px;
+      width: 5px; height: 10px;
+      border: solid var(--content-primary-reverse);
+      border-width: 0 2.5px 2.5px 0;
+      transform: rotate(45deg);
+    }
+    .checkbox-row.has-error input[type="checkbox"] {
+      border-color: var(--content-alert);
+    }
+    .checkbox-row label {
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      color: var(--content-secondary);
+      cursor: pointer;
+    }
+    .checkbox-row label a {
+      color: var(--content-primary);
+      text-decoration: underline;
+    }
+    .checkbox-row label strong {
+      font-weight: var(--font-medium);
+    }
+
+    /* Inline validation */
+    .validation-msg {
+      font-size: var(--text-xs);
+      color: var(--content-alert);
+      line-height: var(--leading-xs);
+      margin-top: var(--space-1);
+      display: none;
+      padding-left: 28px;
+    }
+    .validation-msg.visible {
+      display: block;
+    }
+
+    /* ─── Photo Upload Modal ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--bc-transition-slow);
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-overlay.closing {
+      opacity: 0;
+      pointer-events: none;
+      transition-duration: 150ms;
+    }
+
+    .modal-scale-wrapper {
+      transform: scale(1.25);
+      transform-origin: center center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .modal {
+      background: var(--bg-primary);
+      border-radius: var(--radius-3xl);
+      padding: var(--space-4) var(--space-6);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      align-items: center;
+      max-height: 68vh;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+      transition: opacity var(--bc-transition-slow),
+                  transform var(--bc-transition-slow);
+    }
+    .modal-overlay.active .modal {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .modal-overlay.closing .modal {
+      opacity: 0;
+      transform: translateY(6px) scale(0.97);
+      transition-duration: 150ms;
+    }
+
+    .modal-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .modal-header-bar h2 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-medium);
+      color: var(--content-primary);
+      line-height: var(--leading-lg);
+    }
+    .modal-close {
+      background: none; border: none;
+      cursor: pointer; color: var(--content-primary);
+      display: flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      transition: background var(--bc-transition-fast);
+    }
+    .modal-close:hover { background: var(--bg-secondary); }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      align-items: center;
+    }
+
+    /* ── Summary card (matches bikes flow) ── */
+    .summary-card {
+      max-width: 320px;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      align-items: center;
+    }
+    .summary-card .summary-preview {
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--bg-quartenary);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .summary-card .summary-preview img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .summary-card .summary-preview .photo-placeholder-icon {
+      color: var(--content-quartenary);
+    }
+    .summary-card .summary-label {
+      font-size: var(--text-sm);
+      font-weight: var(--font-medium);
+      color: var(--content-primary);
+      text-align: center;
+      line-height: var(--leading-sm);
+    }
+    .summary-card .summary-upload-btn {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      height: 32px;
+      padding: 6px 14px;
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      border: none;
+      border-radius: var(--radius-lg);
+      font-size: 13px;
+      font-weight: var(--font-regular);
+      font-family: var(--font-primary);
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+      transition: box-shadow var(--bc-transition-normal), transform var(--bc-transition-normal);
+    }
+    .summary-card .summary-upload-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+      opacity: 0;
+      transition: opacity var(--bc-transition-normal);
+    }
+    .summary-card .summary-upload-btn:hover {
+      box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4);
+      transform: translateY(-0.5px);
+    }
+    .summary-card .summary-upload-btn:hover::before { opacity: 1; }
+    .summary-card .summary-upload-btn:active {
+      box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3);
+      transform: scale(0.97);
+    }
+    .summary-card .summary-status {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: var(--text-sm);
+      color: var(--content-positive);
+      line-height: var(--leading-sm);
+      width: 100%;
+      justify-content: center;
+    }
+    .summary-card .summary-status .replace-link {
+      position: relative;
+      color: var(--content-tertiary);
+      cursor: pointer;
+      font-size: var(--text-xs);
+      background: none;
+      border: none;
+      font-family: var(--font-primary);
+      margin-left: var(--space-1);
+      padding: 4px 0;
+      transition: color var(--bc-transition-normal);
+    }
+    .summary-card .summary-status .replace-link::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      width: calc(100% - 16px);
+      height: 1px;
+      background: rgba(9,9,7,0.3);
+      transform: translateX(-50%);
+      transition: background var(--bc-transition-normal), height var(--bc-transition-normal);
+    }
+    .summary-card .summary-status .replace-link:hover {
+      color: var(--content-primary);
+    }
+    .summary-card .summary-status .replace-link:hover::after {
+      height: 1.5px;
+      background: var(--content-primary);
+    }
+
+    .modal-size-reminder {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      padding: var(--space-3);
+      background: var(--bg-attention);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 320px;
+    }
+    .modal-size-reminder svg {
+      flex-shrink: 0;
+      color: var(--content-attention);
+      margin-top: 1px;
+    }
+    .modal-size-reminder span {
+      font-size: var(--text-sm);
+      line-height: var(--leading-sm);
+      color: var(--content-attention);
+    }
+    .modal-size-reminder strong {
+      font-weight: var(--font-medium);
+    }
+
+    .modal-instruction {
+      font-size: var(--text-sm);
+      color: var(--content-tertiary);
+      line-height: var(--leading-sm);
+      text-align: center;
+      max-width: 320px;
+    }
+
+    /* Modal buttons */
+    .mobile-modal-btn-wrapper {
+      display: contents;
+    }
+    .modal-home-indicator {
+      display: none;
+    }
+    .btn-modal-primary {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      height: 52px;
+      padding: 14px 24px;
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      border: none;
+      border-radius: var(--radius-2xl);
+      font-size: var(--text-base);
+      font-weight: var(--font-regular);
+      font-family: var(--font-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+      width: 100%;
+      box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+      transition: box-shadow var(--bc-transition-normal), transform var(--bc-transition-normal);
+    }
+    .btn-modal-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+      opacity: 0;
+      transition: opacity var(--bc-transition-normal);
+    }
+    .btn-modal-primary:hover {
+      box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4);
+      transform: translateY(-0.5px);
+    }
+    .btn-modal-primary:hover::before { opacity: 1; }
+    .btn-modal-primary:active {
+      box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3);
+      transform: scale(0.97);
+    }
+    /* Spinner */
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 2.5px solid var(--bg-quartenary);
+      border-top-color: var(--content-primary);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Toast ─── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      max-width: 826px;
+      padding: var(--space-2) var(--space-4);
+      border-radius: 0;
+      font-family: var(--font-primary);
+      font-size: var(--text-base);
+      line-height: var(--leading-base);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      z-index: 2000;
+      opacity: 0;
+      transition: transform var(--bc-transition-slow), opacity var(--bc-transition-slow);
+      white-space: nowrap;
+    }
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .toast-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .toast.error {
+      background: var(--bg-alert);
+      color: var(--content-alert);
+      border-left: 6px solid var(--content-alert);
+    }
+    .toast.error .toast-icon { background: var(--content-alert); }
+    .toast.success {
+      background: var(--bg-positive);
+      color: var(--content-positive);
+      border-left: 6px solid var(--content-positive);
+    }
+    .toast.success .toast-icon { background: var(--content-positive); }
+
+    /* ─── Reduced motion ─── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+      }
+    }
+
+    /* ─── Mobile ─── */
+    @media (max-width: 600px) {
+      body {
+        padding: 0;
+        align-items: stretch;
+        background-color: var(--bg-tertiary);
+      }
+      .subflow-wrapper {
+        max-width: 100%;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        overflow: visible;
+      }
+      .chat-container {
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+      }
+      .subflow-wrapper.subflow-active .chat-container {
+        display: none;
+      }
+      .subflow-panel {
+        position: relative;
+        height: auto;
+        min-height: 100vh;
+        min-height: 100dvh;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .panel-content {
+        padding: var(--space-4) var(--space-4);
+      }
+      .panel-footer {
+        padding: var(--space-4);
+        position: sticky;
+        bottom: 0;
+      }
+
+      /* Step rows — wrap thumbnails below on mobile */
+      .step-row {
+        flex-wrap: wrap;
+      }
+      .step-thumbs,
+      .optional-thumbs {
+        order: 10;
+        width: 100%;
+        padding-left: calc(32px + var(--space-3));
+        padding-top: var(--space-2);
+      }
+
+      /* Modal → bottom sheet */
+      .modal-overlay {
+        align-items: flex-end;
+        padding: 0;
+      }
+      .modal-scale-wrapper {
+        transform: none;
+        max-width: 100%;
+      }
+      .modal {
+        border-radius: var(--radius-3xl) var(--radius-3xl) 0 0;
+        max-height: 85vh;
+        padding: var(--space-4);
+        transform: translateY(100%);
+      }
+      .modal-overlay.active .modal {
+        transform: translateY(0);
+      }
+      .modal-overlay.closing .modal {
+        transform: translateY(100%);
+      }
+      .mobile-modal-btn-wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: var(--space-2);
+        padding-bottom: env(safe-area-inset-bottom, 0);
+      }
+      .modal-home-indicator {
+        display: flex;
+        justify-content: center;
+        padding: var(--space-2) 0;
+      }
+      .modal-home-indicator .indicator-bar {
+        width: 36px;
+        height: 5px;
+        border-radius: 3px;
+        background: var(--bg-quartenary);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="subflow-wrapper" id="subflow-wrapper">
+    <!-- Chat Container -->
+    <div class="chat-container">
+      <!-- Header -->
+      <div class="chat-header">
+        <div class="chat-header-content">
+          <div class="product-image-container">
+            <img class="product-image" src="https://www.figma.com/api/mcp/asset/871387d7-ac91-49c7-8a4c-869195d61471" alt="Product" onerror="this.style.background='#EAEAEA'">
+            <img class="user-avatar-small" src="https://www.figma.com/api/mcp/asset/1346fbaa-08aa-4bda-a4f2-4c04c49cc00e" alt="User" onerror="this.style.background='#EAEAEA'">
+          </div>
+          <div class="product-info">
+            <h2>Cycling Jersey Pro</h2>
+            <span class="price">&euro;89</span>
+          </div>
+        </div>
+        <div class="options-icon">
+          <svg width="20" height="4" viewBox="0 0 20 4" fill="none">
+            <circle cx="2" cy="2" r="2" fill="var(--content-primary)"/>
+            <circle cx="10" cy="2" r="2" fill="var(--content-primary)"/>
+            <circle cx="18" cy="2" r="2" fill="var(--content-primary)"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- View Order Progress -->
+      <div class="order-progress-bar">
+        <span class="order-progress-text">View order progress</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M9 18L15 12L9 6" stroke="var(--content-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <!-- Chat Body with Admin Messages -->
+      <div class="chat-body">
+        <div class="protection-banner">
+          <div class="protection-icon">
+            <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+              <path d="M9 0L0 3.63636V9.09091C0 14.1409 3.843 18.8636 9 20C14.157 18.8636 18 14.1409 18 9.09091V3.63636L9 0ZM9 9.99091H16.2C15.723 13.7318 12.822 17.1 9 17.9909V10H1.8V4.58182L9 1.87273V9.99091Z" fill="var(--content-primary)"/>
+            </svg>
+          </div>
+          <span class="protection-text">buycycle's seller protection guarantees you'll be paid securely. Learn more.</span>
+        </div>
+
+        <div class="admin-messages-container">
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Paid! Confirm your details by [date]</div>
+            <div class="admin-message-body">Congratulations! The buyer paid and we're securely holding the funds until they received the order. Confirm your details in time to get your shipping label. You will have 7 days to send the order.</div>
+            <div class="admin-message-time">14:58</div>
+          </div>
+
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Details confirmed!</div>
+            <div class="admin-message-body">You must send the order before [date].</div>
+            <div class="admin-message-time">14:58</div>
+          </div>
+
+          <div class="admin-message inactive">
+            <div class="admin-message-title">Payment information saved</div>
+            <div class="admin-message-body">Your updated payment details have been saved.</div>
+            <div class="admin-message-time">14:58</div>
+          </div>
+
+          <div class="admin-message active">
+            <div class="admin-message-title">Pack and send the order before [date]</div>
+            <div class="admin-message-body">Get your parcel ready in just a few easy steps.</div>
+            <div class="admin-message-time">16:30</div>
+            <div class="action-buttons">
+              <button class="btn-primary-sm" onclick="openPanel()">
+                Pack and send the order
+                <svg viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comment Input -->
+      <div class="comment-section">
+        <div class="comment-input-container">
+          <div class="input-wrapper">
+            <input type="text" class="message-input" placeholder="Your message...">
+          </div>
+          <button class="send-button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M4 12L20 12M20 12L14 6M20 12L14 18" stroke="var(--content-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Pack and Send Subflow Panel ═══ -->
+    <div class="subflow-panel" id="pack-send-panel">
+
+      <!-- Panel Header -->
+      <div class="panel-header">
+        <button class="panel-back" onclick="closePanel()">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Pack and send the order
+        </button>
+      </div>
+
+      <!-- Panel Content -->
+      <div class="panel-content">
+
+        <!-- Urgency banner -->
+        <div class="urgency-banner">
+          <div class="urgency-top">
+            <div class="urgency-date">Send by: Friday, 24 January</div>
+            <div class="urgency-badge" id="urgencyBadge">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3.5V6.5L7.5 7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              0 / 4 steps
+            </div>
+          </div>
+          <div class="urgency-body" id="urgencyBody">Complete all steps below and send your parcel before the deadline. <strong>Late shipments will cancel the sale.</strong></div>
+        </div>
+
+        <!-- Context header -->
+        <div class="context-header">
+          <h2>Pack and document your order</h2>
+          <p>Photos protect you if the buyer opens a damage claim. Without them, disputes cannot be resolved in your favor. Your selected size: <strong>M (30&times;25&times;15cm)</strong> &mdash; oversized packages will incur a surcharge.</p>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="progress-section">
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-label" id="progressLabel">0 / 3 photos uploaded</div>
+        </div>
+
+        <!-- Step checklist -->
+        <div class="step-list">
+
+          <!-- Step 1: Photo of item next to the packaging -->
+          <div class="step-row" id="row-step1" onclick="openPhotoModal(0)">
+            <div class="step-indicator" id="indicator-step1">1</div>
+            <div class="step-text">
+              <div class="step-name">Photo of the item next to the packaging</div>
+              <div class="step-desc">Lay the item next to the box you'll use to ship it</div>
+            </div>
+            <div class="step-thumbs" id="thumbs-step1"></div>
+            <div class="step-action" id="action-step1">
+              <button class="step-action-btn">Upload</button>
+            </div>
+          </div>
+
+          <!-- Step 2: Photo of item in the box -->
+          <div class="step-row" id="row-step2" onclick="openPhotoModal(1)">
+            <div class="step-indicator" id="indicator-step2">2</div>
+            <div class="step-text">
+              <div class="step-name">Photo of item in the box</div>
+              <div class="step-desc">Show the item and padding inside the open box</div>
+            </div>
+            <div class="step-thumbs" id="thumbs-step2"></div>
+            <div class="step-action" id="action-step2">
+              <button class="step-action-btn">Upload</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Print shipping label -->
+          <div class="step-row" id="row-step3" onclick="handleLabelPrint()">
+            <div class="step-indicator" id="indicator-step3">3</div>
+            <div class="step-text">
+              <div class="step-name">Print the shipping label</div>
+              <div class="step-desc">Stick it on your sealed package — barcode must be scannable</div>
+            </div>
+            <div class="step-action" id="action-step3">
+              <button class="step-action-btn">Print</button>
+            </div>
+          </div>
+
+          <!-- Step 4: Photo of sealed package -->
+          <div class="step-row" id="row-step4" onclick="openPhotoModal(2)">
+            <div class="step-indicator" id="indicator-step4">4</div>
+            <div class="step-text">
+              <div class="step-name">Photo of the sealed package</div>
+              <div class="step-desc">Show the sealed box with the shipping label visible</div>
+            </div>
+            <div class="step-thumbs" id="thumbs-step4"></div>
+            <div class="step-action" id="action-step4">
+              <button class="step-action-btn">Upload</button>
+            </div>
+          </div>
+
+          <!-- Optional: Additional photos -->
+          <div class="step-row optional" id="row-optional" onclick="triggerOptionalUpload()">
+            <div class="step-indicator">+</div>
+            <div class="step-text">
+              <div class="step-name">Additional photos</div>
+              <div class="step-desc">Optional — upload extra photos for any step</div>
+            </div>
+            <div class="optional-thumbs" id="optionalThumbs"></div>
+            <div class="step-action">
+              <button class="step-action-btn">Upload</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Send the order section -->
+        <div class="send-section">
+          <div class="send-section-header" onclick="toggleSendSection()">
+            <div class="send-section-title">
+              <h3>Send the order</h3>
+              <span>Drop off your parcel at a carrier location</span>
+            </div>
+            <svg class="send-section-chevron" id="sendChevron" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="send-section-body" id="sendBody">
+            <div class="carrier-row">
+              Carrier: DHL
+              <img src="https://www.figma.com/api/mcp/asset/1a5baab3-124e-4782-8f64-2230ab8ef5de" alt="DHL" onerror="this.style.display='none'">
+            </div>
+            <div class="send-deadline"><strong>Send by 24 January 2025</strong> or the sale will be cancelled and your listing deactivated.</div>
+          </div>
+          <div style="padding: 0 var(--space-4) var(--space-4);">
+            <button class="branches-btn">
+              See branches / parcel shops
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Terms & Conditions -->
+        <div class="terms-section">
+          <p class="terms-title">Terms &amp; Conditions</p>
+
+          <div class="checkbox-row" id="checkbox-group-1">
+            <input type="checkbox" id="terms-1" onchange="updateConfirmState()">
+            <label for="terms-1">My package fits within my selected size (M &mdash; 30&times;25&times;15cm). I understand an <strong>oversize surcharge will be deducted from my payout</strong> if it exceeds these dimensions.</label>
+          </div>
+          <div class="validation-msg" id="validation-cb1">You must accept this term to continue.</div>
+
+          <div class="checkbox-row" id="checkbox-group-2">
+            <input type="checkbox" id="terms-2" onchange="updateConfirmState()">
+            <label for="terms-2">My item is securely padded. I acknowledge that <strong>shipping damage due to improper packing will be deducted from my payment</strong>.</label>
+          </div>
+          <div class="validation-msg" id="validation-cb2">You must accept this term to continue.</div>
+        </div>
+
+      </div>
+
+      <!-- Panel Footer -->
+      <div class="panel-footer">
+        <div class="panel-footer-hint" id="footerHint">Complete all steps and accept terms to confirm.</div>
+        <button class="btn-primary-lg" id="confirmBtn" disabled onclick="handleConfirm()">
+          Confirm
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M16.67 5.83L7.5 15L3.33 10.83" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Photo Upload Modal -->
+  <div class="modal-overlay" id="photoModal" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-scale-wrapper">
+      <div class="modal">
+        <div class="modal-header-bar">
+          <h2 id="modalTitle">Upload photo</h2>
+          <button class="modal-close" onclick="closePhotoModal()">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-instruction" id="modalInstruction">Take a clear photo showing the required view.</p>
+          <div class="summary-card" id="modalSummaryCard">
+            <div class="summary-preview" id="modalPreview">
+              <svg class="photo-placeholder-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <rect x="6" y="10" width="36" height="28" rx="4" stroke="currentColor" stroke-width="2"/>
+                <circle cx="17" cy="21" r="3" stroke="currentColor" stroke-width="2"/>
+                <path d="M6 32L16 24L24 30L32 22L42 30" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="summary-label" id="modalLabel"></div>
+            <div id="modalAction"></div>
+          </div>
+          <div class="modal-size-reminder" id="modalSizeReminder" style="display: none;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.33L1.33 4.67V8C1.33 11.5 4.5 14.77 8 15.5C11.5 14.77 14.67 11.5 14.67 8V4.67L8 1.33Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+            <span>Size M &mdash; max 30&times;25&times;15cm. <strong>Oversize surcharge</strong> applies if exceeded.</span>
+          </div>
+        </div>
+        <div class="mobile-modal-btn-wrapper">
+          <button class="btn-modal-primary" id="modalDoneBtn" style="display: none;" onclick="closePhotoModal()">Done</button>
+          <div class="modal-home-indicator"><div class="indicator-bar"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Hidden file inputs -->
+  <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp,image/heic" style="display: none;" onchange="handleFileSelected(event)">
+  <input type="file" id="file-optional" accept="image/jpeg,image/png,image/webp,image/heic" multiple style="display: none;" onchange="handleOptionalFile(event)">
+
+  <script>
+    // ─── State ───
+    const state = {
+      photos: [null, null, null], // index 0 = step 1, index 1 = step 2, index 2 = step 4
+      optionalPhotos: [],   // extra photos uploaded for logistics
+      labelPrinted: false,
+      sendExpanded: false,
+      activeSlot: null,      // null = required photo, 'optional' = optional
+      confirmAttempted: false,
+    };
+
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+
+    const CHECK_SVG = `<svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 5L5.5 9.5L13 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+    const PHOTO_CONFIG = [
+      {
+        title: 'Photo of the item next to the packaging',
+        instruction: 'Lay the item next to the box you\'ll use to ship it. This proves the item\'s condition before packing and confirms your packaging choice.',
+        indicatorId: 'indicator-step1',
+        rowId: 'row-step1',
+        thumbsId: 'thumbs-step1',
+        actionId: 'action-step1',
+        stepNum: '1',
+      },
+      {
+        title: 'Photo of item in the box',
+        instruction: 'Show the item and any protective padding inside the open box. Make sure the entire item is visible.',
+        indicatorId: 'indicator-step2',
+        rowId: 'row-step2',
+        thumbsId: 'thumbs-step2',
+        actionId: 'action-step2',
+        stepNum: '2',
+      },
+      {
+        title: 'Photo of the sealed package',
+        instruction: 'Show the sealed box with the shipping label clearly visible and the barcode scannable.',
+        indicatorId: 'indicator-step4',
+        rowId: 'row-step4',
+        thumbsId: 'thumbs-step4',
+        actionId: 'action-step4',
+        stepNum: '4',
+      },
+    ];
+
+    // ─── Panel open / close ───
+    function openPanel() {
+      document.getElementById('subflow-wrapper').classList.add('subflow-active');
+      document.getElementById('pack-send-panel').classList.add('active');
+    }
+
+    function closePanel() {
+      document.getElementById('pack-send-panel').classList.remove('active');
+      setTimeout(() => {
+        document.getElementById('subflow-wrapper').classList.remove('subflow-active');
+      }, 150);
+    }
+
+    // ─── Photo Modal ───
+    const PLACEHOLDER_SVG = `<svg class="photo-placeholder-icon" width="48" height="48" viewBox="0 0 48 48" fill="none"><rect x="6" y="10" width="36" height="28" rx="4" stroke="currentColor" stroke-width="2"/><circle cx="17" cy="21" r="3" stroke="currentColor" stroke-width="2"/><path d="M6 32L16 24L24 30L32 22L42 30" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+    function renderModalSummary(index) {
+      const config = PHOTO_CONFIG[index];
+      const photo = state.photos[index];
+      const preview = document.getElementById('modalPreview');
+      const label = document.getElementById('modalLabel');
+      const action = document.getElementById('modalAction');
+      const doneBtn = document.getElementById('modalDoneBtn');
+
+      label.textContent = config.title;
+
+      if (photo && photo.url) {
+        preview.innerHTML = `<img src="${photo.url}" alt="${config.title}">`;
+        action.innerHTML = `
+          <div class="summary-status">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Uploaded
+            <button class="replace-link" onclick="event.stopPropagation(); triggerFileInput()">Replace</button>
+          </div>`;
+        doneBtn.style.display = 'flex';
+      } else {
+        preview.innerHTML = PLACEHOLDER_SVG;
+        action.innerHTML = `
+          <button class="summary-upload-btn" onclick="triggerFileInput()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Upload photo
+          </button>`;
+        doneBtn.style.display = 'none';
+      }
+    }
+
+    function openPhotoModal(index) {
+      state.activeSlot = index;
+      const config = PHOTO_CONFIG[index];
+      const overlay = document.getElementById('photoModal');
+
+      document.getElementById('modalTitle').textContent = config.title;
+      document.getElementById('modalInstruction').textContent = config.instruction;
+      document.getElementById('modalSizeReminder').style.display = (index === 0 || index === 1) ? 'flex' : 'none';
+
+      renderModalSummary(index);
+
+      overlay.classList.remove('closing');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePhotoModal() {
+      const overlay = document.getElementById('photoModal');
+      overlay.classList.add('closing');
+      setTimeout(() => {
+        overlay.classList.remove('active', 'closing');
+        document.body.style.overflow = '';
+        state.activeSlot = null;
+      }, 150);
+    }
+
+    function closeModalOnBackdrop(event) {
+      if (event.target === event.currentTarget || event.target.classList.contains('modal-scale-wrapper')) {
+        closePhotoModal();
+      }
+    }
+
+    function triggerFileInput() {
+      document.getElementById('file-input').click();
+    }
+
+    // ─── File upload handling ───
+    function handleFileSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const slotIndex = state.activeSlot;
+      if (slotIndex === null) return;
+
+      event.target.value = '';
+
+      if (!ACCEPTED_TYPES.includes(file.type)) {
+        showToast('Invalid file type. Please use JPG, PNG, or WebP.', 'error');
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        showToast('File too large. Maximum size is 10MB.', 'error');
+        return;
+      }
+
+      // Show spinner in preview
+      document.getElementById('modalPreview').innerHTML = `<div class="spinner"></div>`;
+      document.getElementById('modalAction').innerHTML = '';
+      document.getElementById('modalDoneBtn').style.display = 'none';
+
+      const uploadTime = 800 + Math.random() * 1200;
+      setTimeout(() => {
+        if (Math.random() < 0.05) {
+          showToast('Upload failed. Please try again.', 'error');
+          renderModalSummary(slotIndex);
+          return;
+        }
+
+        const url = URL.createObjectURL(file);
+
+        // Revoke previous URL if replacing
+        if (state.photos[slotIndex] && state.photos[slotIndex].url) {
+          URL.revokeObjectURL(state.photos[slotIndex].url);
+        }
+
+        state.photos[slotIndex] = { url, name: file.name };
+
+        // Re-render summary card with uploaded state
+        renderModalSummary(slotIndex);
+
+        updateStepRow(slotIndex);
+        updateProgress();
+        updateConfirmState();
+      }, uploadTime);
+    }
+
+    // ─── Step row updates ───
+    function updateStepRow(photoIndex) {
+      const config = PHOTO_CONFIG[photoIndex];
+      const photo = state.photos[photoIndex];
+      const row = document.getElementById(config.rowId);
+      const indicator = document.getElementById(config.indicatorId);
+      const thumbs = document.getElementById(config.thumbsId);
+      const action = document.getElementById(config.actionId);
+
+      if (photo && photo.url) {
+        row.classList.add('complete');
+        indicator.innerHTML = CHECK_SVG;
+        thumbs.innerHTML = `<div class="step-thumb"><img src="${photo.url}" alt="${config.title}"></div>`;
+        action.innerHTML = `<button class="step-action-btn">Edit</button>`;
+      } else {
+        row.classList.remove('complete');
+        indicator.textContent = config.stepNum;
+        thumbs.innerHTML = '';
+        action.innerHTML = `<button class="step-action-btn">Upload</button>`;
+      }
+    }
+
+    // ─── Label print ───
+    function handleLabelPrint() {
+      if (state.labelPrinted) return;
+
+      state.labelPrinted = true;
+      const row = document.getElementById('row-step3');
+      const indicator = document.getElementById('indicator-step3');
+      const action = document.getElementById('action-step3');
+
+      row.classList.add('complete');
+      indicator.innerHTML = CHECK_SVG;
+      action.innerHTML = `<button class="step-action-btn">Reprint</button>`;
+
+      updateConfirmState();
+      showToast('Shipping label downloaded!', 'success');
+    }
+
+    // ─── Send section toggle ───
+    function toggleSendSection() {
+      state.sendExpanded = !state.sendExpanded;
+      const body = document.getElementById('sendBody');
+      const chevron = document.getElementById('sendChevron');
+
+      body.classList.toggle('visible', state.sendExpanded);
+      chevron.classList.toggle('open', state.sendExpanded);
+    }
+
+    // ─── Optional photos ───
+    function triggerOptionalUpload() {
+      document.getElementById('file-optional').click();
+    }
+
+    function handleOptionalFile(event) {
+      const files = Array.from(event.target.files);
+      if (!files.length) return;
+      event.target.value = '';
+
+      let skipped = 0;
+      files.forEach(file => {
+        if (!ACCEPTED_TYPES.includes(file.type) || file.size > MAX_FILE_SIZE) {
+          skipped++;
+          return;
+        }
+        const url = URL.createObjectURL(file);
+        state.optionalPhotos.push({ url, name: file.name });
+      });
+
+      renderOptionalThumbs();
+      if (skipped > 0) {
+        showToast(`${skipped} file${skipped > 1 ? 's' : ''} skipped (wrong type or too large).`, 'error');
+      }
+    }
+
+    function renderOptionalThumbs() {
+      const container = document.getElementById('optionalThumbs');
+      container.innerHTML = state.optionalPhotos.map(p =>
+        `<div class="step-thumb"><img src="${p.url}" alt="Extra photo"></div>`
+      ).join('');
+    }
+
+    // ─── Progress bar ───
+    function updateProgress() {
+      const uploaded = state.photos.filter(p => p && p.url).length;
+      const fill = document.getElementById('progressFill');
+      const label = document.getElementById('progressLabel');
+      const pct = (uploaded / 3) * 100;
+
+      fill.style.width = pct + '%';
+      fill.classList.toggle('complete', uploaded === 3);
+      label.textContent = `${uploaded} / 3 photos uploaded`;
+    }
+
+    // ─── Badge & confirm state ───
+    function updateConfirmState() {
+      const uploaded = state.photos.filter(p => p && p.url).length;
+      const cb1 = document.getElementById('terms-1').checked;
+      const cb2 = document.getElementById('terms-2').checked;
+      const stepsComplete = uploaded + (state.labelPrinted ? 1 : 0);
+      const allMet = uploaded === 3 && state.labelPrinted && cb1 && cb2;
+
+      // Update badge
+      const badge = document.getElementById('urgencyBadge');
+      const body = document.getElementById('urgencyBody');
+
+      if (allMet) {
+        badge.classList.add('ready');
+        badge.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6L5 9L10 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Ready to send`;
+        body.innerHTML = 'All steps complete! Drop off your parcel before the deadline. <strong>Don\'t forget to bring the receipt.</strong>';
+      } else {
+        badge.classList.remove('ready');
+        badge.innerHTML = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M6 3.5V6.5L7.5 7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg> ${stepsComplete} / 4 steps`;
+        body.innerHTML = 'Complete all steps below and send your parcel before the deadline. <strong>Late shipments will cancel the sale.</strong>';
+      }
+
+      // Update confirm button
+      document.getElementById('confirmBtn').disabled = !allMet;
+
+      // Update footer hint
+      const hint = document.getElementById('footerHint');
+      if (!allMet) {
+        hint.classList.add('visible');
+        const missing = [];
+        if (uploaded < 3) missing.push(`${3 - uploaded} photo${3 - uploaded > 1 ? 's' : ''}`);
+        if (!state.labelPrinted) missing.push('label print');
+        if (!cb1 || !cb2) missing.push('terms acceptance');
+        hint.textContent = `Still needed: ${missing.join(', ')}.`;
+      } else {
+        hint.classList.remove('visible');
+      }
+
+      // Clear validation on check
+      if (state.confirmAttempted) {
+        if (cb1) {
+          document.getElementById('checkbox-group-1').classList.remove('has-error');
+          document.getElementById('validation-cb1').classList.remove('visible');
+        }
+        if (cb2) {
+          document.getElementById('checkbox-group-2').classList.remove('has-error');
+          document.getElementById('validation-cb2').classList.remove('visible');
+        }
+      }
+    }
+
+    // ─── Confirm handler ───
+    function handleConfirm() {
+      state.confirmAttempted = true;
+
+      const photo1 = state.photos[0] && state.photos[0].url;
+      const photo2 = state.photos[1] && state.photos[1].url;
+      const photo3 = state.photos[2] && state.photos[2].url;
+      const cb1 = document.getElementById('terms-1').checked;
+      const cb2 = document.getElementById('terms-2').checked;
+
+      let hasError = false;
+
+      if (!cb1) {
+        document.getElementById('checkbox-group-1').classList.add('has-error');
+        document.getElementById('validation-cb1').classList.add('visible');
+        hasError = true;
+      }
+      if (!cb2) {
+        document.getElementById('checkbox-group-2').classList.add('has-error');
+        document.getElementById('validation-cb2').classList.add('visible');
+        hasError = true;
+      }
+
+      if (hasError || !photo1 || !photo2 || !photo3 || !state.labelPrinted) {
+        const firstError = document.querySelector('.validation-msg.visible, .has-error');
+        if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        showToast('Please complete all required steps.', 'error');
+        return;
+      }
+
+      showToast('Order confirmed! Drop off your parcel at the carrier.', 'success');
+      const btn = document.getElementById('confirmBtn');
+      btn.disabled = true;
+      btn.innerHTML = `Confirmed <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16.67 5.83L7.5 15L3.33 10.83" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    }
+
+    // ─── Toast ───
+    function showToast(message, type) {
+      const toast = document.getElementById('toast');
+      const icons = {
+        success: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        error: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 9V13M12 17H12.01M12 3L2 20H22L12 3Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+      };
+      toast.innerHTML = `<div class="toast-icon">${icons[type] || ''}</div><span>${message}</span>`;
+      toast.className = 'toast ' + type;
+      toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
+
+      requestAnimationFrame(() => { toast.classList.add('visible'); });
+
+      const duration = type === 'error' ? 5000 : 3000;
+      setTimeout(() => { toast.classList.remove('visible'); }, duration);
+    }
+
+    // ─── Keyboard ───
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const photoModal = document.getElementById('photoModal');
+        if (photoModal.classList.contains('active')) {
+          closePhotoModal();
+        }
+      }
+    });
+
+    // ─── Init ───
+    updateProgress();
+    updateConfirmState();
+  </script>
+</body>
+</html>

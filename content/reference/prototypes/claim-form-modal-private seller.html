@@ -1,0 +1,2188 @@
+<!-- AGENTS.MD READ SUCCESSFULLY -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>buycycle — Order Center — Claim Flow (Bikes — Merged Steps)</title>
+<style>
+  /* ── Design Tokens ─────────────────────────────── */
+  :root {
+    --bg-primary: #FCFCFC;
+    --bg-secondary: #F3F3F3;
+    --bg-tertiary: #FFFFFF;
+    --bg-quartenary: #EAEAEA;
+    --bg-primary-reverse: #090907;
+    --bg-positive: #E8F8F0;
+    --bg-attention: #FFFBEB;
+    --bg-warning: #FFF7ED;
+    --bg-information: #EFF6FF;
+    --bg-alert: #FFEBEB;
+    --bg-accent-green: #DAFDA0;
+
+    --content-primary: #090907;
+    --content-secondary: #333333;
+    --content-tertiary: #535353;
+    --content-quartenary: #A9A9A9;
+    --content-primary-reverse: #FCFCFC;
+    --content-positive: #146C43;
+    --content-attention: #92400E;
+    --content-warning: #EA580C;
+    --content-information: #1D4ED8;
+    --content-alert: #B91C1C;
+
+    --border-primary: #090907;
+    --border-secondary: #757575;
+    --border-tertiary: #EAEAEA;
+    --border-quartenary: #D0D0D0;
+    --border-positive: #146C43;
+    --border-attention: #92400E;
+    --border-alert: #B91C1C;
+
+    --font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --text-xs: 12px;
+    --text-sm: 14px;
+    --text-base: 16px;
+    --text-lg: 18px;
+    --text-xl: 20px;
+    --text-2xl: 24px;
+    --text-3xl: 30px;
+    --leading-xs: 18px;
+    --leading-sm: 21px;
+    --leading-base: 24px;
+    --leading-lg: 27px;
+    --leading-xl: 28px;
+    --leading-2xl: 32px;
+    --leading-3xl: 39px;
+
+    /* DS 4px grid only — 4|8|12|16|24|32|44|48 */
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+    --space-6: 24px; --space-8: 32px; --space-11: 44px; --space-12: 48px;
+
+    --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px;
+    --radius-xl: 16px; --radius-full: 9999px;
+
+    --shadow-sm: 0 1px 2px rgba(9,9,7,0.06);
+    --shadow-md: 0 4px 12px rgba(9,9,7,0.08);
+    --shadow-lg: 0 8px 30px rgba(9,9,7,0.12);
+    --shadow-xl: 0 16px 48px rgba(9,9,7,0.16);
+
+    /* DS Motion tokens */
+    --bc-transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+    --bc-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --bc-transition-slow: 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: var(--text-base); line-height: var(--leading-base); -webkit-text-size-adjust: 100%; overflow-x: hidden; max-width: 100vw; }
+  body {
+    font-family: var(--font-family);
+    color: var(--content-primary);
+    background: var(--bg-secondary);
+    min-height: 100dvh;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; }
+  input, textarea { font-family: inherit; }
+
+  /* ── Full page layout ──────────────────────────────── */
+  .page-layout {
+    display: flex; flex-direction: column; min-height: 100dvh;
+    max-width: 100vw; overflow-x: hidden;
+  }
+
+  /* Trust bar — ~30px */
+  .trust-bar {
+    display: flex; align-items: center; justify-content: center; gap: var(--space-8);
+    height: 30px; padding: 0 var(--space-6);
+    background: var(--bg-primary-reverse); color: var(--content-primary-reverse);
+    font-size: var(--text-xs); line-height: var(--leading-xs); flex-shrink: 0;
+  }
+  .trust-bar-item { display: flex; align-items: center; gap: var(--space-1); white-space: nowrap; }
+
+  /* Navbar — ~68px */
+  .navbar {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px; padding: 0 var(--space-6);
+    background: var(--bg-tertiary); border-bottom: 1px solid var(--border-tertiary);
+    flex-shrink: 0;
+  }
+  .navbar-logo {
+    font-size: var(--text-2xl); font-weight: 700; color: var(--content-primary);
+    font-style: italic; letter-spacing: -0.5px;
+  }
+  .navbar-search {
+    display: flex; align-items: center; gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--border-tertiary); border-radius: var(--radius-md);
+    font-size: var(--text-sm); color: var(--content-quartenary);
+    width: 320px;
+  }
+  .navbar-actions { display: flex; align-items: center; gap: var(--space-4); }
+  .navbar-action {
+    width: 32px; height: 32px; border-radius: var(--radius-full);
+    background: var(--bg-secondary); display: flex; align-items: center; justify-content: center;
+  }
+  .navbar-sell {
+    padding: var(--space-2) var(--space-4);
+    background: var(--bg-accent-green); color: var(--content-primary);
+    border-radius: var(--radius-md); font-size: var(--text-sm); font-weight: 500;
+  }
+
+  /* Category nav — ~42px */
+  .category-nav {
+    display: flex; align-items: center; gap: var(--space-6);
+    height: 42px; padding: 0 var(--space-6); flex-shrink: 0;
+    border-bottom: 1px solid var(--border-tertiary);
+    font-size: var(--text-sm); color: var(--content-primary);
+  }
+  .category-nav span { white-space: nowrap; cursor: pointer; }
+  .category-nav span:hover { color: var(--content-tertiary); }
+
+  /* Main content area */
+  .main-area {
+    display: flex; flex: 1; min-height: 0; overflow: hidden;
+  }
+
+  /* Left sidebar — 225px per Figma */
+  .sidebar-nav {
+    width: 225px; flex-shrink: 0;
+    background: var(--bg-tertiary);
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: var(--space-3);
+    height: 48px; padding: 0 var(--space-6);
+    font-size: var(--text-sm); color: var(--content-primary);
+    cursor: pointer; transition: background 120ms ease-out;
+  }
+  .sidebar-item:hover { background: var(--bg-secondary); }
+  .sidebar-item.active { font-weight: 500; background: var(--bg-secondary); }
+  .sidebar-item svg { width: 20px; height: 20px; color: var(--content-tertiary); }
+
+  /* Inbox panel — 386px per Figma */
+  .inbox-panel {
+    width: 386px; flex-shrink: 0;
+    border-left: 1px solid var(--border-tertiary);
+    border-right: 1px solid var(--border-tertiary);
+    background: var(--bg-tertiary);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .inbox-header {
+    height: 64px; display: flex; align-items: center;
+    padding: 0 var(--space-4);
+    font-size: var(--text-2xl); font-weight: 700;
+  }
+  .inbox-tabs {
+    display: flex; align-items: center; gap: var(--space-2);
+    height: 40px; padding: 0 var(--space-4);
+    margin-top: var(--space-3);
+  }
+  .inbox-tab {
+    height: 40px; display: flex; align-items: center;
+    padding: 0 var(--space-3);
+    font-size: var(--text-sm); border-radius: 24px;
+    cursor: pointer; color: var(--content-primary);
+  }
+  .inbox-tab.active {
+    background: var(--bg-primary-reverse); color: var(--content-primary-reverse);
+  }
+  .inbox-list { flex: 1; overflow-y: auto; margin-top: var(--space-3); }
+  .inbox-item {
+    display: flex; align-items: center; gap: var(--space-3);
+    height: 80px; padding: 0 var(--space-4);
+    cursor: pointer;
+  }
+  .inbox-item:hover { background: var(--bg-secondary); }
+  .inbox-item.active { background: var(--bg-secondary); }
+  .inbox-item-img {
+    width: 80px; height: 45px; border-radius: 3px;
+    background: var(--bg-quartenary); flex-shrink: 0;
+    position: relative;
+  }
+  .inbox-item-avatar {
+    position: absolute; bottom: -7px; right: -2px;
+    width: 21px; height: 21px; border-radius: 100px;
+    background: var(--bg-quartenary); flex-shrink: 0;
+  }
+  .inbox-item-text { flex: 1; min-width: 0; }
+  .inbox-item-name {
+    font-size: var(--text-sm); font-weight: 500; color: var(--content-primary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    line-height: var(--leading-sm);
+  }
+  .inbox-item-preview {
+    font-size: var(--text-xs); color: var(--content-tertiary);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    line-height: var(--leading-xs);
+  }
+  .inbox-item-meta {
+    display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1);
+    flex-shrink: 0;
+  }
+  .inbox-item-time {
+    font-size: var(--text-xs); color: var(--content-tertiary);
+    line-height: var(--leading-xs);
+  }
+  .inbox-item-dot {
+    width: 8px; height: 8px; border-radius: var(--radius-full);
+    background: var(--content-alert); flex-shrink: 0;
+  }
+
+  /* Chat panel — 901px flex area, 24px padding, 16px top per Figma */
+  .chat-panel {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    background: var(--bg-secondary);
+    padding: 16px 24px 0 24px;
+  }
+
+  @media (max-width: 1200px) {
+    .sidebar-nav { display: none; }
+    .inbox-panel { width: 300px; }
+  }
+  @media (max-width: 768px) {
+    .trust-bar { display: none; }
+    .category-nav { display: none; }
+    .inbox-panel { display: none; }
+    .chat-panel { padding: 0; min-width: 0; }
+    .navbar { padding: 0 var(--space-4); gap: var(--space-2); }
+    .navbar-search { display: none; }
+    .navbar-actions { gap: var(--space-2); }
+    .navbar-action:nth-of-type(2),
+    .navbar-action:nth-of-type(3) { display: none; }
+    .main-area { width: 100%; max-width: 100vw; overflow: hidden; }
+  }
+
+  /* ── Chat container (Shop pattern) ───────────────── */
+  .chat-container {
+    width: 100%; flex: 1; min-height: 0;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-tertiary);
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0px -1px 6px 0px rgba(83,83,83,0.15), 0px 1px 6px 0px rgba(83,83,83,0.15);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    opacity: 0.9;
+  }
+  .chat-header {
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: 95px; padding: var(--space-4);
+    border-bottom: 1px solid var(--border-tertiary);
+    background: var(--bg-tertiary); flex-shrink: 0;
+  }
+  .chat-header-content { display: flex; align-items: center; gap: var(--space-3); min-height: 63px; }
+  .product-image-container { position: relative; width: 80px; height: 45.33px; flex-shrink: 0; }
+  .product-image {
+    width: 80px; height: 45.33px; border-radius: 3px; object-fit: cover;
+    background: var(--bg-secondary);
+  }
+  .user-avatar-small {
+    position: absolute; bottom: -7px; right: -2px;
+    width: 21px; height: 21px; border-radius: 100px;
+    object-fit: cover; background: var(--bg-quartenary);
+  }
+  .product-info { display: flex; flex-direction: column; justify-content: center; }
+  .product-info h2 {
+    font-size: var(--text-base); font-weight: 500; line-height: var(--leading-base);
+    color: var(--content-primary); margin: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .product-info .price {
+    font-size: var(--text-sm); font-weight: 400; line-height: var(--leading-sm);
+    color: var(--content-secondary);
+  }
+  .options-icon {
+    width: 24px; height: 24px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .order-progress-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 48px; padding: 0 var(--space-4); flex-shrink: 0;
+    background: var(--bg-secondary); border-bottom: 1px solid var(--border-tertiary);
+    cursor: pointer;
+  }
+  .order-progress-bar:hover { background: var(--bg-quartenary); }
+  .order-progress-text {
+    font-size: var(--text-sm); font-weight: 500;
+    color: var(--content-primary);
+  }
+
+  .chat-body {
+    flex: 1; display: flex; flex-direction: column; overflow-y: auto;
+  }
+  .protection-banner {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-4); border-bottom: 1px solid var(--border-tertiary);
+  }
+  .protection-icon { width: 24px; height: 24px; flex-shrink: 0; }
+  .protection-text {
+    font-size: var(--text-xs); font-weight: 400; line-height: var(--leading-xs);
+    color: var(--content-tertiary);
+  }
+  .admin-messages-container {
+    display: flex; flex-direction: column;
+  }
+  .admin-message {
+    padding: var(--space-4); border-bottom: 1px solid var(--border-tertiary);
+    display: flex; flex-direction: column; gap: var(--space-1);
+  }
+  .admin-message.inactive .admin-message-title { color: var(--content-tertiary); }
+  .admin-message.inactive .admin-message-body { color: var(--content-tertiary); }
+  .admin-message.active .admin-message-title { color: var(--content-primary); }
+  .admin-message.active .admin-message-body { color: var(--content-secondary); }
+  .admin-message-title { font-size: var(--text-base); font-weight: 500; line-height: var(--leading-base); }
+  .admin-message-body { font-size: var(--text-sm); font-weight: 400; line-height: var(--leading-sm); }
+  .admin-message-time { font-size: var(--text-xs); font-weight: 400; line-height: var(--leading-xs); color: var(--content-tertiary); }
+  .action-buttons { display: flex; flex-direction: column; gap: var(--space-2); margin-top: var(--space-1); }
+
+  /* Chat messages (Figma pattern) */
+  .chat-messages { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-4); }
+  .chat-msg-row {
+    display: flex; flex-direction: column; gap: var(--space-1);
+    padding: 0;
+  }
+  .chat-msg-row.from-buyer { align-items: flex-end; }
+  .chat-msg-row.from-seller { align-items: flex-start; }
+  .chat-msg-content {
+    display: flex; gap: var(--space-1); align-items: flex-end;
+  }
+  .chat-msg-row.from-buyer .chat-msg-content { flex-direction: row-reverse; }
+  .chat-msg-avatar {
+    width: 24px; height: 24px; border-radius: 150px; background: var(--bg-quartenary);
+    flex-shrink: 0; overflow: hidden;
+  }
+  .chat-msg-bubble {
+    max-width: 268px; padding: var(--space-3);
+    border-radius: 6px;
+    font-size: var(--text-sm); line-height: var(--leading-sm);
+    color: var(--content-primary);
+  }
+  .chat-msg-row.from-seller .chat-msg-bubble {
+    border: 1px solid var(--border-tertiary); background: var(--bg-tertiary);
+  }
+  .chat-msg-row.from-buyer .chat-msg-bubble {
+    background: var(--bg-secondary); border: none;
+  }
+  .chat-msg-time {
+    font-size: var(--text-xs); color: var(--content-tertiary); line-height: var(--leading-xs);
+  }
+
+  .comment-section {
+    background: var(--bg-secondary); height: 80px;
+    padding: var(--space-4); margin-top: auto; flex-shrink: 0;
+  }
+  .comment-input-container { display: flex; align-items: center; gap: var(--space-4); height: 48px; }
+  .input-wrapper { flex: 1; height: 48px; }
+  .message-input {
+    width: 100%; height: 48px; padding: 10px var(--space-4);
+    background: var(--bg-tertiary); border: 1px solid var(--border-tertiary);
+    border-radius: var(--radius-md); font-family: var(--font-family);
+    font-size: var(--text-sm); line-height: var(--leading-sm);
+    color: var(--content-primary); outline: none;
+    transition: border-color 200ms ease-out, box-shadow 200ms ease-out;
+  }
+  .message-input::placeholder { color: var(--content-quartenary); }
+  .message-input:hover { border-color: var(--content-quartenary); }
+  .message-input:focus {
+    border-width: 2px; border-color: var(--border-secondary);
+    box-shadow: 0 0 0 3px rgba(9,9,7,0.08);
+  }
+  .send-button {
+    width: 24px; height: 24px; background: transparent; border: none; cursor: pointer;
+    color: var(--content-primary);
+  }
+  /* Post-claim elements */
+  .admin-message.attention .admin-message-title {
+    color: var(--content-warning); font-weight: 700;
+  }
+  .admin-message.attention .admin-message-body { color: var(--content-secondary); }
+  .admin-message.attention .admin-message-body a {
+    color: var(--content-primary); text-decoration: underline;
+  }
+
+  .compensation-request {
+    display: flex; flex-direction: column;
+    padding: var(--space-3); background: var(--bg-secondary);
+    border-radius: 6px; font-size: var(--text-sm); font-weight: 500;
+    color: var(--content-primary);
+  }
+
+  /* Flagship claim bar (dark, echoes summary page banner) */
+  .claim-summary-bar {
+    display: none; flex-direction: column;
+    gap: var(--space-2); padding: var(--space-3) var(--space-4);
+    background: linear-gradient(135deg, var(--bg-primary-reverse) 0%, #1a1a1a 100%);
+    color: var(--content-primary-reverse);
+    position: relative; overflow: hidden; flex-shrink: 0;
+    transition: background 400ms ease-out;
+  }
+  .claim-summary-bar::before {
+    content: ''; position: absolute;
+    top: -40px; right: -40px; width: 140px; height: 140px;
+    background: radial-gradient(circle, var(--content-attention) 0%, transparent 60%);
+    opacity: 0.85; filter: blur(20px); pointer-events: none;
+    transition: background 400ms ease-out, opacity 400ms ease-out;
+  }
+  .claim-summary-bar.escalated::before {
+    background: radial-gradient(circle, var(--content-information) 0%, transparent 60%);
+    opacity: 0.8;
+  }
+  .claim-summary-bar.resolved::before {
+    background: radial-gradient(circle, var(--content-positive) 0%, transparent 60%);
+    opacity: 0.85;
+  }
+  .claim-summary-bar.cancelled::before {
+    background: radial-gradient(circle, var(--content-quartenary) 0%, transparent 60%);
+    opacity: 0.6;
+  }
+  .claim-summary-bar > * { position: relative; z-index: 1; }
+  .claim-summary-bar.visible { display: flex; }
+  .claim-summary-bar-left {
+    display: flex; align-items: center; gap: var(--space-2);
+    font-size: var(--text-sm); font-weight: 500;
+  }
+  .claim-summary-bar-dot {
+    width: 8px; height: 8px; border-radius: var(--radius-full);
+    background: var(--content-attention); animation: pulse 1.5s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  .claim-summary-bar.escalated .claim-summary-bar-dot { background: var(--content-information); }
+  .claim-summary-bar.resolved .claim-summary-bar-dot { background: var(--content-positive); animation: none; }
+  .claim-summary-bar.cancelled .claim-summary-bar-dot { background: var(--content-quartenary); animation: none; }
+  /* Body copy slot — only shown in terminal states (cancelled / resolved) */
+  .claim-summary-bar-body {
+    display: none;
+    font-size: var(--text-xs); line-height: var(--leading-xs);
+    color: rgba(255,255,255,0.75); font-weight: 400;
+  }
+  .claim-summary-bar.cancelled .claim-summary-bar-body,
+  .claim-summary-bar.resolved .claim-summary-bar-body { display: block; }
+  .claim-summary-bar.cancelled .claim-countdown,
+  .claim-summary-bar.resolved .claim-countdown { display: none; }
+  .claim-summary-bar-btn {
+    display: inline-flex; align-items: center; gap: var(--space-1);
+    height: 32px; padding: 6px 14px;
+    background: rgba(255,255,255,0.15); color: var(--content-primary-reverse);
+    border: none; border-radius: 8px; font-family: var(--font-family);
+    font-size: 13px; font-weight: 400; cursor: pointer; text-decoration: none;
+    transition: background 200ms ease-out, transform 200ms ease-out;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .claim-summary-bar-btn:hover { background: rgba(255,255,255,0.25); }
+  .claim-summary-bar-btn:active { transform: scale(0.97); }
+  .chat-top-pinned { flex-shrink: 0; position: sticky; top: 0; z-index: 5; }
+  .claim-summary-bar-right {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .claim-countdown { font-size: var(--text-xs); color: rgba(255,255,255,0.55); white-space: nowrap; font-weight: 400; }
+
+  .chat-action-bar {
+    display: none; gap: var(--space-2); padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--border-tertiary); flex-shrink: 0;
+  }
+  .chat-action-bar.visible { display: flex; }
+  .chat-action-bar .btn-chat-primary {
+    flex: 1; height: 40px; display: flex; align-items: center; justify-content: center;
+    background: var(--bg-primary-reverse); color: var(--content-primary-reverse);
+    border: none; border-radius: 10px; font-family: var(--font-family);
+    font-size: var(--text-sm); font-weight: 400; cursor: pointer;
+  }
+  .chat-action-bar .btn-chat-secondary {
+    flex: 1; height: 40px; display: flex; align-items: center; justify-content: center;
+    background: var(--bg-tertiary); color: var(--content-primary);
+    border: 1.5px solid var(--border-secondary); border-radius: 10px;
+    font-family: var(--font-family); font-size: var(--text-sm); font-weight: 400; cursor: pointer;
+  }
+
+  #postClaimElements { display: none; }
+  #postClaimElements.visible { display: contents; }
+
+  /* DS button/main — Primary, Large (52h / 14·24 / 12r) */
+  .btn-primary {
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    width: 100%; height: 52px; padding: 14px var(--space-6);
+    background: var(--content-primary); color: var(--content-primary-reverse);
+    font-family: var(--font-family); font-size: var(--text-base); font-weight: 400; line-height: var(--leading-base);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+    transition: all 200ms;
+  }
+  .btn-primary::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+    opacity: 0; transition: opacity 200ms;
+  }
+  .btn-primary:hover {
+    box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4);
+    transform: translateY(-0.5px);
+  }
+  .btn-primary:hover::before { opacity: 1; }
+  .btn-primary:active {
+    box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3);
+    transform: scale(0.97);
+  }
+  .btn-primary:disabled {
+    background: var(--bg-quartenary); color: var(--content-tertiary);
+    box-shadow: none; cursor: not-allowed; transform: none;
+  }
+  .btn-primary:disabled::before { opacity: 0; }
+  .btn-primary:focus-visible { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+
+  /* DS button/main — Secondary, Large (52h / 14·24 / 12r / 1.5px border) */
+  .btn-secondary {
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+    width: 100%; height: 52px; padding: 14px var(--space-6);
+    background: var(--bg-tertiary); color: var(--content-primary);
+    font-family: var(--font-family); font-size: var(--text-base); font-weight: 400; line-height: var(--leading-base);
+    border-radius: var(--radius-lg);
+    border: 1.5px solid var(--border-secondary);
+    transition: all 200ms;
+  }
+  .btn-secondary::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(135deg, transparent 0%, rgba(9,9,7,0.05) 100%);
+    opacity: 0; transition: opacity 200ms;
+  }
+  .btn-secondary:hover { background: var(--bg-secondary); border-color: var(--border-primary); }
+  .btn-secondary:hover::before { opacity: 1; }
+  .btn-secondary:active { background: var(--bg-quartenary); border-color: var(--border-primary); transform: scale(0.97); }
+  .btn-secondary:disabled {
+    background: var(--bg-quartenary); color: var(--content-tertiary);
+    border-color: var(--border-tertiary); cursor: not-allowed; transform: none;
+  }
+  .btn-secondary:focus-visible { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+
+  /* ── Modal ─────────────────────────────────────── */
+  /* #7 — backdrop blur transition */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(9,9,7,0.45); opacity: 0; pointer-events: none;
+    backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+    transition: opacity 300ms ease-out, backdrop-filter 300ms ease-out, -webkit-backdrop-filter 300ms ease-out;
+    padding: var(--space-6);
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+
+  .modal {
+    width: 100%; max-width: 947px; max-height: 90vh;
+    background: var(--bg-tertiary); border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl); display: flex; flex-direction: column;
+    transform: translateY(16px) scale(0.97);
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1); overflow: hidden;
+  }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--border-tertiary); flex-shrink: 0;
+  }
+  .modal-title { font-size: var(--text-lg); font-weight: 500; }
+  .modal-close {
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    border-radius: var(--radius-full); color: var(--content-tertiary); transition: background 0.15s, color 0.15s;
+  }
+  .modal-close:hover { background: var(--bg-secondary); color: var(--content-primary); }
+
+  .progress-bar {
+    display: flex; gap: var(--space-1); padding: 0 var(--space-6); padding-top: var(--space-4); flex-shrink: 0;
+  }
+  .progress-bar.hidden { display: none; }
+  /* progress-segment styles defined below with spring transition */
+
+  .progress-labels {
+    display: flex; gap: var(--space-1); padding: var(--space-1) var(--space-6) 0; flex-shrink: 0;
+  }
+  .progress-labels.hidden { display: none; }
+  .progress-label { flex: 1; font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--content-quartenary); transition: color 0.3s; }
+  .progress-label.active { color: var(--content-primary); font-weight: 500; }
+
+  .modal-body { flex: 1; overflow-y: auto; padding: var(--space-6); position: relative; }
+
+  /* #1 — directional step transitions */
+  .step { display: none; }
+  .step.active { display: block; animation: slideInForward 200ms ease-out forwards; }
+  .step.active.slide-back { animation: slideInBack 200ms ease-out forwards; }
+  #step1 > .field { margin-bottom: var(--space-4); }
+  #step1 > .smart-tags-section { margin-top: var(--space-4); }
+  @keyframes slideInForward { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes slideInBack { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+
+  /* #2 — staggered list items */
+  .cause-option, .checkbox-item { opacity: 0; animation: staggerIn 200ms ease-out forwards; }
+  .step.active .cause-option:nth-child(1), .step.active .checkbox-item:nth-child(1) { animation-delay: 0ms; }
+  .step.active .cause-option:nth-child(2), .step.active .checkbox-item:nth-child(2) { animation-delay: 40ms; }
+  .step.active .cause-option:nth-child(3), .step.active .checkbox-item:nth-child(3) { animation-delay: 80ms; }
+  .step.active .cause-option:nth-child(4), .step.active .checkbox-item:nth-child(4) { animation-delay: 120ms; }
+  @keyframes staggerIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* #4 — thumbnail entrance */
+  @keyframes thumbPop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+  /* #5 — success screen choreography */
+  .success-icon { opacity: 0; animation: successPop 300ms ease-out 100ms forwards; }
+  .success-title { opacity: 0; animation: staggerIn 200ms ease-out 200ms forwards; }
+  .success-msg { opacity: 0; animation: staggerIn 200ms ease-out 260ms forwards; }
+  .success-next-steps { opacity: 0; animation: staggerIn 250ms ease-out 340ms forwards; }
+  @keyframes successPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+  /* #6 — progress bar segment spring */
+  .progress-segment {
+    flex: 1; height: 3px; background: var(--bg-quartenary);
+    border-radius: var(--radius-full); transition: background 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .progress-segment.active, .progress-segment.completed { background: var(--bg-primary-reverse); }
+
+  .modal-footer {
+    display: flex; gap: var(--space-3); padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--border-tertiary); flex-shrink: 0;
+  }
+  /* DS button/main — Tertiary (text-only with hover color shift) */
+  .modal-footer .btn-back {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--space-1);
+    height: 52px; padding: 14px var(--space-4);
+    background: transparent; color: var(--content-tertiary);
+    font-family: var(--font-family); font-size: var(--text-base); font-weight: 400; line-height: var(--leading-base);
+    border-radius: var(--radius-lg);
+    transition: color 200ms; white-space: nowrap;
+  }
+  .modal-footer .btn-back:hover { color: var(--content-primary); }
+  .modal-footer .btn-back:focus-visible { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+  .modal-footer .btn-next { flex: 1; }
+
+  /* ── Eligibility Gate ──────────────────────────── */
+  .eligibility-card {
+    background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-4);
+  }
+  .eligibility-card-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+  .eligibility-card-info { display: flex; flex-direction: column; gap: 2px; }
+  .eligibility-bike { font-weight: 700; font-size: var(--text-sm); }
+  .eligibility-order { font-size: var(--text-xs); color: var(--content-tertiary); }
+  .eligibility-delivered { font-size: var(--text-xs); color: var(--content-tertiary); margin-top: var(--space-1); }
+  /* DS product-tags style */
+  .eligibility-time-badge {
+    display: inline-flex; align-items: center; font-size: var(--text-xs); font-weight: 400; padding: var(--space-1) var(--space-3);
+    border-radius: 24px; background: var(--bg-positive); color: var(--content-positive);
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .eligibility-time-badge.amber { background: var(--bg-attention); color: var(--content-attention); }
+  .eligibility-warning {
+    display: flex; gap: var(--space-2); padding: var(--space-3); background: var(--bg-attention);
+    border-radius: var(--radius-md); font-size: var(--text-xs); color: var(--content-attention); line-height: var(--leading-xs);
+  }
+  .eligibility-cta { margin-top: var(--space-6); }
+
+  /* DS button/main — Tertiary (::after underline, motion-standard) */
+  .link-tertiary {
+    position: relative; display: inline-flex; align-items: center;
+    color: var(--content-tertiary); text-decoration: none;
+    font-family: var(--font-family); font-size: var(--text-sm); font-weight: 400; line-height: var(--leading-sm);
+    transition: color var(--bc-transition-normal);
+    cursor: pointer;
+  }
+  .link-tertiary::after {
+    content: ''; position: absolute; bottom: 4px; left: 50%;
+    width: calc(100% - 16px); height: 1px;
+    background: rgba(9,9,7,0.3); transform: translateX(-50%);
+    transition: width var(--bc-transition-normal), height var(--bc-transition-normal), background var(--bc-transition-normal);
+  }
+  .link-tertiary:hover { color: var(--content-primary); }
+  .link-tertiary:hover::after { height: 1.5px; background: var(--content-primary); }
+  .link-tertiary:active { color: var(--content-primary); }
+  .link-tertiary:active::after { width: calc(100% - 20px); }
+  .link-tertiary[disabled], .link-tertiary.disabled { color: var(--content-tertiary); pointer-events: none; }
+  .link-tertiary[disabled]::after, .link-tertiary.disabled::after { display: none; }
+  .link-tertiary:focus-visible { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+
+  /* ── Form elements ─────────────────────────────── */
+  .step-heading { font-size: var(--text-base); font-weight: 500; margin-bottom: var(--space-1); }
+  .step-sub { font-size: var(--text-sm); color: var(--content-tertiary); margin-bottom: var(--space-4); }
+
+  .field { margin-bottom: var(--space-4); }
+  /* DS text-base/Medium for form labels */
+  .field-label { display: block; font-size: var(--text-base); font-weight: 500; line-height: var(--leading-base); margin-bottom: var(--space-2); color: var(--content-primary); }
+  .field-label .required { color: var(--content-alert); }
+  /* DS inputs/text-field — 12r / 1.5px default → 2px focused / 16·10 padding */
+  textarea.field-input, input.field-input {
+    width: 100%; padding: 10px var(--space-4); border: 1.5px solid var(--border-tertiary);
+    border-radius: var(--radius-lg); font-family: var(--font-family);
+    font-size: var(--text-base); line-height: var(--leading-base);
+    color: var(--content-primary); background: var(--bg-tertiary); transition: border-color 200ms; resize: vertical;
+  }
+  input.field-input { height: 48px; }
+  textarea.field-input:hover, input.field-input:hover { border-color: var(--content-quartenary); }
+  textarea.field-input:focus, input.field-input:focus {
+    outline: none; border: 2px solid var(--border-secondary);
+    padding: 9.5px calc(var(--space-4) - 0.5px);
+    box-shadow: 0 0 0 3px rgba(9,9,7,0.08);
+  }
+  textarea.field-input::placeholder, input.field-input::placeholder { color: var(--content-quartenary); }
+  .field-hint { font-size: var(--text-xs); color: var(--content-quartenary); margin-top: var(--space-1); }
+  .field-counter { display: flex; justify-content: space-between; }
+
+  /* Min-char hint */
+  .char-min-hint {
+    font-size: var(--text-xs); font-weight: 500; margin-top: var(--space-1);
+    transition: color 0.2s;
+  }
+  .char-min-hint.unmet { color: var(--content-tertiary); }
+  .char-min-hint.met { color: var(--content-positive); }
+
+  /* ── Smart tags (Airbnb-style) ─────────────────── */
+  .smart-tags-section {
+    margin-bottom: var(--space-4); display: none;
+  }
+  .smart-tags-section.visible { display: block; }
+  .smart-tags-label {
+    font-size: var(--text-xs); font-weight: 500; color: var(--content-tertiary);
+    margin-bottom: var(--space-2); display: flex; align-items: center; gap: var(--space-1);
+  }
+  .smart-tags-label .dot {
+    width: 6px; height: 6px; border-radius: var(--radius-full);
+    background: var(--content-positive); display: inline-block;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .smart-tags {
+    display: flex; flex-wrap: wrap; gap: var(--space-2);
+  }
+  /* DS filters/chips — Small (32h, rounded-[24px]). Gray default → Black selected, no border */
+  .smart-tag {
+    display: inline-flex; align-items: center; height: 32px; padding: 0 var(--space-3);
+    font-family: var(--font-family); font-size: var(--text-sm); line-height: var(--leading-sm);
+    background: var(--bg-quartenary); color: var(--content-primary);
+    border: none; border-radius: 24px;
+    transition: background 200ms, color 200ms; user-select: none;
+    animation: tagAppear 200ms ease forwards;
+    cursor: pointer;
+  }
+  @keyframes tagAppear { from { opacity:0; transform: scale(0.9); } to { opacity:1; transform: scale(1); } }
+  .smart-tag:hover { background: var(--border-quartenary); }
+  .smart-tag.selected { background: var(--content-primary); color: var(--content-primary-reverse); }
+  .smart-tag:focus-visible { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+
+  /* ── Cause question ────────────────────────────── */
+  .cause-section { margin-bottom: var(--space-4); }
+  .cause-section .step-sub { margin-bottom: var(--space-3); }
+  .cause-options { display: flex; flex-direction: column; gap: var(--space-2); }
+  .cause-option {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border: 1px solid var(--border-tertiary);
+    border-radius: var(--radius-lg); cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    font-size: var(--text-sm);
+  }
+  .cause-option:hover { border-color: var(--border-quartenary); }
+  .cause-option.selected { border-color: var(--border-primary); background: var(--bg-secondary); }
+  .cause-option:focus-visible { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+  /* DS controls/radio-button — 24×24 / 1.5px / 12×12 inner dot */
+  .cause-dot {
+    width: 24px; height: 24px; border: 1.5px solid var(--border-tertiary);
+    border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; background: var(--bg-tertiary); transition: border-color 200ms;
+  }
+  .cause-option:hover .cause-dot { border-color: var(--content-tertiary); }
+  .cause-option.selected .cause-dot { border-color: var(--border-primary); }
+  .cause-dot::after {
+    content: ''; width: 12px; height: 12px; border-radius: var(--radius-full);
+    background: var(--content-primary); transform: scale(0); transition: transform 200ms;
+  }
+  .cause-option.selected .cause-dot::after { transform: scale(1); }
+  .cause-dot input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+  /* ── Photo upload (step-list checklist) ─────────── */
+  .upload-section { margin-bottom: 0; }
+  .upload-section-title { display: none; }
+  .step-list {
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .step-row {
+    display: flex; align-items: center; gap: var(--space-3);
+    padding: var(--space-6) 0; border-bottom: 1px solid var(--border-tertiary);
+    cursor: pointer; transition: background var(--bc-transition-fast);
+    margin: 0 calc(-1 * var(--space-2)); padding-left: var(--space-2); padding-right: var(--space-2);
+    border-radius: var(--radius-lg);
+  }
+  .step-row:last-child { border-bottom: none; }
+  .step-row:hover { background: var(--bg-secondary); }
+  .step-indicator {
+    width: 32px; height: 32px; border-radius: 50%; border: none;
+    background: var(--bg-secondary); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: var(--text-sm); font-weight: 700; color: var(--content-primary);
+    transition: background var(--bc-transition-normal), color var(--bc-transition-normal);
+  }
+  .step-row.complete .step-indicator { background: var(--content-positive); color: var(--content-primary-reverse); }
+  .step-row.partial .step-indicator { background: var(--content-primary); color: var(--content-primary-reverse); }
+  .step-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .step-name { font-size: var(--text-lg); font-weight: 500; color: var(--content-primary); line-height: var(--leading-lg); }
+  .step-optional {
+    display: inline-block; margin-left: var(--space-2);
+    padding: 2px var(--space-2);
+    font-size: var(--text-xs); font-weight: 400; line-height: var(--leading-xs);
+    background: var(--bg-quartenary); color: var(--content-tertiary);
+    border-radius: 24px; vertical-align: middle;
+  }
+  .step-desc { font-size: var(--text-sm); color: var(--content-tertiary); line-height: var(--leading-sm); }
+  .step-row.complete .step-name { color: var(--content-tertiary); }
+  .step-thumbs { display: flex; gap: var(--space-1); flex-shrink: 0; }
+  .step-thumbs:empty { display: none; }
+  .step-thumb {
+    width: 36px; height: 28px; border-radius: var(--radius-sm); overflow: hidden;
+    background: var(--bg-quartenary); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; cursor: pointer;
+  }
+  .step-thumb .thumb-remove {
+    position: absolute; inset: 0;
+    background: rgba(9,9,7,0.6); display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity var(--bc-transition-fast);
+  }
+  .step-thumb:hover .thumb-remove { opacity: 1; }
+  /* DS button/main — Secondary, Medium (40h / 10·18 / 10r / 1.5px borderSecondary) */
+  .step-action { flex-shrink: 0; display: flex; align-items: center; }
+  .step-action-btn {
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 40px; padding: 10px 18px; gap: 6px;
+    border: 1.5px solid var(--border-secondary); border-radius: 10px;
+    background: var(--bg-tertiary); font-family: var(--font-family);
+    font-size: var(--text-sm); font-weight: 400; line-height: var(--leading-sm);
+    color: var(--content-primary); cursor: pointer; white-space: nowrap;
+    transition: background var(--bc-transition-normal), border-color var(--bc-transition-normal), transform var(--bc-transition-normal);
+  }
+  .step-action-btn::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(135deg, transparent 0%, rgba(9,9,7,0.05) 100%);
+    opacity: 0; transition: opacity var(--bc-transition-normal);
+  }
+  .step-action-btn:hover { background: var(--bg-secondary); border-color: var(--border-primary); }
+  .step-action-btn:hover::before { opacity: 1; }
+  .step-action-btn:active { background: var(--bg-quartenary); border-color: var(--border-primary); transform: scale(0.97); }
+  .step-action-btn:focus-visible { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+  .step-row.complete .step-action-btn {
+    background: var(--bg-quartenary); color: var(--content-tertiary); border-color: var(--border-tertiary);
+  }
+  .step-row.complete .step-action-btn:hover { background: var(--bg-secondary); color: var(--content-primary); border-color: var(--border-secondary); }
+  .upload-helper {
+    font-size: var(--text-sm); color: var(--content-tertiary); line-height: var(--leading-sm);
+    margin-top: var(--space-3);
+  }
+  .upload-note {
+    font-size: var(--text-sm); color: var(--content-information); background: var(--bg-information);
+    padding: var(--space-3); border-radius: var(--radius-md); line-height: var(--leading-sm);
+    margin-bottom: var(--space-4);
+  }
+
+  .video-upload-section {
+    margin-top: var(--space-4); padding: var(--space-4); border: 1px solid var(--border-tertiary);
+    border-radius: var(--radius-lg); background: var(--bg-secondary);
+  }
+  .video-upload-title {
+    font-size: var(--text-sm); font-weight: 500; margin-bottom: var(--space-1);
+    display: flex; align-items: center; gap: var(--space-2);
+  }
+  .video-upload-title .optional-badge {
+    font-size: var(--text-sm); font-weight: 400; color: var(--content-quartenary);
+    background: var(--bg-tertiary); padding: 1px var(--space-2); border-radius: var(--radius-full);
+  }
+  .video-upload-desc { font-size: var(--text-sm); color: var(--content-tertiary); line-height: var(--leading-sm); margin-bottom: var(--space-3); }
+  /* DS button/main — Secondary, Small (32h / 6·14 / 8r) */
+  .video-upload-btn {
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; gap: var(--space-1);
+    height: 32px; padding: 6px 14px; border: 1.5px solid var(--border-secondary);
+    border-radius: 8px; font-family: var(--font-family); font-size: 13px; font-weight: 400; line-height: 18px;
+    color: var(--content-primary); background: var(--bg-tertiary); cursor: pointer;
+    transition: all 200ms;
+  }
+  .video-upload-btn:hover { background: var(--bg-secondary); border-color: var(--border-primary); }
+  .video-upload-btn:active { background: var(--bg-quartenary); transform: scale(0.97); }
+  .video-upload-btn:focus-visible { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+  .video-upload-btn.added {
+    border-color: var(--border-positive); color: var(--content-positive); background: var(--bg-positive);
+  }
+
+  /* ── Compensation ──────────────────────────────── */
+  .comp-intro {
+    font-size: var(--text-sm); color: var(--content-secondary); margin-bottom: var(--space-4);
+    line-height: var(--leading-sm); padding: var(--space-3); background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+  }
+  .radio-group { display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-4); }
+  .radio-option {
+    display: flex; align-items: flex-start; gap: var(--space-3);
+    padding: var(--space-3) var(--space-4); border: 1px solid var(--border-tertiary);
+    border-radius: var(--radius-lg); cursor: pointer; transition: border-color 0.15s, background 0.15s;
+  }
+  .radio-option:hover { border-color: var(--border-quartenary); }
+  .radio-option.selected { border-color: var(--border-primary); background: var(--bg-secondary); }
+  .radio-option:focus-visible { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+  .radio-option.subtle {
+    border-color: var(--border-tertiary); background: transparent;
+  }
+  .radio-option.subtle .radio-label { color: var(--content-tertiary); font-weight: 400; }
+  .radio-option.subtle.selected { border-color: var(--border-primary); background: var(--bg-secondary); }
+  .radio-option.subtle.selected .radio-label { color: var(--content-primary); font-weight: 500; }
+  /* DS controls/radio-button — 24×24 / 1.5px / 12×12 inner dot */
+  .radio-dot {
+    width: 24px; height: 24px; border: 1.5px solid var(--border-tertiary);
+    border-radius: var(--radius-full); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 0; background: var(--bg-tertiary); transition: border-color 200ms;
+  }
+  .radio-option:hover .radio-dot { border-color: var(--content-tertiary); }
+  .radio-option.selected .radio-dot { border-color: var(--border-primary); }
+  .radio-dot::after {
+    content: ''; width: 12px; height: 12px; border-radius: var(--radius-full);
+    background: var(--content-primary); transform: scale(0); transition: transform 200ms;
+  }
+  .radio-option.selected .radio-dot::after { transform: scale(1); }
+  .radio-dot input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .radio-label { font-size: var(--text-sm); font-weight: 500; }
+  .radio-desc { font-size: var(--text-xs); color: var(--content-tertiary); margin-top: 2px; }
+  .radio-amount { margin-top: var(--space-2); display: none; }
+  .radio-option.selected .radio-amount.needs-amount { display: flex; }
+  /* DS inputs/text-field with prefix — 48h / 12r / 1.5px → 2px focused */
+  .amount-input-wrap {
+    display: flex; align-items: stretch; height: 48px; border: 1.5px solid var(--border-tertiary);
+    border-radius: var(--radius-lg); overflow: hidden; background: var(--bg-tertiary); transition: border-color 200ms;
+  }
+  .amount-input-wrap:hover { border-color: var(--content-quartenary); }
+  .amount-input-wrap:focus-within { border: 2px solid var(--border-secondary); box-shadow: 0 0 0 3px rgba(9,9,7,0.08); }
+  .amount-prefix { display: flex; align-items: center; padding: 0 var(--space-4); font-size: var(--text-base); color: var(--content-tertiary); background: var(--bg-secondary); border-right: 1.5px solid var(--border-tertiary); }
+  .amount-input { border: none; outline: none; padding: 0 var(--space-4); font-size: var(--text-base); width: 120px; background: transparent; color: var(--content-primary); font-family: var(--font-family); -moz-appearance: textfield; appearance: textfield; }
+  .amount-input::-webkit-outer-spin-button, .amount-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .amount-input::placeholder { color: var(--content-quartenary); }
+
+  /* DS controls/checkbox-ML 20px — 1px border, 4px radius */
+  .checkbox-group { display: flex; flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-6); }
+  .checkbox-item { display: flex; gap: var(--space-2); align-items: flex-start; cursor: pointer; }
+  .checkbox-box {
+    width: 20px; height: 20px; border: 1px solid var(--border-secondary);
+    border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px; transition: background 200ms, border-color 200ms;
+    background: var(--bg-tertiary);
+  }
+  .checkbox-item:focus-within .checkbox-box { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+  .checkbox-box.checked { background: var(--content-primary); border-color: var(--content-primary); }
+  .checkbox-box input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .checkbox-check {
+    color: var(--content-primary-reverse); font-size: 13px; line-height: 1;
+    opacity: 0; transform: scale(0.5); transition: all 200ms;
+  }
+  .checkbox-box.checked .checkbox-check { opacity: 1; transform: scale(1); }
+  .checkbox-text { font-size: var(--text-base); line-height: var(--leading-base); color: var(--content-secondary); }
+
+  /* ── Expandable terms detail ───────────────────── */
+  .confirm-terms-detail {
+    background: var(--bg-secondary); border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .confirm-terms-toggle {
+    display: flex; align-items: center; justify-content: space-between; width: 100%;
+    padding: var(--space-3) var(--space-4); background: none; border: none;
+    font-family: var(--font-family); font-size: var(--text-sm); font-weight: 500;
+    color: var(--content-tertiary); cursor: pointer;
+    transition: color var(--bc-transition-normal);
+  }
+  .confirm-terms-toggle:hover { color: var(--content-primary); }
+  .confirm-terms-chevron {
+    transition: transform var(--bc-transition-normal); flex-shrink: 0;
+  }
+  .confirm-terms-detail.open .confirm-terms-chevron { transform: rotate(180deg); }
+  .confirm-terms-content {
+    max-height: 0; overflow: hidden; transition: max-height 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .confirm-terms-detail.open .confirm-terms-content { max-height: 200px; }
+  .confirm-terms-content ul {
+    list-style: none; padding: 0 var(--space-4) var(--space-4); display: flex; flex-direction: column; gap: var(--space-3);
+  }
+  .confirm-terms-content li {
+    font-size: var(--text-sm); line-height: var(--leading-sm); color: var(--content-tertiary);
+    padding-left: var(--space-4); position: relative;
+  }
+  .confirm-terms-content li::before {
+    content: ''; position: absolute; left: 0; top: 8px;
+    width: 4px; height: 4px; border-radius: var(--radius-full); background: var(--content-quartenary);
+  }
+
+  /* ── Success ───────────────────────────────────── */
+  .success-state {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: var(--space-8) var(--space-4);
+  }
+  .success-icon {
+    width: 64px; height: 64px; border-radius: var(--radius-full);
+    background: var(--bg-positive); display: flex; align-items: center; justify-content: center;
+    margin-bottom: var(--space-4);
+  }
+  .success-icon svg { width: 28px; height: 28px; color: var(--content-positive); }
+  .success-title { font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-2); }
+  .success-msg {
+    font-size: var(--text-sm); color: var(--content-tertiary); margin-bottom: var(--space-6);
+    max-width: 560px; line-height: var(--leading-sm);
+  }
+  .success-next-steps {
+    background: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-4);
+    text-align: left; width: 100%; max-width: 640px; margin-bottom: var(--space-6);
+  }
+  .success-next-title { font-size: var(--text-sm); font-weight: 700; margin-bottom: var(--space-2); }
+  .success-next-list { list-style: none; }
+  .success-next-list li {
+    font-size: var(--text-sm); color: var(--content-tertiary); padding: var(--space-1) 0;
+    display: flex; align-items: flex-start; gap: var(--space-2); line-height: var(--leading-sm);
+  }
+  .success-next-list li .step-num {
+    background: var(--bg-quartenary); border-radius: var(--radius-full);
+    width: 20px; height: 20px; min-width: 20px; display: flex; align-items: center; justify-content: center; margin-top: 1px;
+    font-size: var(--text-xs); font-weight: 700; color: var(--content-tertiary); flex-shrink: 0;
+  }
+
+  /* ── Offer to seller (success state) ─────────── */
+  .offer-section {
+    width: 100%; max-width: 640px; text-align: left; margin-bottom: var(--space-6);
+  }
+  .offer-toggle {
+    display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4);
+    background: var(--bg-secondary); border-radius: var(--radius-lg); cursor: pointer;
+    border: 1px solid var(--border-tertiary); transition: border-color 0.15s;
+  }
+  .offer-toggle:hover { border-color: var(--border-quartenary); }
+  .offer-toggle.active { border-color: var(--border-primary); }
+  /* DS controls/toggle — 56×32 track, 24×24 knob, 100px radius, On=accent-green */
+  .offer-toggle-switch {
+    width: 56px; height: 32px; border-radius: 100px; background: var(--bg-quartenary);
+    position: relative; flex-shrink: 0; transition: background 300ms;
+  }
+  .offer-toggle.active .offer-toggle-switch { background: var(--bg-accent-green); }
+  .offer-toggle-switch::after {
+    content: ''; position: absolute; top: 4px; left: 4px;
+    width: 24px; height: 24px; border-radius: var(--radius-full);
+    background: var(--content-primary);
+    transition: transform 300ms;
+  }
+  .offer-toggle.active .offer-toggle-switch::after { transform: translateX(24px); }
+  .offer-toggle-text { font-size: var(--text-sm); font-weight: 500; }
+  .offer-toggle-sub { font-size: var(--text-sm); color: var(--content-tertiary); margin-top: 1px; }
+
+  .offer-form {
+    display: none; margin-top: var(--space-3); padding: var(--space-4);
+    background: var(--bg-tertiary); border: 1px solid var(--border-tertiary);
+    border-radius: var(--radius-lg);
+  }
+  .offer-form.visible { display: block; }
+  .offer-form-label { font-size: var(--text-sm); font-weight: 500; color: var(--content-tertiary); margin-bottom: var(--space-2); }
+  .offer-amount-row { display: flex; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3); }
+  .offer-message-area {
+    width: 100%; padding: 10px var(--space-4); border: 1.5px solid var(--border-tertiary);
+    border-radius: var(--radius-lg); font-size: var(--text-base); line-height: var(--leading-base);
+    color: var(--content-primary); background: var(--bg-tertiary); resize: vertical;
+    font-family: var(--font-family); min-height: 80px; transition: border-color 200ms;
+  }
+  .offer-message-area:hover { border-color: var(--content-quartenary); }
+  .offer-message-area:focus { outline: none; border: 2px solid var(--border-secondary); padding: 9.5px calc(var(--space-4) - 0.5px); box-shadow: 0 0 0 3px rgba(9,9,7,0.08); }
+  .offer-message-area::placeholder { color: var(--content-quartenary); }
+  /* DS button/main — Primary, Medium (40h / 10·18 / 10r) */
+  .offer-send-btn {
+    position: relative; overflow: hidden;
+    margin-top: var(--space-3); display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px; width: 100%; height: 40px; padding: 10px 18px;
+    background: var(--content-primary); color: var(--content-primary-reverse);
+    font-family: var(--font-family); font-size: var(--text-sm); font-weight: 400; line-height: var(--leading-sm);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px -2px rgba(9,9,7,0.3);
+    transition: all 200ms;
+  }
+  .offer-send-btn:hover { box-shadow: 0 4px 16px -4px rgba(9,9,7,0.4); transform: translateY(-0.5px); }
+  .offer-send-btn:active { box-shadow: 0 1px 4px -1px rgba(9,9,7,0.3); transform: scale(0.97); }
+  .offer-send-btn:focus-visible { outline: 2px solid var(--content-primary); outline-offset: 2px; }
+  .offer-sent-confirm {
+    display: none; padding: var(--space-3); background: var(--bg-positive);
+    border-radius: var(--radius-md); font-size: var(--text-sm); color: var(--content-positive);
+    font-weight: 500; text-align: center; margin-top: var(--space-3);
+  }
+  .offer-sent-confirm.visible { display: block; }
+
+  .seller-visibility-note {
+    display: flex; align-items: flex-start; gap: var(--space-2); padding: var(--space-3);
+    background: var(--bg-secondary); border-radius: var(--radius-md);
+    font-size: var(--text-sm); color: var(--content-tertiary); line-height: var(--leading-sm);
+    margin-bottom: var(--space-4); width: 100%; max-width: 640px;
+  }
+
+  /* ── Mobile (DS button/sticky-app for footer) ─────────────────── */
+  @media (max-width: 768px) {
+    .chat-header { padding: var(--space-3) var(--space-4); }
+    .comment-section { padding: var(--space-3) var(--space-4); }
+    .modal-overlay { padding: 0; align-items: flex-end; width: 100vw; max-width: 100vw; }
+    .modal { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100%; border-radius: 0; transform: translateY(100%); }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-header { padding: var(--space-3) var(--space-4); }
+    .modal-body { padding: var(--space-4); padding-bottom: 140px; max-width: 100vw; }
+    .progress-bar { padding: 0 var(--space-4); padding-top: var(--space-3); }
+    .progress-labels { display: none; }
+    .step, .field, .cause-options, .cause-option, .checkbox-group, .checkbox-item, .smart-tags-section, .upload-section, .step-list, .success-state, .success-next-steps, .offer-section { max-width: 100%; }
+    textarea.field-input, input.field-input { max-width: 100%; }
+
+    /* DS button/sticky-app — 44px top padding, gradient bg, 49px button height, 34px iOS safe area */
+    .modal-footer {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 110;
+      padding: var(--space-11) var(--space-6) calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+      background: linear-gradient(179.636deg, rgba(252,252,252,0) 0.95%, rgb(252,252,252) 39.17%);
+      border-top: none; gap: var(--space-2);
+    }
+    .modal-footer .btn-primary, .modal-footer .btn-secondary { height: 49px; }
+    .modal-footer .btn-back { height: 49px; }
+
+    /* Upload step rows — stack thumbs below text on mobile */
+    .step-row {
+      flex-wrap: wrap; padding: var(--space-4) var(--space-2);
+    }
+    .step-thumbs {
+      width: 100%; padding-left: 44px; margin-top: var(--space-2);
+    }
+    .step-thumbs:empty { display: none; }
+  }
+
+  .modal-body::-webkit-scrollbar { width: 4px; }
+  .modal-body::-webkit-scrollbar-track { background: transparent; }
+  .modal-body::-webkit-scrollbar-thumb { background: var(--border-quartenary); border-radius: var(--radius-full); }
+
+  /* DS reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition: none !important;
+      animation: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Full page layout ───────────────── -->
+<div class="page-layout">
+
+  <!-- Trust bar -->
+  <div class="trust-bar">
+    <span class="trust-bar-item">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 1l1.5 3 3.5.5-2.5 2.5.5 3.5L6 9l-3 1.5.5-3.5L1 4.5 4.5 4z"/></svg>
+      4.9 Hervorragend
+    </span>
+    <span class="trust-bar-item">Europe's biggest bike selection</span>
+    <span class="trust-bar-item">Only certified offers</span>
+    <span class="trust-bar-item">100% buyers protection</span>
+    <span class="trust-bar-item">Financing</span>
+  </div>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="navbar-logo">buycycle.</div>
+    <div class="navbar-search">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="7" r="5"/><path d="M11 11l3 3"/></svg>
+      Search 100k+ cycling & other sports items...
+    </div>
+    <div class="navbar-actions">
+      <div class="navbar-action" style="font-size:14px">DE</div>
+      <div class="navbar-action"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3C5.5 3 2 8 2 8s3.5 5 6 5 6-5 6-5-3.5-5-6-5z"/><circle cx="8" cy="8" r="2"/></svg></div>
+      <div class="navbar-action"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10v8H3z"/><path d="M3 4l5 4 5-4"/></svg></div>
+      <div class="navbar-action" style="background:var(--bg-quartenary)"></div>
+      <div class="navbar-sell">Sell</div>
+    </div>
+  </div>
+
+  <!-- Category nav -->
+  <div class="category-nav">
+    <span>Cycling</span>
+    <span>Popular Brands</span>
+    <span>Road & Gravel</span>
+    <span>MTB</span>
+    <span>Cycling Gear</span>
+    <span>Cycling Accessories</span>
+    <span>Clothing & Shoes</span>
+    <span>Running</span>
+    <span>Wintersports</span>
+    <span>Other</span>
+  </div>
+
+  <!-- Main content area -->
+  <div class="main-area">
+
+    <!-- Left sidebar -->
+    <div class="sidebar-nav">
+      <div class="sidebar-item active">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="12" rx="2"/><path d="M2 7l8 5 8-5"/></svg>
+        Inbox
+      </div>
+      <div class="sidebar-item">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 20 20"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 10l2 2 4-4"/></svg>
+        Orders
+      </div>
+      <div class="sidebar-item">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 20 20"><rect x="4" y="2" width="12" height="16" rx="1"/><path d="M7 6h6M7 9h6M7 12h4"/></svg>
+        Listings
+      </div>
+      <div class="sidebar-item">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="10" rx="2"/><path d="M3 9h14"/></svg>
+        Payment
+      </div>
+      <div class="sidebar-item">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><path d="M10 7v3l2 2"/></svg>
+        Settings
+      </div>
+      <div class="sidebar-item" style="margin-top:auto">
+        <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 20 20"><path d="M7 17V3m0 0l-4 4m4-4l4 4"/><path d="M3 10h6"/></svg>
+        Logout
+      </div>
+    </div>
+
+    <!-- Inbox panel -->
+    <div class="inbox-panel">
+      <div class="inbox-header">Inbox</div>
+      <div class="inbox-tabs">
+        <span class="inbox-tab">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="4"/><path d="M9 9l3 3"/></svg>
+        </span>
+        <span class="inbox-tab">All</span>
+        <span class="inbox-tab active">Buying</span>
+        <span class="inbox-tab">Selling</span>
+      </div>
+      <div class="inbox-list">
+        <div class="inbox-item active">
+          <div class="inbox-item-img">
+            <div class="inbox-item-avatar"></div>
+          </div>
+          <div class="inbox-item-text">
+            <div class="inbox-item-name">Canyon Aeroad CF SL 8</div>
+            <div class="inbox-item-preview">Order delivered. Check i...</div>
+          </div>
+          <div class="inbox-item-meta">
+            <div class="inbox-item-dot"></div>
+          </div>
+        </div>
+        <div class="inbox-item">
+          <div class="inbox-item-img">
+            <div class="inbox-item-avatar"></div>
+          </div>
+          <div class="inbox-item-text">
+            <div class="inbox-item-name">Specialized Diverge Expert</div>
+            <div class="inbox-item-preview">Order packing</div>
+          </div>
+          <div class="inbox-item-meta">
+            <div class="inbox-item-time">20/01</div>
+          </div>
+        </div>
+        <div class="inbox-item">
+          <div class="inbox-item-img">
+            <div class="inbox-item-avatar"></div>
+          </div>
+          <div class="inbox-item-text">
+            <div class="inbox-item-name">Canyon Spectral CFR 9.0 SL</div>
+            <div class="inbox-item-preview">Quentin: Offer: €3,100</div>
+          </div>
+          <div class="inbox-item-meta">
+            <div class="inbox-item-dot"></div>
+            <div class="inbox-item-time">15:07</div>
+          </div>
+        </div>
+        <div class="inbox-item">
+          <div class="inbox-item-img">
+            <div class="inbox-item-avatar"></div>
+          </div>
+          <div class="inbox-item-text">
+            <div class="inbox-item-name">Trek Domane SLR 7</div>
+            <div class="inbox-item-preview">Sold to someone else</div>
+          </div>
+          <div class="inbox-item-meta">
+            <div class="inbox-item-time">20/01</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat panel -->
+    <div class="chat-panel">
+
+<!-- ── Chat container ───────────────── -->
+<div class="chat-container">
+  <!-- Sticky top group: header + progress + claim bar -->
+  <div class="chat-top-pinned">
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="chat-header-content">
+      <div class="product-image-container">
+        <div class="product-image" style="background:var(--bg-secondary);display:flex;align-items:center;justify-content:center">
+          <svg width="24" height="24" fill="none" stroke="var(--content-tertiary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="18.5" r="3.5"/><circle cx="18.5" cy="18.5" r="3.5"/><path d="M15 18.5h-5l-2-6h11l-1.5 4.5M8 12.5L6.5 7H3"/><path d="M8 12.5l4-5.5 3 3.5"/></svg>
+        </div>
+        <div class="user-avatar-small" style="background:var(--bg-quartenary)"></div>
+      </div>
+      <div class="product-info">
+        <h2>Canyon Aeroad CF SL 8</h2>
+        <span class="price">€2,400</span>
+      </div>
+    </div>
+    <div class="options-icon">
+      <svg width="20" height="4" viewBox="0 0 20 4" fill="none"><circle cx="2" cy="2" r="2" fill="var(--content-primary)"/><circle cx="10" cy="2" r="2" fill="var(--content-primary)"/><circle cx="18" cy="2" r="2" fill="var(--content-primary)"/></svg>
+    </div>
+  </div>
+
+  <!-- View Order Progress -->
+  <div class="order-progress-bar">
+    <span class="order-progress-text">View order progress</span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 18L15 12L9 6" stroke="var(--content-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+  <!-- Claim summary bar (hidden until submission, anchored at top) -->
+  <div class="claim-summary-bar" id="claimSummaryBar">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);width:100%">
+      <div class="claim-summary-bar-left">
+        <div class="claim-summary-bar-dot"></div>
+        <span id="claimSummaryBarLabel">Claim filed — Pending agreement</span>
+      </div>
+      <div class="claim-summary-bar-right">
+        <span class="claim-countdown" id="claimCountdown"></span>
+        <a href="claim-summary-v2.html" class="claim-summary-bar-btn">
+          View report
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 7H10M10 7L7 4M10 7L7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="claim-summary-bar-body" id="claimSummaryBarBody"></div>
+  </div>
+
+  <!-- Prototype state preview — not part of production UI -->
+  <div id="stateToggleRow" style="display:none;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);background:var(--bg-secondary);border-bottom:1px solid var(--border-tertiary);font-family:var(--font-family)">
+    <span style="font-size:11px;font-weight:500;color:var(--content-tertiary);text-transform:uppercase;letter-spacing:0.04em">Preview state</span>
+    <div style="display:flex;gap:2px;padding:2px;background:var(--bg-tertiary);border-radius:var(--radius-full)" id="stateToggle">
+      <button class="state-preview-btn active" data-state="pending" onclick="setBarState('pending')" style="padding:var(--space-1) var(--space-3);font-size:var(--text-xs);font-weight:500;border-radius:var(--radius-full);border:none;background:var(--content-primary);color:var(--content-primary-reverse);cursor:pointer;font-family:inherit">Pending</button>
+      <button class="state-preview-btn" data-state="escalated" onclick="setBarState('escalated')" style="padding:var(--space-1) var(--space-3);font-size:var(--text-xs);font-weight:500;border-radius:var(--radius-full);border:none;background:none;color:var(--content-tertiary);cursor:pointer;font-family:inherit">Escalated</button>
+      <button class="state-preview-btn" data-state="cancelled" onclick="setBarState('cancelled')" style="padding:var(--space-1) var(--space-3);font-size:var(--text-xs);font-weight:500;border-radius:var(--radius-full);border:none;background:none;color:var(--content-tertiary);cursor:pointer;font-family:inherit">Cancelled</button>
+      <button class="state-preview-btn" data-state="resolved" onclick="setBarState('resolved')" style="padding:var(--space-1) var(--space-3);font-size:var(--text-xs);font-weight:500;border-radius:var(--radius-full);border:none;background:none;color:var(--content-tertiary);cursor:pointer;font-family:inherit">Resolved</button>
+    </div>
+  </div>
+  </div><!-- /chat-top-pinned -->
+
+  <!-- Chat Body -->
+  <div class="chat-body">
+    <div class="protection-banner">
+      <div class="protection-icon">
+        <svg width="18" height="20" viewBox="0 0 18 20" fill="none"><path d="M9 0L0 3.63636V9.09091C0 14.1409 3.843 18.8636 9 20C14.157 18.8636 18 14.1409 18 9.09091V3.63636L9 0ZM9 9.99091H16.2C15.723 13.7318 12.822 17.1 9 17.9909V10H1.8V4.58182L9 1.87273V9.99091Z" fill="var(--content-primary)"/></svg>
+      </div>
+      <span class="protection-text">buycycle's buyer protection guarantees secure transactions. Learn more.</span>
+    </div>
+
+    <div class="admin-messages-container">
+      <div class="admin-message inactive">
+        <div class="admin-message-title">Order delivered</div>
+        <div class="admin-message-body">Your Canyon Aeroad CF SL 8 has been delivered. If you notice any issues, you can file a claim within 48 hours.</div>
+        <div class="admin-message-time">March 25, 14:00</div>
+      </div>
+    </div>
+
+    <!-- User messages -->
+    <div class="chat-messages">
+      <div class="chat-msg-row from-buyer">
+        <div class="chat-msg-content">
+          <div class="chat-msg-avatar"></div>
+          <div class="chat-msg-bubble">Hey, the bike arrived but there's some damage to the derailleur hanger. It looks bent. Also the rear wheel seems a bit out of true.</div>
+        </div>
+        <div class="chat-msg-time">14:22</div>
+      </div>
+      <div class="chat-msg-row from-seller">
+        <div class="chat-msg-content">
+          <div class="chat-msg-avatar"></div>
+          <div class="chat-msg-bubble">Oh no, sorry to hear that. Can you share photos? It was fine when I packed it. Might have happened during shipping.</div>
+        </div>
+        <div class="chat-msg-time">14:35</div>
+      </div>
+      <div class="chat-msg-row from-buyer">
+        <div class="chat-msg-content">
+          <div class="chat-msg-avatar"></div>
+          <div class="chat-msg-bubble">Yeah, I'll take some now. I think I'll also open a claim with buycycle just so it's documented.</div>
+        </div>
+        <div class="chat-msg-time">14:41</div>
+      </div>
+    </div>
+
+    <div class="admin-messages-container" id="preClaimAdmin">
+      <div class="admin-message active">
+        <div class="admin-message-title">Report a problem with this order</div>
+        <div class="admin-message-body">If you notice any issues with the bike, you can file a claim to start a resolution process with the seller.</div>
+        <div class="admin-message-time">March 25, 14:00</div>
+        <div class="action-buttons">
+          <button class="btn-primary" id="btnReportProblem" onclick="openModal()" style="height:32px;padding:6px 14px;font-size:13px;border-radius:8px">
+            Report a problem
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post-claim elements (hidden until submission) -->
+    <div id="postClaimElements">
+      <div class="admin-messages-container">
+        <div class="admin-message attention">
+          <div class="admin-message-title">Claim filed. Awaiting response.</div>
+          <div class="admin-message-body">The order is on hold due to a reported issue. You have 5 days to resolve this directly with the seller. If no agreement is reached, buycycle's claims team will take over.</div>
+          <div class="admin-message-time">just now</div>
+        </div>
+      </div>
+
+      <!-- Compensation request bubble -->
+      <div class="chat-messages" id="compensationBubble">
+        <div class="chat-msg-row from-buyer">
+          <div class="chat-msg-content">
+            <div class="chat-msg-avatar"></div>
+            <div class="compensation-request">
+              <div>Request: <strong id="compensationAmount">€80</strong></div>
+              <div style="font-size:var(--text-xs);color:var(--content-tertiary);font-weight:400;margin-top:2px">The seller can accept, counter, or discuss.</div>
+            </div>
+          </div>
+          <div class="chat-msg-time">just now</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action buttons bar (hidden until submission) -->
+  <div class="chat-action-bar" id="chatActionBar">
+    <button class="btn-chat-primary">Send a new offer</button>
+    <button class="btn-chat-secondary">Withdraw claim</button>
+  </div>
+
+  <!-- Comment Input -->
+  <div class="comment-section">
+    <div class="comment-input-container">
+      <div class="input-wrapper">
+        <input type="text" class="message-input" placeholder="Your message...">
+      </div>
+      <button class="send-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 12L20 12M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+    </div><!-- /chat-panel -->
+  </div><!-- /main-area -->
+</div><!-- /page-layout -->
+
+<!-- ── Modal ────────────────────────────────────── -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-label="Claim report">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Report a problem</span>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l8 8M14 6l-8 8"/></svg>
+      </button>
+    </div>
+
+    <div class="progress-bar hidden" id="progressBar">
+      <div class="progress-segment" data-step="1"></div>
+      <div class="progress-segment" data-step="2"></div>
+      <div class="progress-segment" data-step="3"></div>
+      <div class="progress-segment" data-step="4"></div>
+    </div>
+    <div class="progress-labels hidden" id="progressLabels">
+      <span class="progress-label" data-step="1">Issue</span>
+      <span class="progress-label" data-step="2">Photos</span>
+      <span class="progress-label" data-step="3">Compensation</span>
+      <span class="progress-label" data-step="4">Review</span>
+    </div>
+
+    <div class="modal-body" id="modalBody">
+
+      <!-- Step 0: Eligibility gate -->
+      <div class="step active" id="step0">
+        <div style="font-size:var(--text-sm);color:var(--content-tertiary);line-height:var(--leading-sm);margin-bottom:var(--space-4)">
+          Filing a claim will temporarily hold your payment to the seller, allowing you to negotiate fair compensation or reach out to our team for help.
+        </div>
+        <div class="eligibility-warning" style="margin-bottom:var(--space-4);font-size:var(--text-sm);padding:var(--space-4);line-height:var(--leading-sm)">
+          <span style="flex-shrink:0;display:flex;margin-top:3px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3.25C14.3206 3.25 16.5462 4.17187 18.1872 5.81282C19.8281 7.45376 20.75 9.67936 20.75 12C20.75 14.3206 19.8281 16.5462 18.1872 18.1872C16.5462 19.8281 14.3206 20.75 12 20.75C9.67936 20.75 7.45376 19.8281 5.81282 18.1872C4.17187 16.5462 3.25 14.3206 3.25 12C3.25 9.67936 4.17187 7.45376 5.81282 5.81282C7.45376 4.17187 9.67936 3.25 12 3.25ZM12 22C14.6522 22 17.1957 20.9464 19.0711 19.0711C20.9464 17.1957 22 14.6522 22 12C22 9.34784 20.9464 6.8043 19.0711 4.92893C17.1957 3.05357 14.6522 2 12 2C9.34784 2 6.8043 3.05357 4.92893 4.92893C3.05357 6.8043 2 9.34784 2 12C2 14.6522 3.05357 17.1957 4.92893 19.0711C6.8043 20.9464 9.34784 22 12 22ZM12.625 7H11.375V7.625V12.625V13.25H12.625V12.625V7.625V7ZM11.0625 16.375H12.9375V14.5H11.0625V16.375Z" fill="var(--content-attention)"/></svg></span>
+          <span>You can only submit <strong>ONE claim</strong> per order. Review all issues carefully before submitting.</span>
+        </div>
+        <div style="margin-bottom:var(--space-6)">
+          <a href="https://buycycle.com/en-us/page/buyer-protection" target="_blank" rel="noopener" class="link-tertiary">Learn more about our Buyer Protection policy →</a>
+        </div>
+        <div class="eligibility-cta">
+          <button class="btn-primary" onclick="startClaim()">Start claim report →</button>
+        </div>
+      </div>
+
+      <!-- Step 1: Describe the issue + cause -->
+      <div class="step" id="step1">
+        <div class="field">
+          <label class="field-label" for="issueDesc">Describe the issue <span class="required">*</span></label>
+          <textarea class="field-input" id="issueDesc" rows="5" maxlength="500" placeholder="Be as specific as possible. Which part is affected, what's wrong, how you noticed it. The more detail you provide, the faster your claim can be resolved." oninput="onDescriptionInput()"></textarea>
+          <div style="display:flex;align-items:baseline;gap:var(--space-1);margin-top:var(--space-1)">
+            <div class="char-min-hint unmet" id="charMinHint" style="margin-top:0">20 more characters needed</div>
+            <span class="field-hint" style="margin-top:0;margin-left:auto;flex-shrink:0"><span id="issueCharCount">0</span>/500</span>
+          </div>
+        </div>
+
+        <div class="smart-tags-section" id="smartTagsSection">
+          <div class="smart-tags-label"><span class="dot"></span> Does any of this apply?</div>
+          <div class="smart-tags" id="smartTags"></div>
+        </div>
+
+        <div style="border-top:1px solid var(--border-tertiary);margin:var(--space-4) 0"></div>
+
+        <div class="cause-section">
+          <div class="step-sub" style="font-size:var(--text-base);font-weight:500;color:var(--content-primary)">What do you think caused the issue?</div>
+          <div class="cause-options" id="causeOptions">
+            <label class="cause-option" data-cause="transport" tabindex="0">
+              <span class="cause-dot"><input type="radio" name="cause" value="transport"></span>
+              <span>
+                <strong>Carrier damage</strong>
+                <div style="font-size:var(--text-sm);color:var(--content-tertiary);margin-top:2px;line-height:var(--leading-sm)">The package shows visible damage on the outside. The issue was most likely caused during transport.</div>
+              </span>
+            </label>
+            <label class="cause-option" data-cause="packaging" tabindex="0">
+              <span class="cause-dot"><input type="radio" name="cause" value="packaging"></span>
+              <span>
+                <strong>Packaging mistake</strong>
+                <div style="font-size:var(--text-sm);color:var(--content-tertiary);margin-top:2px;line-height:var(--leading-sm)">The package looks fine from the outside, but the bike was damaged inside. Likely due to insufficient packaging by the seller.</div>
+              </span>
+            </label>
+            <label class="cause-option" data-cause="listing" tabindex="0">
+              <span class="cause-dot"><input type="radio" name="cause" value="listing"></span>
+              <span>
+                <strong>Not as described</strong>
+                <div style="font-size:var(--text-sm);color:var(--content-tertiary);margin-top:2px;line-height:var(--leading-sm)">The bike doesn't match what was shown in the listing description or photos. The seller misrepresented the item's condition, specs, or components.</div>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Photos + Video -->
+      <div class="step" id="step2">
+        <div class="step-heading">Upload evidence</div>
+
+        <div class="upload-note">
+          Upload close-up photos of each issue and of the packaging. Clear photos help the seller understand the problem and support your case if buycycle needs to step in.
+        </div>
+
+        <div class="step-list">
+          <div class="step-row" id="row-damage" onclick="addPhoto('damage')">
+            <div class="step-indicator" id="indicator-damage">1</div>
+            <div class="step-text">
+              <div class="step-name">Photos of the damage</div>
+              <div class="step-desc">Min. 2 photos — close-ups of each reported issue</div>
+            </div>
+            <div class="step-thumbs" id="thumbs-damage"></div>
+            <div class="step-action">
+              <button class="step-action-btn" id="action-damage">Upload</button>
+            </div>
+          </div>
+
+          <div class="step-row" id="row-packaging" onclick="addPhoto('packaging')">
+            <div class="step-indicator" id="indicator-packaging">2</div>
+            <div class="step-text">
+              <div class="step-name">Photos of the packaging</div>
+              <div class="step-desc">Min. 2 photos — condition of packaging on arrival</div>
+            </div>
+            <div class="step-thumbs" id="thumbs-packaging"></div>
+            <div class="step-action">
+              <button class="step-action-btn" id="action-packaging">Upload</button>
+            </div>
+          </div>
+
+          <div class="step-row" id="row-video" onclick="toggleVideo()">
+            <div class="step-indicator" id="indicator-video">3</div>
+            <div class="step-text">
+              <div class="step-name">Video <span class="step-optional">optional</span></div>
+              <div class="step-desc">A short clip of the issue. Most formats accepted (MP4, MOV, AVI, WebM).</div>
+            </div>
+            <div class="step-thumbs" id="thumbs-video"></div>
+            <div class="step-action">
+              <button class="step-action-btn" id="action-video">Upload</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Compensation -->
+      <div class="step" id="step3" style="padding-top:var(--space-8);padding-bottom:var(--space-8)">
+        <div class="field" style="margin-bottom:var(--space-6)">
+          <label class="field-label" for="partialAmount">How much compensation do you request? <span class="required">*</span></label>
+          <div class="amount-input-wrap" style="margin-top:var(--space-3)">
+            <span class="amount-prefix">€</span>
+            <input type="number" class="amount-input" id="partialAmount" placeholder="0" min="1" oninput="onAmountInput()" style="width:160px">
+          </div>
+        </div>
+
+        <div style="font-size:var(--text-sm);color:var(--content-information);background:var(--bg-information);padding:var(--space-3);border-radius:var(--radius-md);line-height:var(--leading-sm)">
+          If the issue was caused by the seller (wrong listing or poor packaging), the seller is responsible for compensating the loss of value. Carrier damage is covered by <strong>buycycle Buyer Protection</strong> when there is visible damage to the packaging.
+        </div>
+
+      </div>
+
+      <!-- Step 4: Review & submit -->
+      <div class="step" id="step4">
+
+        <div class="checkbox-group" id="checkboxGroup">
+          <label class="checkbox-item" tabindex="0">
+            <span class="checkbox-box" data-cb="0"><input type="checkbox"><span class="checkbox-check">✓</span></span>
+            <span>
+              <span class="checkbox-text">I have listed all issues with this order. No additional claims will be accepted after submission.</span>
+            </span>
+          </label>
+          <label class="checkbox-item" tabindex="0">
+            <span class="checkbox-box" data-cb="1"><input type="checkbox"><span class="checkbox-check">✓</span></span>
+            <span>
+              <span class="checkbox-text">I will not use, repair, or modify the item while the claim is active without buycycle's approval.</span>
+            </span>
+          </label>
+          <label class="checkbox-item" tabindex="0">
+            <span class="checkbox-box" data-cb="2"><input type="checkbox"><span class="checkbox-check">✓</span></span>
+            <span>
+              <span class="checkbox-text">I will not return the item without approval from buycycle's claims team.</span>
+            </span>
+          </label>
+        </div>
+
+        <div class="field" style="margin-top:var(--space-4)">
+          <label class="field-label" for="extraNotes">Anything else? <span style="color:var(--content-quartenary)">(optional)</span></label>
+          <textarea class="field-input" id="extraNotes" rows="3" maxlength="500" placeholder="Any additional context…"></textarea>
+        </div>
+
+        <div style="margin-top:var(--space-4)">
+          <div class="step-heading" style="margin-bottom:var(--space-3)">What happens after you submit?</div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-2);font-size:var(--text-sm);color:var(--content-tertiary);line-height:var(--leading-sm)">
+            <p>You'll have <strong style="color:var(--content-primary)">5 days</strong> to find a solution with the seller in the chat. If no resolution is reached, buycycle's claims team will step in.</p>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:var(--space-2);margin-top:var(--space-3);padding:var(--space-3);background:var(--bg-secondary);border-radius:var(--radius-md);font-size:var(--text-sm);line-height:var(--leading-sm);color:var(--content-primary)">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:2px"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span><strong>The seller will see everything</strong> submitted in this claim report, including photos, your description, and the tags you selected.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success -->
+      <div class="step" id="stepSuccess">
+        <div class="success-state">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div class="success-title">Claim submitted</div>
+          <div class="success-msg">Your claim for order #BC-29471 has been received.</div>
+
+          <div id="successOfferSent" style="display:none;background:var(--bg-positive);border-radius:var(--radius-md);padding:var(--space-3);font-size:var(--text-sm);color:var(--content-positive);font-weight:500;margin-bottom:var(--space-4);text-align:center;width:100%;max-width:640px">
+            A compensation offer of <span id="successOfferAmount"></span> has been sent to the seller on your behalf.
+          </div>
+
+          <div class="success-next-steps">
+            <div class="success-next-title">What happens next?</div>
+            <ul class="success-next-list" id="successNextList">
+              <li><span class="step-num">1</span><span> The seller will be notified. You have <strong>5 days</strong> to find a solution together in the chat.</span></li>
+              <li><span class="step-num">2</span><span> If you can't agree, buycycle's claims team will review all evidence and decide on the compensation.</span></li>
+              <li><span class="step-num">3</span><span> You'll be notified of the decision in the chat and by email within 1–2 business days.</span></li>
+            </ul>
+          </div>
+
+          <a href="#" class="btn-secondary" style="max-width:640px;text-decoration:none" onclick="closeModal(); return false;">Back to chat</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer" id="modalFooter">
+      <button class="btn-back" id="btnBack" onclick="goBack()" style="display:none">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 12L6 8l4-4"/></svg>
+        Back
+      </button>
+      <button class="btn-primary btn-next" id="btnNext" onclick="goNext()" disabled>Next →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────
+let currentStep = 0;
+const state = {
+  description: '',
+  tags: new Set(),
+  damagePhotos: 0,
+  packagingPhotos: 0,
+  hasVideo: false,
+  cause: null,
+  compensation: null,
+  amount: 0,
+  checkboxes: [false, false, false],
+};
+
+// ── Smart tag keyword map (with nested sub-tags) ─────────
+const tagKeywords = {
+  'Frame damage': ['frame','dent','crack','scratch on frame','paint','chip','carbon','clearcoat','lacquer','impact','delamination','repainted','touch-up'],
+  'Derailleur hanger': ['hanger','derailleur hanger','bent hanger','hanger bent','hanger broken','hanger snapped','hanger cracked'],
+  'Rear derailleur': ['rear derailleur','derailleur bent','mech','shifter mech','derailleur broken','derailleur cage','jockey','pulley'],
+  'Brake disc rotor': ['rotor','disc bent','disc warped','rotor bent','rotor warped','disc rubbing','rotor rubbing','disc crooked'],
+  'Brakes not working': ['brake','braking','no pressure','spongy','lever goes','bleed','bleeding','hydraulic','brake pad','contaminated','leak','brake lever'],
+  'Not as described': ['wrong','different','not matching','lower spec','not as described','worse condition','doesn\'t match','incorrect','not what'],
+  'Wheel issue': ['wheel','out of true','wobbl','rim','spoke','hub','freehub','bearing','buckle'],
+  'Missing parts': ['missing','not included','forgot','without','absent','charger','axle missing','bolts missing','pedals missing','spacer missing'],
+  'Electronic shifting': ['di2','etap','axs','electronic','not shifting electronically','battery dead','not charging','junction','wire broken'],
+  'Fork damage': ['fork','steerer','headtube','stanchion','fork crack','fork scratch','lockout'],
+  'Seatpost / dropper': ['seatpost','seat post','dropper','seatpost stuck','dropper sinking','dropper not working','seat clamp','collar'],
+  'Drivetrain wear': ['chain worn','chain rust','cassette worn','chainring','bottom bracket','bb','creak','pedal thread','crank thread','chain stretch'],
+  'Headset': ['headset','steering bearing','headset bearing','headset rust','headset play','headset loose'],
+  'Handlebar / stem': ['handlebar','stem','bar tape','drop bar','hood','cockpit','stem bolt'],
+  'Rear shock': ['shock','damper','rear suspension','shock leak','shock service','shock lockout'],
+  'Tires': ['tire','tyre','flat','puncture','worn tire','cracked tire','wrong tire'],
+};
+
+// Sub-tags that appear when a parent tag is selected
+const subTags = {
+  'Frame damage': ['Scratch / paint chip', 'Carbon crack / fracture', 'Dent / impact', 'Transport damage (internal contact)', 'Previous repair not disclosed'],
+  'Derailleur hanger': ['Hanger bent', 'Hanger broken / snapped', 'Hanger misaligned'],
+  'Rear derailleur': ['Rear derailleur bent', 'Rear derailleur broken', 'Cage damaged', 'Not shifting properly'],
+  'Brake disc rotor': ['Rotor bent / warped', 'Rotor rubbing', 'Rotor worn'],
+  'Brakes not working': ['No pressure / spongy', 'Needs bleeding', 'Pads worn / contaminated', 'Hydraulic leak', 'Lever damaged'],
+  'Not as described': ['Wrong components / lower spec', 'Wrong frame size', 'Wrong model year', 'Wrong color / wrong bike', 'Condition much worse than listed'],
+  'Wheel issue': ['Wheel out of true', 'Rim cracked / dented', 'Bearings worn / noisy', 'Spokes broken / loose', 'Hub / freehub issue'],
+  'Missing parts': ['Charger (Di2/eTap/AXS)', 'Thru axle', 'Seatpost clamp / bolts', 'Stem / handlebar bolts', 'Pedals', 'Spacers / end caps'],
+  'Electronic shifting': ['System not responding', 'Battery dead / not charging', 'Cable / wire broken', 'Charger missing'],
+  'Fork damage': ['Fork scratch / paint damage', 'Fork carbon crack', 'Lockout not working', 'Leaking oil / needs service', 'Headtube / steerer issue'],
+  'Seatpost / dropper': ['Seatpost stuck', 'Dropper not working / sinking', 'Seatpost cracked', 'Clamp broken / missing', 'Dropper cable issue'],
+  'Drivetrain wear': ['Chain worn / rusty', 'Cassette worn / damaged', 'Chainring damaged', 'Bottom bracket worn', 'Crank / pedal thread damaged'],
+  'Headset': ['Bearings worn / rusted', 'Play / loose'],
+  'Handlebar / stem': ['Bar damaged / scratched', 'Stem bolts stripped', 'Bar tape damaged', 'Handlebar cracked (carbon)'],
+  'Rear shock': ['Needs service / leaking oil', 'Lockout not working', 'Not functioning properly'],
+  'Tires': ['Worn / cracked', 'Flat / puncture', 'Wrong tires'],
+};
+
+let lastSuggestedTags = [];
+
+function onDescriptionInput() {
+  const desc = document.getElementById('issueDesc').value;
+  state.description = desc;
+  document.getElementById('issueCharCount').textContent = desc.length;
+
+  // Update char hint
+  const hint = document.getElementById('charMinHint');
+  const met = desc.trim().length >= 20;
+  hint.classList.toggle('met', met);
+  hint.classList.toggle('unmet', !met);
+  hint.textContent = met ? '✓ Ready' : `${20 - desc.trim().length} more characters needed`;
+
+  suggestTags(desc);
+  validateStep1();
+}
+
+function suggestTags(text) {
+  const lower = text.toLowerCase();
+  const matched = [];
+  for (const [tag, keywords] of Object.entries(tagKeywords)) {
+    if (keywords.some(kw => lower.includes(kw))) {
+      matched.push(tag);
+    }
+  }
+  const section = document.getElementById('smartTagsSection');
+  const container = document.getElementById('smartTags');
+
+  if (matched.length === 0) {
+    section.classList.remove('visible');
+    return;
+  }
+
+  // Only re-render if tags changed
+  const key = matched.join(',');
+  if (key === lastSuggestedTags.join(',')) return;
+  lastSuggestedTags = matched;
+
+  container.innerHTML = '';
+  matched.forEach(tag => {
+    const btn = document.createElement('button');
+    btn.className = 'smart-tag' + (state.tags.has(tag) ? ' selected' : '');
+    btn.textContent = tag;
+    btn.tabIndex = 0;
+    btn.addEventListener('click', () => {
+      if (state.tags.has(tag)) {
+        state.tags.delete(tag);
+        btn.classList.remove('selected');
+        // Remove sub-tags
+        if (subTags[tag]) subTags[tag].forEach(st => state.tags.delete(st));
+        renderSubTags();
+      } else {
+        state.tags.add(tag);
+        btn.classList.add('selected');
+        renderSubTags();
+      }
+      validateStep1();
+    });
+    btn.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); btn.click(); } });
+    container.appendChild(btn);
+  });
+  section.classList.add('visible');
+  renderSubTags();
+}
+
+function renderSubTags() {
+  let subContainer = document.getElementById('subTagsContainer');
+  if (!subContainer) {
+    subContainer = document.createElement('div');
+    subContainer.id = 'subTagsContainer';
+    subContainer.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;';
+    document.getElementById('smartTags').parentNode.appendChild(subContainer);
+  }
+  subContainer.innerHTML = '';
+  const selectedParents = Array.from(state.tags).filter(t => subTags[t]);
+  if (selectedParents.length === 0) { subContainer.style.display = 'none'; return; }
+  subContainer.style.display = 'flex';
+
+  // Label
+  const label = document.createElement('div');
+  label.style.cssText = 'width:100%;font-size:11px;font-weight:500;color:var(--content-tertiary);margin-bottom:2px;';
+  label.textContent = 'Can you be more specific?';
+  subContainer.appendChild(label);
+
+  selectedParents.forEach(parent => {
+    subTags[parent].forEach(st => {
+      const btn = document.createElement('button');
+      btn.className = 'smart-tag' + (state.tags.has(st) ? ' selected' : '');
+      btn.textContent = st;
+      btn.tabIndex = 0;
+      btn.style.animationDelay = '0.05s';
+      btn.addEventListener('click', () => {
+        if (state.tags.has(st)) { state.tags.delete(st); btn.classList.remove('selected'); }
+        else { state.tags.add(st); btn.classList.add('selected'); }
+        validateStep1();
+      });
+      btn.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); btn.click(); } });
+      subContainer.appendChild(btn);
+    });
+  });
+}
+
+function validateStep1() {
+  const descOk = state.description.trim().length >= 20;
+  const causeOk = !!state.cause;
+  document.getElementById('btnNext').disabled = !(descOk && causeOk);
+}
+
+// ── Photo upload ─────────────────────────────────
+const photoColors = ['#C4B5A0','#A0B5C4','#B5C4A0','#C4A0B5','#A0C4B0','#B0A0C4','#C4C0A0','#A0A0C4'];
+
+function updateUploadRow(type) {
+  const filled = type === 'damage' ? state.damagePhotos : state.packagingPhotos;
+  const min = type === 'damage' ? 2 : 2;
+  const max = type === 'damage' ? 8 : 4;
+  const row = document.getElementById('row-' + type);
+  const indicator = document.getElementById('indicator-' + type);
+  const thumbs = document.getElementById('thumbs-' + type);
+  const actionBtn = document.getElementById('action-' + type);
+
+  row.classList.toggle('complete', filled >= min);
+  row.classList.toggle('partial', filled > 0 && filled < min);
+
+  if (filled >= min) {
+    indicator.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    actionBtn.textContent = filled + '/' + max + ' uploaded';
+  } else if (filled > 0) {
+    indicator.textContent = type === 'damage' ? '1' : '2';
+    actionBtn.textContent = filled + '/' + min + ' uploaded';
+  } else {
+    indicator.textContent = type === 'damage' ? '1' : '2';
+    actionBtn.textContent = 'Upload';
+  }
+
+  thumbs.innerHTML = '';
+  for (let i = 0; i < filled; i++) {
+    const thumb = document.createElement('div');
+    thumb.className = 'step-thumb';
+    thumb.style.background = photoColors[i % photoColors.length];
+    thumb.style.animation = 'thumbPop 150ms ease-out ' + (i * 40) + 'ms forwards';
+    thumb.style.opacity = '0';
+    thumb.innerHTML = '<span class="thumb-remove"><svg width="12" height="12" fill="none" stroke="#FCFCFC" stroke-width="2" stroke-linecap="round"><path d="M3 3l6 6M9 3l-6 6"/></svg></span>';
+    thumb.addEventListener('click', function(e) { e.stopPropagation(); removePhoto(type); });
+    thumbs.appendChild(thumb);
+  }
+}
+function buildUploadGrid() { updateUploadRow('damage'); updateUploadRow('packaging'); }
+
+function addPhoto(type) {
+  if (type === 'damage' && state.damagePhotos < 8) state.damagePhotos++;
+  else if (type === 'packaging' && state.packagingPhotos < 4) state.packagingPhotos++;
+  updateUploadRow(type);
+  validateStep2();
+}
+
+function removePhoto(type) {
+  if (type === 'damage') state.damagePhotos = Math.max(0, state.damagePhotos - 1);
+  else state.packagingPhotos = Math.max(0, state.packagingPhotos - 1);
+  updateUploadRow(type);
+  validateStep2();
+}
+
+function toggleVideo() {
+  state.hasVideo = !state.hasVideo;
+  updateVideoRow();
+}
+function updateVideoRow() {
+  const row = document.getElementById('row-video');
+  const indicator = document.getElementById('indicator-video');
+  const thumbs = document.getElementById('thumbs-video');
+  const actionBtn = document.getElementById('action-video');
+  if (!row) return;
+
+  row.classList.toggle('complete', state.hasVideo);
+
+  if (state.hasVideo) {
+    indicator.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    actionBtn.textContent = '1 uploaded';
+  } else {
+    indicator.textContent = '3';
+    actionBtn.textContent = 'Upload';
+  }
+
+  thumbs.innerHTML = '';
+  if (state.hasVideo) {
+    const thumb = document.createElement('div');
+    thumb.className = 'step-thumb';
+    thumb.style.background = '#B0A0C4';
+    thumb.style.animation = 'thumbPop 150ms ease-out forwards';
+    thumb.style.opacity = '0';
+    thumb.innerHTML = '<svg width="14" height="14" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round"><path d="M13 4l-3.5 2.5L13 9V4z"/><rect x="1" y="3.5" width="8" height="7" rx="1.5"/></svg><span class="thumb-remove"><svg width="12" height="12" fill="none" stroke="#FCFCFC" stroke-width="2" stroke-linecap="round"><path d="M3 3l6 6M9 3l-6 6"/></svg></span>';
+    thumb.addEventListener('click', function(e) { e.stopPropagation(); toggleVideo(); });
+    thumbs.appendChild(thumb);
+  }
+}
+
+function validateStep2() {
+  const valid = state.damagePhotos >= 2 && state.packagingPhotos >= 2;
+  document.getElementById('btnNext').disabled = !valid;
+}
+
+// ── Cause selection ──────────────────────────────
+document.querySelectorAll('#causeOptions .cause-option').forEach(opt => {
+  opt.addEventListener('click', function() {
+    document.querySelectorAll('#causeOptions .cause-option').forEach(o => o.classList.remove('selected'));
+    this.classList.add('selected');
+    this.querySelector('input').checked = true;
+    state.cause = this.dataset.cause;
+    validateStep1();
+  });
+  opt.addEventListener('keydown', function(e) {
+    if (e.key==='Enter'||e.key===' ') { e.preventDefault(); this.click(); }
+  });
+});
+
+// ── Compensation ──
+function onAmountInput() {
+  const amount = parseInt(document.getElementById('partialAmount').value) || 0;
+  state.amount = amount;
+  validateStep3();
+}
+
+function validateStep3() {
+  const amount = parseInt(document.getElementById('partialAmount').value) || 0;
+  state.amount = amount;
+  document.getElementById('btnNext').disabled = amount <= 0;
+}
+
+// ── Checkboxes ───────────────────────────────────
+document.querySelectorAll('#checkboxGroup .checkbox-item').forEach((item, i) => {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    const cb = this.querySelector('input[type=checkbox]');
+    cb.checked = !cb.checked;
+    state.checkboxes[i] = cb.checked;
+    this.querySelector('.checkbox-box').classList.toggle('checked', cb.checked);
+    validateStep4();
+  });
+  item.addEventListener('keydown', function(e) {
+    if (e.key==='Enter'||e.key===' ') { e.preventDefault(); this.click(); }
+  });
+});
+
+function validateStep4() {
+  document.getElementById('btnNext').disabled = !state.checkboxes.every(Boolean);
+}
+
+// ── Navigation ───────────────────────────────────
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  renderStep();
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('modalOverlay').classList.contains('open')) closeModal();
+});
+
+function startClaim() { stepDirection = 'forward'; currentStep = 1; renderStep(); }
+
+let stepDirection = 'forward';
+function goNext() {
+  if (currentStep === 4) { submitClaim(); return; }
+  if (currentStep < 4) { stepDirection = 'forward'; currentStep++; renderStep(); document.getElementById('modalBody').scrollTop = 0; }
+}
+function goBack() {
+  if (currentStep > 1) { stepDirection = 'back'; currentStep--; renderStep(); document.getElementById('modalBody').scrollTop = 0; }
+}
+
+function submitClaim() {
+  currentStep = 5;
+  renderStep();
+
+  // Hide pre-claim admin, show post-claim elements
+  document.getElementById('preClaimAdmin').style.display = 'none';
+  document.getElementById('postClaimElements').classList.add('visible');
+  document.getElementById('claimSummaryBar').classList.add('visible');
+  document.getElementById('chatActionBar').classList.add('visible');
+  document.getElementById('stateToggleRow').style.display = 'flex';
+  startClaimCountdown();
+  setBarState('pending');
+
+  // Update compensation amount in the request bubble
+  if (state.amount > 0) {
+    document.getElementById('compensationAmount').textContent = '€' + state.amount;
+    document.getElementById('compensationBubble').style.display = 'flex';
+  } else {
+    document.getElementById('compensationBubble').style.display = 'none';
+  }
+
+  // Scroll chat to bottom
+  const chatBody = document.querySelector('.chat-body');
+  if (chatBody) chatBody.scrollTop = chatBody.scrollHeight;
+
+  if (state.amount > 0) {
+    document.getElementById('successOfferSent').style.display = 'block';
+    document.getElementById('successOfferAmount').textContent = '€' + state.amount;
+  }
+}
+
+function renderStep() {
+  document.querySelectorAll('.step').forEach(s => { s.classList.remove('active'); s.classList.remove('slide-back'); });
+  const isGate = currentStep === 0;
+  const isSuccess = currentStep === 5;
+
+  const pBar = document.getElementById('progressBar');
+  const pLabels = document.getElementById('progressLabels');
+  if (isGate || isSuccess) { pBar.classList.add('hidden'); pLabels.classList.add('hidden'); }
+  else {
+    pBar.classList.remove('hidden'); pLabels.classList.remove('hidden');
+    document.querySelectorAll('.progress-segment').forEach(seg => {
+      const s = parseInt(seg.dataset.step);
+      seg.classList.toggle('active', s === currentStep);
+      seg.classList.toggle('completed', s < currentStep);
+    });
+    document.querySelectorAll('.progress-label').forEach(lbl => {
+      lbl.classList.toggle('active', parseInt(lbl.dataset.step) === currentStep);
+    });
+  }
+
+  const titles = { 0:'Report a problem', 1:"What is the issue?", 2:'Upload evidence', 3:'Compensation', 4:'Before you submit', 5:'Claim submitted' };
+  document.getElementById('modalTitle').textContent = titles[currentStep] || '';
+
+  const stepIds = { 0:'step0', 1:'step1', 2:'step2', 3:'step3', 4:'step4', 5:'stepSuccess' };
+  const activeStep = document.getElementById(stepIds[currentStep]);
+  activeStep.classList.add('active');
+  if (stepDirection === 'back') activeStep.classList.add('slide-back');
+
+  const footer = document.getElementById('modalFooter');
+  const backBtn = document.getElementById('btnBack');
+  const nextBtn = document.getElementById('btnNext');
+  if (isGate || isSuccess) { footer.style.display = 'none'; }
+  else {
+    footer.style.display = 'flex';
+    backBtn.style.display = currentStep > 1 ? 'flex' : 'none';
+    nextBtn.textContent = currentStep === 4 ? 'Submit claim report' : 'Next →';
+  }
+
+  if (currentStep === 2) {
+    updateUploadRow('damage');
+    updateUploadRow('packaging');
+    updateVideoRow();
+  }
+
+  validateCurrentStep();
+}
+
+function validateCurrentStep() {
+  switch (currentStep) {
+    case 1: validateStep1(); break;
+    case 2: validateStep2(); break;
+    case 3: validateStep3(); break;
+    case 4: validateStep4(); break;
+    default: document.getElementById('btnNext').disabled = false;
+  }
+}
+
+document.getElementById('modal').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey && e.target.tagName !== 'TEXTAREA') {
+    const nextBtn = document.getElementById('btnNext');
+    if (nextBtn && !nextBtn.disabled && document.getElementById('modalFooter').style.display !== 'none') {
+      e.preventDefault(); nextBtn.click();
+    }
+  }
+});
+
+function startClaimCountdown() {
+  const el = document.getElementById('claimCountdown');
+  if (!el) return;
+  const deadline = Date.now() + 5 * 24 * 60 * 60 * 1000;
+  function tick() {
+    const diff = deadline - Date.now();
+    if (diff <= 0) { el.textContent = 'Expired'; return; }
+    const days = Math.floor(diff / 864e5);
+    const hours = Math.floor((diff % 864e5) / 36e5);
+    el.textContent = days + 'd ' + hours + 'h left';
+  }
+  tick();
+  setInterval(tick, 60000);
+}
+
+// ── Chat status callout — state preview ──────────────
+const BAR_COPY = {
+  pending: {
+    label: 'Claim filed — Pending agreement',
+    body: ''
+  },
+  escalated: {
+    label: 'Claim under buycycle review',
+    body: ''
+  },
+  cancelled: {
+    label: 'Claim cancelled',
+    body: 'The claim has been canceled, and the order is now complete. The seller\'s payout has been released, and no further action is needed.'
+  },
+  resolved: {
+    label: 'Claim resolved',
+    body: 'You\'ve successfully resolved the issue. The agreed amount will be deducted from the seller\'s payout and transferred to your original payment method within 5–7 business days. Thank you for finding a solution together.'
+  }
+};
+
+function setBarState(state) {
+  const bar = document.getElementById('claimSummaryBar');
+  const label = document.getElementById('claimSummaryBarLabel');
+  const body = document.getElementById('claimSummaryBarBody');
+  if (!bar || !label) return;
+
+  bar.classList.remove('escalated', 'resolved', 'cancelled');
+  if (state !== 'pending') bar.classList.add(state);
+
+  label.textContent = BAR_COPY[state].label;
+  body.textContent = BAR_COPY[state].body;
+
+  document.querySelectorAll('.state-preview-btn').forEach(btn => {
+    const active = btn.dataset.state === state;
+    btn.classList.toggle('active', active);
+    btn.style.background = active ? 'var(--content-primary)' : 'none';
+    btn.style.color = active ? 'var(--content-primary-reverse)' : 'var(--content-tertiary)';
+  });
+}
+
+</script>
+</body>
+</html>

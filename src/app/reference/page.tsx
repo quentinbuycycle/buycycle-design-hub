@@ -31,7 +31,7 @@ export default function ReferencePage() {
                       <div className={styles.cardActions}>
                         {feature.web && (
                           <a
-                            href={`/reference/prototypes/${feature.web}`}
+                            href={`/reference/prototypes/${encodeURIComponent(feature.web)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className={styles.actionButton}
@@ -41,7 +41,7 @@ export default function ReferencePage() {
                         )}
                         {feature.webDesktop && (
                           <a
-                            href={`/reference/prototypes/${feature.webDesktop}`}
+                            href={`/reference/prototypes/${encodeURIComponent(feature.webDesktop)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className={styles.actionButton}
@@ -51,7 +51,7 @@ export default function ReferencePage() {
                         )}
                         {feature.webMobile && (
                           <a
-                            href={`/reference/prototypes/${feature.webMobile}`}
+                            href={`/reference/prototypes/${encodeURIComponent(feature.webMobile)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className={styles.actionButton}
@@ -61,7 +61,7 @@ export default function ReferencePage() {
                         )}
                         {feature.app && (
                           <a
-                            href={`/reference/prototypes/${feature.app}`}
+                            href={`/reference/prototypes/${encodeURIComponent(feature.app)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className={`${styles.actionButton} ${styles.actionButtonApp}`}

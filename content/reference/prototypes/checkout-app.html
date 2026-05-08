@@ -1,0 +1,3084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - App</title>
+  <style>
+    :root {
+      /* Colors */
+      --content-primary: #090907;
+      --content-primary-reverse: #FCFCFC;
+      --content-secondary: #333333;
+      --content-tertiary: #535353;
+      --content-positive: #146C43;
+      --bg-primary: #FCFCFC;
+      --bg-secondary: #F3F3F3;
+      --bg-tertiary: #FFFFFF;
+      --bg-primary-reverse: #090907;
+      --bg-quartenary: #EAEAEA;
+      --bg-positive: #E8F8F0;
+      --border-primary: #090907;
+      --border-secondary: #757575;
+      --border-tertiary: #EAEAEA;
+
+      /* Typography */
+      --font-family: 'Neue Haas Grotesk Text Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      --text-xs: 12px;
+      --text-sm: 14px;
+      --text-base: 16px;
+      --text-xl: 20px;
+      --text-2xl: 24px;
+      --line-height-xs: 18px;
+      --line-height-sm: 21px;
+      --line-height-base: 24px;
+      --line-height-xl: 28px;
+      --line-height-2xl: 32px;
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+      --ease-in: cubic-bezier(0.4, 0, 1, 1);
+      --duration-enter: 200ms;
+      --duration-exit: 150ms;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background: #E5E5E5;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+
+    .phone-frame {
+      width: 390px;
+      height: 844px;
+      background: var(--bg-primary);
+      position: relative;
+      overflow: hidden;
+      border-radius: 40px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px 0;
+      height: 54px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .status-bar .time {
+      font-family: 'SF Pro Display', -apple-system, sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      letter-spacing: 0;
+    }
+
+    .status-bar .dynamic-island {
+      width: 120px;
+      height: 36px;
+      background: #000;
+      border-radius: 100px;
+    }
+
+    .status-bar .icons {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-bar .icons svg {
+      display: block;
+    }
+
+    /* App Header */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border-tertiary);
+      padding: 0 var(--space-4) var(--space-4);
+    }
+
+    .app-header-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .back-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+    }
+
+    .app-header h1 {
+      font-family: var(--font-family);
+      font-size: var(--text-2xl);
+      font-weight: 500;
+      line-height: var(--line-height-2xl);
+      color: var(--content-primary);
+    }
+
+    /* Scrollable Content */
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-4);
+      padding-bottom: 140px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+      min-height: 0;
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    .progress-bar .step {
+      flex: 1;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--bg-quartenary);
+    }
+
+    .progress-bar .step.active {
+      background: var(--content-primary);
+    }
+
+    /* Bike Info */
+    .bike-info {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .bike-header {
+      display: flex;
+      gap: var(--space-2);
+      align-items: flex-start;
+    }
+
+    .bike-image {
+      width: 80px;
+      height: 60px;
+      border-radius: 6px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .bike-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bike-brand {
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-secondary);
+    }
+
+    .bike-model {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      line-height: var(--line-height-xl);
+      color: var(--content-primary);
+    }
+
+    .bike-tags {
+      display: flex;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .tag {
+      background: var(--bg-secondary);
+      padding: var(--space-1) var(--space-2);
+      border-radius: 24px;
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-secondary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .section-header svg {
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      line-height: var(--line-height-xl);
+      color: var(--content-primary);
+    }
+
+    /* Shipping To Section */
+    .shipping-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    /* Country Dropdown */
+    .country-dropdown {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 6px;
+      height: 40px;
+      padding: 0 var(--space-4);
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .country-dropdown span {
+      flex: 1;
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-primary);
+    }
+
+    /* Login Card */
+    .login-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 8px;
+      padding: var(--space-4) var(--space-3);
+      cursor: pointer;
+    }
+
+    .login-card-icon {
+      width: 28px;
+      height: 28px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .login-card-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .login-card-title {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      line-height: var(--line-height-sm);
+      color: var(--content-primary);
+    }
+
+    .login-card-subtitle {
+      font-size: var(--text-xs);
+      line-height: var(--line-height-xs);
+      color: var(--content-tertiary);
+    }
+
+    /* Shipping Address Card (filled state) */
+    .shipping-address-card {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      padding: var(--space-4) var(--space-3);
+      cursor: pointer;
+    }
+
+    .shipping-address-card.visible {
+      display: flex;
+      animation: fadeSlideIn var(--duration-enter) var(--ease-out) both;
+    }
+
+    .shipping-address-card-text {
+      flex: 1;
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-tertiary);
+    }
+
+    .shipping-address-card-text .address-name {
+      font-weight: 500;
+      color: var(--content-primary);
+    }
+
+    .shipping-address-card svg {
+      flex-shrink: 0;
+    }
+
+    /* Delivery Options */
+    .delivery-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .delivery-options {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .delivery-option {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      padding: var(--space-4) var(--space-3);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--bg-tertiary);
+      transition: background-color var(--duration-enter) var(--ease-out),
+                  border-color var(--duration-enter) var(--ease-out),
+                  transform var(--duration-enter) var(--ease-out);
+      will-change: transform;
+    }
+
+    .delivery-option.selected {
+      background: var(--bg-secondary);
+      border-color: transparent;
+    }
+
+    .delivery-option:not(.selected) {
+      background: var(--bg-tertiary);
+      border-color: var(--border-tertiary);
+    }
+
+    .delivery-option:active {
+      transform: scale(0.97);
+      transition: transform 100ms var(--ease-out);
+    }
+
+    .delivery-option-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .delivery-option-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    /* Radio Button */
+    .radio-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--content-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color var(--duration-enter) var(--ease-out);
+    }
+
+    .radio-circle.selected {
+      border-color: var(--content-primary);
+    }
+
+    .radio-circle.selected::after {
+      content: '';
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--content-primary);
+      animation: scalePop 150ms var(--ease-out) both;
+    }
+
+    .radio-label {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      line-height: var(--line-height-sm);
+      color: var(--content-secondary);
+    }
+
+    .delivery-price {
+      font-size: var(--text-base);
+      font-weight: 500;
+      line-height: var(--line-height-base);
+      color: var(--content-primary);
+    }
+
+    .delivery-details {
+      padding-left: 0;
+      margin: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    .delivery-details li {
+      font-size: var(--text-xs);
+      line-height: var(--line-height-xs);
+      color: var(--content-tertiary);
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .delivery-details li::before {
+      content: '\2022';
+      position: absolute;
+      left: 6px;
+    }
+
+    /* Info Badge */
+    .info-badge {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-1);
+      background: #EFF6FF;
+      border-radius: var(--space-1);
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .info-badge svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      color: #1D4ED8;
+    }
+    .info-badge span {
+      font-size: var(--text-xs);
+      line-height: var(--line-height-xs);
+      color: var(--content-tertiary);
+    }
+    .info-badge strong {
+      font-weight: 500;
+      color: var(--content-secondary);
+    }
+
+    /* Expandable description */
+    .delivery-description {
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-tertiary);
+      width: 100%;
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: grid-template-rows var(--duration-enter) var(--ease-out),
+                  opacity var(--duration-enter) var(--ease-out),
+                  transform var(--duration-enter) var(--ease-out);
+    }
+    .delivery-description > span {
+      overflow: hidden;
+    }
+    .delivery-description.expanded,
+    .delivery-description.expanded-initial {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .delivery-description.expanded-initial {
+      transition: none;
+    }
+    .delivery-description.collapsing {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: grid-template-rows var(--duration-exit) var(--ease-in),
+                  opacity var(--duration-exit) var(--ease-in),
+                  transform var(--duration-exit) var(--ease-in);
+    }
+
+    .price-from {
+      font-size: var(--text-xs);
+      font-weight: 400;
+      color: var(--content-tertiary);
+    }
+    .pickup-empty-label {
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-tertiary);
+    }
+
+    /* Inline detail panel */
+    .inline-detail {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition: grid-template-rows var(--duration-enter) var(--ease-out),
+                  opacity var(--duration-enter) var(--ease-out);
+    }
+    .inline-detail > div {
+      overflow: hidden;
+    }
+    .inline-detail.expanded {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+    .inline-detail.expanded-initial {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      transition: none;
+    }
+    .inline-detail.collapsing {
+      grid-template-rows: 0fr;
+      opacity: 0;
+      transition: grid-template-rows var(--duration-exit) var(--ease-in),
+                  opacity var(--duration-exit) var(--ease-in);
+    }
+    .inline-detail-inner {
+      padding-top: var(--space-2);
+    }
+
+    /* Delivery detail card */
+    .delivery-detail-card {
+      border: 1px solid var(--border-tertiary);
+      border-radius: 8px;
+      padding: var(--space-4);
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+      background: var(--bg-tertiary);
+    }
+    .delivery-detail-card .carrier-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .delivery-detail-card .carrier-icon svg {
+      width: 16px;
+      height: 16px;
+      color: var(--content-tertiary);
+    }
+    .delivery-detail-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .delivery-detail-name {
+      font-weight: 500;
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-primary);
+    }
+    .delivery-detail-edit {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    .delivery-detail-edit svg {
+      width: 20px;
+      height: 20px;
+      color: var(--content-tertiary);
+    }
+    .delivery-detail-options-label {
+      font-size: var(--text-xs);
+      line-height: var(--line-height-xs);
+      color: var(--content-tertiary);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Carrier Selection Modal */
+    .carrier-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--duration-enter) var(--ease-out);
+    }
+    .carrier-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .carrier-overlay.hiding {
+      opacity: 0;
+      transition: opacity var(--duration-exit) var(--ease-in);
+    }
+    .carrier-modal {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-primary);
+      border-radius: 16px 16px 0 0;
+      z-index: 31;
+      display: flex;
+      flex-direction: column;
+      max-height: 70%;
+      overflow: hidden;
+      transform: translateY(100%);
+      transition: transform 300ms var(--ease-out);
+    }
+    .carrier-modal.active {
+      transform: translateY(0);
+    }
+    .carrier-modal.hiding {
+      transform: translateY(100%);
+      transition: transform 250ms var(--ease-in);
+    }
+    .carrier-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-tertiary);
+      flex-shrink: 0;
+    }
+    .carrier-modal-title {
+      font-size: var(--text-xl);
+      font-weight: 500;
+      line-height: var(--line-height-xl);
+      color: var(--content-primary);
+    }
+    .carrier-modal-close {
+      width: 24px;
+      height: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carrier-modal-close svg {
+      width: 20px;
+      height: 20px;
+      color: var(--content-primary);
+    }
+    .carrier-list {
+      overflow-y: auto;
+      flex: 1;
+    }
+    .carrier-list-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-tertiary);
+      cursor: pointer;
+      transition: background 150ms var(--ease-out);
+    }
+    .carrier-list-item:last-child {
+      border-bottom: none;
+    }
+    .carrier-list-item:active {
+      background: var(--bg-secondary);
+    }
+    .carrier-list-item.selected {
+      background: var(--bg-secondary);
+    }
+    .carrier-list-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--content-tertiary);
+      line-height: 1;
+    }
+    .carrier-list-item.selected .carrier-list-icon {
+      background: var(--bg-quartenary);
+    }
+    .carrier-list-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .carrier-list-name {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      line-height: var(--line-height-sm);
+      color: var(--content-primary);
+    }
+    .carrier-list-detail {
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-tertiary);
+    }
+    .carrier-list-price {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      line-height: var(--line-height-sm);
+      color: var(--content-primary);
+      flex-shrink: 0;
+    }
+    .carrier-list-check {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      color: var(--content-primary);
+      opacity: 0;
+      transition: opacity var(--duration-enter) var(--ease-out);
+    }
+    .carrier-list-item.selected .carrier-list-check {
+      opacity: 1;
+    }
+
+    .btn-choose-pickup {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      width: 100%;
+      height: 44px;
+      background: var(--bg-primary-reverse);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-family);
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      font-weight: 500;
+      color: var(--content-primary-reverse);
+      cursor: pointer;
+      box-shadow: 0px 2px 8px rgba(9, 9, 7, 0.3);
+      transition: transform var(--duration-enter) var(--ease-out),
+                  opacity var(--duration-enter) var(--ease-out);
+      will-change: transform;
+    }
+    .btn-choose-pickup:hover {
+      opacity: 0.9;
+    }
+    .btn-choose-pickup:active {
+      transform: scale(0.97);
+      transition: transform 100ms var(--ease-out);
+    }
+    .btn-choose-pickup svg {
+      width: 20px;
+      height: 20px;
+      color: var(--content-primary-reverse);
+      flex-shrink: 0;
+    }
+
+    /* Discount Code */
+    .discount-link {
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-primary);
+      text-decoration: underline;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-family);
+      padding: 0;
+      text-align: left;
+    }
+
+    /* Delivery Address */
+    .address-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .address-section-header .section-title {
+      flex: 1;
+    }
+
+    .add-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-1);
+      height: 28px;
+      padding: var(--space-1) var(--space-2);
+      border: 1px solid var(--border-secondary);
+      border-radius: 3px;
+      background: none;
+      cursor: pointer;
+      font-family: var(--font-family);
+      font-size: var(--text-xs);
+      line-height: var(--line-height-xs);
+      color: var(--content-primary);
+    }
+
+    /* Address Page (full-screen overlay) */
+    .address-page {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-primary);
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 300ms var(--ease-out);
+    }
+
+    .address-page.active {
+      transform: translateX(0);
+    }
+
+    .address-page.hiding {
+      transform: translateX(100%);
+      transition: transform 250ms var(--ease-in);
+    }
+
+    .address-page-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-4);
+      padding-bottom: 140px;
+    }
+
+    .address-page-title {
+      font-size: var(--text-xl);
+      font-weight: 700;
+      line-height: var(--line-height-xl);
+      color: #000;
+      margin-bottom: var(--space-3);
+    }
+
+    .address-fields {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      flex: 1;
+    }
+
+    .form-label {
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-primary);
+    }
+
+    .form-label.secondary {
+      color: var(--content-tertiary);
+    }
+
+    .form-input {
+      height: 40px;
+      padding: 0 var(--space-4);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 6px;
+      font-family: var(--font-family);
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-primary);
+      background: var(--bg-tertiary);
+      outline: none;
+      transition: border-color var(--duration-enter) var(--ease-out);
+    }
+
+    .form-input:focus {
+      border-color: var(--content-primary);
+    }
+
+    .form-input::placeholder {
+      color: #A9A9A9;
+    }
+
+    /* Phone number compound field */
+    .phone-field {
+      display: flex;
+    }
+
+    .phone-prefix {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: 0 var(--space-4);
+      height: 40px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-tertiary);
+      border-right: none;
+      border-radius: 6px 0 0 6px;
+      font-size: var(--text-base);
+      color: var(--content-tertiary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .phone-prefix svg {
+      flex-shrink: 0;
+    }
+
+    .phone-input {
+      flex: 1;
+      height: 40px;
+      padding: 0 var(--space-4);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 0 6px 6px 0;
+      font-family: var(--font-family);
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-tertiary);
+      background: var(--bg-tertiary);
+      outline: none;
+    }
+
+    .phone-input:focus {
+      border-color: var(--content-primary);
+    }
+
+    /* Country dropdown in form */
+    .country-dropdown-form {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      height: 40px;
+      padding: 0 var(--space-4);
+      background: var(--bg-primary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 6px;
+      font-family: var(--font-family);
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-primary);
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .country-dropdown-form span {
+      flex: 1;
+    }
+
+    /* Address search field */
+    .address-search-field {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      height: 40px;
+      padding: 0 var(--space-4);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 6px;
+    }
+
+    .address-search-field input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-family: var(--font-family);
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-primary);
+      outline: none;
+    }
+
+    .address-search-field input::placeholder {
+      color: #A9A9A9;
+    }
+
+    .address-search-field svg {
+      flex-shrink: 0;
+    }
+
+    /* Checkbox */
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      cursor: pointer;
+    }
+
+    .checkbox-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+      border: 1.5px solid var(--content-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: none;
+      transition: background-color var(--duration-enter) var(--ease-out),
+                  border-color var(--duration-enter) var(--ease-out);
+    }
+
+    .checkbox-row.checked .checkbox-box {
+      background: var(--content-primary);
+      border-color: var(--content-primary);
+    }
+
+    .checkbox-box svg {
+      opacity: 0;
+      transition: opacity var(--duration-enter) var(--ease-out);
+    }
+
+    .checkbox-row.checked .checkbox-box svg {
+      opacity: 1;
+    }
+
+    .checkbox-label {
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-secondary);
+    }
+
+    /* Country dropdown disabled style */
+    .country-dropdown-form.disabled {
+      background: var(--bg-secondary);
+    }
+
+    /* Address page sticky button */
+    .address-page-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0 var(--space-4);
+      padding-top: 44px;
+      background: linear-gradient(180deg, rgba(243,243,243,0) 0%, #F3F3F3 39%);
+    }
+
+    /* Saved Address */
+    .saved-address {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-2);
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 8px;
+      padding: var(--space-3);
+    }
+
+    .saved-address.visible {
+      display: flex;
+      animation: fadeSlideIn var(--duration-enter) var(--ease-out) both;
+    }
+
+    .saved-address.hiding {
+      display: flex;
+      animation: fadeSlideOut var(--duration-exit) var(--ease-in) both;
+    }
+
+    .saved-address-row {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+    }
+
+    .saved-address-check {
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .saved-address-text {
+      flex: 1;
+    }
+
+    .saved-address-name {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      line-height: var(--line-height-sm);
+      color: var(--content-primary);
+    }
+
+    .saved-address-line {
+      font-size: var(--text-xs);
+      line-height: var(--line-height-xs);
+      color: var(--content-tertiary);
+    }
+
+    .edit-button {
+      background: none;
+      border: 1px solid var(--border-secondary);
+      border-radius: 3px;
+      padding: var(--space-1) var(--space-2);
+      font-family: var(--font-family);
+      font-size: var(--text-xs);
+      line-height: var(--line-height-xs);
+      color: var(--content-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+      height: 28px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Price Summary */
+    .price-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .price-rows {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .price-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-tertiary);
+    }
+
+    .price-value {
+      font-size: var(--text-base);
+      font-weight: 500;
+      line-height: var(--line-height-base);
+      color: var(--content-tertiary);
+    }
+
+    .info-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid var(--content-tertiary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: var(--content-tertiary);
+      flex-shrink: 0;
+      cursor: help;
+    }
+
+    .price-total {
+      border-top: 1px solid var(--border-tertiary);
+      padding-top: var(--space-1);
+    }
+
+    .price-total .price-label,
+    .price-total .price-value {
+      color: var(--content-primary);
+      font-weight: 500;
+    }
+
+    /* Buyer Protection Banner */
+    .protection-banner {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: var(--bg-positive);
+      border-radius: 8px;
+      padding: var(--space-2);
+      min-height: 52px;
+    }
+
+    .protection-banner svg {
+      flex-shrink: 0;
+    }
+
+    .protection-text {
+      font-size: var(--text-xs);
+      line-height: var(--line-height-xs);
+      color: var(--content-positive);
+    }
+
+    .protection-text strong {
+      font-weight: 500;
+    }
+
+    /* Sticky Bottom Button */
+    .sticky-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0 var(--space-4);
+      padding-top: 44px;
+      background: linear-gradient(180deg, rgba(243,243,243,0) 0%, #F3F3F3 39%);
+      z-index: 10;
+    }
+
+    .cta-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      width: 100%;
+      height: 49px;
+      background: var(--bg-primary-reverse);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .cta-button span {
+      font-family: var(--font-family);
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-primary-reverse);
+    }
+
+    .home-indicator {
+      height: 34px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 8px;
+    }
+
+    .home-indicator-bar {
+      width: 134px;
+      height: 5px;
+      background: #000;
+      border-radius: 100px;
+    }
+
+    /* Keyframes */
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeSlideOut {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(8px); }
+    }
+
+    @keyframes scalePop {
+      from { transform: scale(0.5); }
+      to { transform: scale(1); }
+    }
+
+    /* ============================================
+       PICK-UP POINT SUB-FLOW
+       ============================================ */
+    .pickup-flow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-primary);
+      z-index: 100;
+      transform: translateX(100%);
+      transition: transform 200ms var(--ease-out);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      visibility: hidden;
+    }
+    .pickup-flow.active {
+      transform: translateX(0);
+      visibility: visible;
+    }
+    .pickup-flow.hiding {
+      transform: translateX(100%);
+      visibility: visible;
+      transition: transform 150ms var(--ease-in);
+    }
+
+    .pickup-flow-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-tertiary);
+      flex-shrink: 0;
+    }
+    .pickup-flow-back {
+      width: 24px;
+      height: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pickup-flow-back svg {
+      width: 24px;
+      height: 24px;
+      color: var(--content-primary);
+    }
+    .pickup-flow-title {
+      font-weight: 500;
+      font-size: var(--text-xl);
+      line-height: var(--line-height-xl);
+      color: var(--content-primary);
+    }
+
+    .pickup-flow-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .pickup-search-bar {
+      padding: var(--space-4);
+      flex-shrink: 0;
+    }
+    .pickup-search-input {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      height: 40px;
+      padding: 0 var(--space-4);
+      border: 1px solid var(--border-tertiary);
+      border-radius: 6px;
+      background: var(--bg-tertiary);
+    }
+    .pickup-search-input svg {
+      width: 20px;
+      height: 20px;
+      color: var(--content-tertiary);
+      flex-shrink: 0;
+    }
+    .pickup-search-input input {
+      flex: 1;
+      border: none;
+      background: none;
+      font-family: var(--font-family);
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-primary);
+      outline: none;
+    }
+    .pickup-search-input input::placeholder {
+      color: #A9A9A9;
+    }
+
+    .pickup-tabs {
+      display: flex;
+      gap: var(--space-2);
+      padding: 0 var(--space-4) var(--space-4);
+      flex-shrink: 0;
+    }
+    .pickup-tab {
+      height: 32px;
+      padding: 0 var(--space-4);
+      border-radius: 100px;
+      border: 1px solid var(--border-tertiary);
+      background: var(--bg-tertiary);
+      font-family: var(--font-family);
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      font-weight: 500;
+      color: var(--content-tertiary);
+      cursor: pointer;
+      transition: background 150ms var(--ease-out),
+                  color 150ms var(--ease-out),
+                  border-color 150ms var(--ease-out);
+    }
+    .pickup-tab.active {
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      border-color: var(--bg-primary-reverse);
+    }
+
+    .pickup-list-view {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .pickup-list-view.hidden { display: none; }
+
+    .pickup-list-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--border-tertiary);
+      cursor: pointer;
+      transition: background 150ms var(--ease-out);
+    }
+    .pickup-list-item:active {
+      background: var(--bg-secondary);
+    }
+    .pickup-carrier-logo {
+      width: 24px;
+      height: 24px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--content-tertiary);
+      line-height: 1;
+    }
+    .pickup-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .pickup-item-name {
+      font-weight: 500;
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-primary);
+    }
+    .pickup-item-address {
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-tertiary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pickup-item-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .pickup-item-price {
+      font-weight: 500;
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-primary);
+    }
+    .pickup-item-distance {
+      font-size: var(--text-xs);
+      line-height: var(--line-height-xs);
+      color: var(--content-tertiary);
+    }
+    .pickup-item-chevron {
+      width: 20px;
+      height: 20px;
+      color: var(--content-tertiary);
+      flex-shrink: 0;
+    }
+
+    .pickup-map-view {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .pickup-map-view.hidden { display: none; }
+
+    .pickup-map-placeholder {
+      flex: 1;
+      background: var(--bg-quartenary);
+      position: relative;
+      min-height: 200px;
+    }
+    .map-pin {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1;
+      cursor: pointer;
+      border: 2px solid var(--content-primary);
+      background: var(--bg-tertiary);
+      color: var(--content-primary);
+      transition: background 150ms var(--ease-out),
+                  color 150ms var(--ease-out);
+      z-index: 1;
+    }
+    .map-pin.active {
+      background: var(--bg-primary-reverse);
+      color: var(--content-primary-reverse);
+      z-index: 2;
+    }
+
+    .pickup-bottom-sheet {
+      background: var(--bg-tertiary);
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      transition: max-height 200ms var(--ease-out);
+      overflow: hidden;
+      max-height: 280px;
+      flex-shrink: 0;
+    }
+    .pickup-bottom-sheet.collapsed {
+      max-height: 32px;
+    }
+    .sheet-handle {
+      display: flex;
+      justify-content: center;
+      padding: 12px 0 8px;
+      cursor: grab;
+      flex-shrink: 0;
+    }
+    .sheet-handle-bar {
+      width: 36px;
+      height: 4px;
+      background: #d0d0d0;
+      border-radius: 2px;
+    }
+    .sheet-content {
+      padding: 0 var(--space-4) var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      overflow: hidden;
+    }
+    .sheet-station-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .sheet-station-details {
+      flex: 1;
+      min-width: 0;
+    }
+    .sheet-station-name {
+      font-weight: 500;
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-primary);
+    }
+    .sheet-station-address {
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-tertiary);
+    }
+    .sheet-station-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sheet-station-distance {
+      font-size: var(--text-xs);
+      line-height: var(--line-height-xs);
+      color: var(--content-tertiary);
+    }
+    .sheet-station-price {
+      font-weight: 500;
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-primary);
+    }
+    .btn-choose-station {
+      width: 100%;
+      height: 44px;
+      background: var(--bg-primary-reverse);
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-family);
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      font-weight: 500;
+      color: var(--content-primary-reverse);
+      cursor: pointer;
+      box-shadow: 0px 2px 8px rgba(9, 9, 7, 0.3);
+      transition: transform 200ms var(--ease-out),
+                  opacity 200ms var(--ease-out);
+      will-change: transform;
+    }
+    .btn-choose-station:hover { opacity: 0.9; }
+    .btn-choose-station:active {
+      transform: scale(0.97);
+      transition: transform 100ms var(--ease-out);
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .address-form.visible,
+      .saved-address.visible {
+        animation: fadeIn var(--duration-enter) ease both;
+      }
+      .address-form.hiding,
+      .saved-address.hiding {
+        animation: fadeOut var(--duration-exit) ease both;
+      }
+      .radio-circle.selected::after {
+        animation: none;
+      }
+      .delivery-option {
+        transition: none;
+      }
+      .login-modal,
+      .address-page {
+        transition: opacity var(--duration-enter) ease;
+        transform: none !important;
+      }
+      .login-modal.hiding,
+      .address-page.hiding {
+        transition: opacity var(--duration-exit) ease;
+      }
+      .address-page {
+        opacity: 0;
+      }
+      .address-page.active {
+        opacity: 1;
+      }
+      .address-page.hiding {
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    /* Login Modal */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--duration-enter) var(--ease-out);
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-overlay.hiding {
+      opacity: 0;
+      transition: opacity var(--duration-exit) var(--ease-in);
+    }
+
+    .login-modal {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-primary);
+      border-radius: 16px 16px 0 0;
+      padding: var(--space-6);
+      z-index: 21;
+      transform: translateY(100%);
+      transition: transform 300ms var(--ease-out);
+    }
+
+    .login-modal.active {
+      transform: translateY(0);
+    }
+
+    .login-modal.hiding {
+      transform: translateY(100%);
+      transition: transform 250ms var(--ease-in);
+    }
+
+    .modal-header {
+      display: flex;
+      gap: var(--space-2);
+      align-items: flex-start;
+      justify-content: center;
+      padding-bottom: var(--space-4);
+    }
+
+    .modal-header-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 500;
+      line-height: var(--line-height-xl);
+      color: #000;
+    }
+
+    .modal-subtitle {
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-tertiary);
+    }
+
+    .modal-close {
+      width: 24px;
+      height: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .modal-body {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .modal-buttons-primary {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .btn-create-account {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 48px;
+      background: var(--bg-primary-reverse);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-family);
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-primary-reverse);
+    }
+
+    .btn-login-email {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 48px;
+      background: none;
+      border: 1px solid var(--border-secondary);
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-family);
+      font-size: var(--text-base);
+      line-height: var(--line-height-base);
+      color: var(--content-primary);
+    }
+
+    .modal-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .modal-divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border-tertiary);
+    }
+
+    .modal-divider span {
+      font-size: var(--text-sm);
+      line-height: var(--line-height-sm);
+      color: var(--content-primary);
+    }
+
+    .modal-buttons-social {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    .btn-social {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      width: 100%;
+      height: 48px;
+      background: none;
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-family);
+      font-size: 17px;
+      line-height: 22px;
+      color: var(--content-primary);
+    }
+
+    .btn-social svg {
+      flex-shrink: 0;
+    }
+
+    /* Focus styles */
+    button:focus-visible,
+    .form-input:focus-visible {
+      outline: 2px solid var(--content-primary);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="time">9:41</span>
+    <div class="dynamic-island"></div>
+    <div class="icons">
+      <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
+        <rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/>
+        <rect x="5" y="2" width="3" height="10" rx="1" fill="#090907"/>
+        <rect x="10" y="1" width="3" height="11" rx="1" fill="#090907"/>
+        <rect x="15" y="0" width="3" height="12" rx="1" fill="#090907"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+        <path d="M8 3.6C9.8 3.6 11.4 4.3 12.6 5.5L14.1 4C12.5 2.4 10.4 1.5 8 1.5C5.6 1.5 3.5 2.4 1.9 4L3.4 5.5C4.6 4.3 6.2 3.6 8 3.6Z" fill="#090907"/>
+        <path d="M8 7.2C9 7.2 9.9 7.6 10.6 8.2L8 10.8L5.4 8.2C6.1 7.6 7 7.2 8 7.2Z" fill="#090907"/>
+      </svg>
+      <svg width="27" height="13" viewBox="0 0 27 13" fill="none">
+        <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#090907" fill="none"/>
+        <rect x="2" y="2" width="19" height="9" rx="2" fill="#090907"/>
+        <path d="M24 4.5V8.5C24.8 8.2 25.3 7.4 25.3 6.5C25.3 5.6 24.8 4.8 24 4.5Z" fill="#090907"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- App Header -->
+  <div class="app-header">
+    <div class="app-header-nav">
+      <button class="back-button" aria-label="Go back">
+        <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+          <path d="M10 1L1.5 10L10 19" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <h1>Checkout</h1>
+    </div>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="scroll-content">
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div class="step active"></div>
+      <div class="step"></div>
+    </div>
+
+    <!-- Bike Info -->
+    <div class="bike-info">
+      <div class="bike-header">
+        <img class="bike-image" src="https://www.figma.com/api/mcp/asset/04f0bd58-470b-4dbc-8fe8-6183592c01f0" alt="Canyon Grail CF SL 8 Etap">
+        <div class="bike-details">
+          <span class="bike-brand">Canyon</span>
+          <span class="bike-model">Grail CF SL 8 Etap</span>
+        </div>
+      </div>
+      <div class="bike-tags">
+        <span class="tag">M-50cm</span>
+        <span class="tag">2019</span>
+        <span class="tag">Shimano Dura Ace Di2</span>
+      </div>
+    </div>
+
+    <!-- Shipping To -->
+    <div class="shipping-section">
+      <div class="section-header">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" stroke="#090907" stroke-width="1.5" fill="none"/>
+        </svg>
+        <span class="section-title">Shipping to</span>
+      </div>
+
+      <button class="country-dropdown" aria-label="Select country">
+        <span>Germany</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M5 7.5L10 12.5L15 7.5" stroke="#090907" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <div class="login-card" id="addressCard" role="button" tabindex="0" aria-label="Log in to add your address">
+        <div class="login-card-icon" id="addressCardIcon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 9C10.66 9 12 7.66 12 6C12 4.34 10.66 3 9 3C7.34 3 6 4.34 6 6C6 7.66 7.34 9 9 9ZM9 10.5C6.99 10.5 3 11.51 3 13.5V15H15V13.5C15 11.51 11.01 10.5 9 10.5Z" fill="#535353"/>
+          </svg>
+        </div>
+        <div class="login-card-content">
+          <span class="login-card-title" id="addressCardTitle">Log in to add your address</span>
+          <span class="login-card-subtitle" id="addressCardSubtitle">Save your details for faster checkout</span>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M7.5 5L12.5 10L7.5 15" stroke="#090907" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <!-- Shipping Address Card (shown after address filled) -->
+      <div class="shipping-address-card" id="shippingAddressCard" role="button" tabindex="0" aria-label="Edit shipping address">
+        <div class="shipping-address-card-text">
+          <span class="address-name" id="shippingName"></span><br>
+          <span id="shippingStreet"></span><br>
+          <span id="shippingCityZip"></span><br>
+          <span id="shippingPhone"></span>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M7.5 5L12.5 10L7.5 15" stroke="#535353" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Delivery Options -->
+    <div class="delivery-section">
+      <div class="section-header">
+        <svg width="28" height="22" viewBox="0 0 24 20" fill="none">
+          <path d="M20 6H17V2H3C1.9 2 1 2.9 1 4V15H3C3 16.66 4.34 18 6 18C7.66 18 9 16.66 9 15H15C15 16.66 16.34 18 18 18C19.66 18 21 16.66 21 15H23V10L20 6ZM6 16.5C5.17 16.5 4.5 15.83 4.5 15C4.5 14.17 5.17 13.5 6 13.5C6.83 13.5 7.5 14.17 7.5 15C7.5 15.83 6.83 16.5 6 16.5ZM19.5 7.5L21.46 10H17V7.5H19.5ZM18 16.5C17.17 16.5 16.5 15.83 16.5 15C16.5 14.17 17.17 13.5 18 13.5C18.83 13.5 19.5 14.17 19.5 15C19.5 15.83 18.83 16.5 18 16.5Z" fill="#090907"/>
+        </svg>
+        <span class="section-title">Delivery options</span>
+      </div>
+
+      <div class="delivery-options">
+        <!-- Home Delivery (selected) -->
+        <div class="delivery-option selected" role="radio" aria-checked="true" tabindex="0" data-option="home">
+          <div class="delivery-option-header">
+            <div class="delivery-option-left">
+              <div class="radio-circle selected"><input type="radio" name="delivery" value="home" checked hidden></div>
+              <span class="radio-label">buycycle home delivery</span>
+            </div>
+            <span class="delivery-price">&euro; 99</span>
+          </div>
+          <div class="info-badge">
+            <svg viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M5 1.5v3M11 1.5v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <path d="M2 7h12" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            <span>Estimated arrival: <strong>Mar 18-25, 2026</strong></span>
+          </div>
+          <div class="delivery-description expanded-initial"><span>buycycle provides packaging, arranges pickup from the seller's doorstep, and delivers the bike directly to you. You'll have 48 hours after delivery to check everything matches the ad, and if not, we'll help resolve the issue.</span></div>
+          <div class="inline-detail expanded-initial" data-inline="home"><div>
+            <div class="inline-detail-inner">
+              <div class="delivery-detail-card" id="homeCarrierCard">
+                <div class="carrier-icon" id="homeCarrierIcon">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <rect x="1" y="5" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.3"/>
+                    <path d="M13 8H16L18 11V15H13V8Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                    <circle cx="6" cy="15" r="2" stroke="currentColor" stroke-width="1.3"/>
+                    <circle cx="16" cy="15" r="2" stroke="currentColor" stroke-width="1.3"/>
+                  </svg>
+                </div>
+                <div class="delivery-detail-content">
+                  <div class="delivery-detail-name" id="homeCarrierName">Hermes Haustür-Zustellung</div>
+                </div>
+                <span class="delivery-detail-options-label" id="homeCarrierOptionsLabel">2 options</span>
+                <button class="delivery-detail-edit" id="homeCarrierChevron" aria-label="Choose carrier">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- Delivery to pick-up point -->
+        <div class="delivery-option" role="radio" aria-checked="false" tabindex="0" data-option="pickup-point">
+          <div class="delivery-option-header">
+            <div class="delivery-option-left">
+              <div class="radio-circle"><input type="radio" name="delivery" value="pickup-point" hidden></div>
+              <span class="radio-label">Delivery to pick-up point</span>
+            </div>
+            <span class="delivery-price"><span class="price-from">From</span> &euro; 49</span>
+          </div>
+          <div class="info-badge">
+            <svg viewBox="0 0 16 16" fill="none">
+              <rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M5 1.5v3M11 1.5v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              <path d="M2 7h12" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            <span>Estimated: typically <strong>2–4 business days</strong></span>
+          </div>
+          <div class="delivery-description"><span>Have your bike shipped to a nearby pick-up point. Choose from available locations and collect at your convenience.</span></div>
+          <div class="inline-detail" data-inline="pickup-point"><div>
+            <div class="inline-detail-inner">
+              <div class="delivery-detail-card">
+                <div class="carrier-icon">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path d="M10 2C7.24 2 5 4.46 5 7.5C5 11.5 10 17 10 17C10 17 15 11.5 15 7.5C15 4.46 12.76 2 10 2Z" stroke="currentColor" stroke-width="1.3"/>
+                    <circle cx="10" cy="7.5" r="2" stroke="currentColor" stroke-width="1.3"/>
+                  </svg>
+                </div>
+                <div class="delivery-detail-content">
+                  <div class="delivery-detail-name">Choose a pick-up point</div>
+                </div>
+                <button class="delivery-detail-edit" aria-label="Choose pick-up point">
+                  <svg viewBox="0 0 20 20" fill="none">
+                    <path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div></div>
+        </div>
+
+        <!-- Pick Up from seller -->
+        <div class="delivery-option" role="radio" aria-checked="false" tabindex="0" data-option="seller">
+          <div class="delivery-option-header">
+            <div class="delivery-option-left">
+              <div class="radio-circle"><input type="radio" name="delivery" value="seller" hidden></div>
+              <span class="radio-label">Pick up from seller</span>
+            </div>
+            <span class="delivery-price">&euro; 0</span>
+          </div>
+          <div class="info-badge">
+            <svg viewBox="0 0 16 16" fill="none">
+              <path d="M8 1.5C5.5 1.5 3.5 3.8 3.5 6.5C3.5 10 8 14.5 8 14.5C8 14.5 12.5 10 12.5 6.5C12.5 3.8 10.5 1.5 8 1.5Z" stroke="currentColor" stroke-width="1.2"/>
+              <circle cx="8" cy="6.5" r="2" stroke="currentColor" stroke-width="1.2"/>
+            </svg>
+            <span>Munich, DE - <strong>Arrange with the seller</strong></span>
+          </div>
+          <div class="delivery-description"><span>Reserve with a fully refundable deposit. Check out the bike in person and get a full refund if you don't want it. Pick up the bike in: Munich, DE</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Discount Code -->
+    <button class="discount-link">Add a discount code</button>
+
+    <!-- Price Summary -->
+    <div class="price-section">
+      <span class="section-title">Price summary</span>
+      <div class="price-rows">
+        <div class="price-row">
+          <span class="price-label">Item Price</span>
+          <span class="price-value">&euro; 5,750</span>
+        </div>
+        <div class="price-row">
+          <span class="price-label">Buyer Protection <span class="info-icon" title="Buyer Protection info">i</span></span>
+          <span class="price-value">&euro; 350</span>
+        </div>
+        <div class="price-row">
+          <span class="price-label">Shipping <span class="info-icon" title="Shipping info">i</span></span>
+          <span class="price-value" id="shippingPrice">&euro; 89</span>
+        </div>
+      </div>
+      <div class="price-row price-total">
+        <span class="price-label">Total <span class="info-icon" title="Total info">i</span></span>
+        <span class="price-value" id="totalPrice">&euro; 6,189</span>
+      </div>
+    </div>
+
+    <!-- Buyer Protection Banner -->
+    <div class="protection-banner">
+      <svg width="21" height="21" viewBox="0 0 21 21" fill="none">
+        <path d="M10.5 1L3 4.5V9.75C3 14.53 6.2 19.03 10.5 20C14.8 19.03 18 14.53 18 9.75V4.5L10.5 1Z" fill="#B8E6CC" stroke="#146C43" stroke-width="1"/>
+        <path d="M8.5 10.5L10 12L13 9" stroke="#146C43" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="protection-text"><strong>Buyer Protection:</strong> The seller is only paid once you have received and approved your item.</span>
+    </div>
+
+  </div>
+
+  <!-- Sticky Bottom Button -->
+  <div class="sticky-bottom">
+    <button class="cta-button" id="loginCta">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M14 3L20 3L20 9" stroke="#FCFCFC" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20 3L11 12" stroke="#FCFCFC" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M10 5H5C4.44772 5 4 5.44772 4 6V19C4 19.5523 4.44772 20 5 20H18C18.5523 20 19 19.5523 19 19V14" stroke="#FCFCFC" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span>Log in to continue</span>
+    </button>
+    <div class="home-indicator">
+      <div class="home-indicator-bar"></div>
+    </div>
+  </div>
+
+  <!-- Address Page (full-screen) -->
+  <div class="address-page" id="addressPage">
+    <!-- Reuse status bar + header -->
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <div class="dynamic-island"></div>
+      <div class="icons">
+        <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
+          <rect x="0" y="3" width="3" height="9" rx="1" fill="#090907"/>
+          <rect x="5" y="2" width="3" height="10" rx="1" fill="#090907"/>
+          <rect x="10" y="1" width="3" height="11" rx="1" fill="#090907"/>
+          <rect x="15" y="0" width="3" height="12" rx="1" fill="#090907"/>
+        </svg>
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+          <path d="M8 3.6C9.8 3.6 11.4 4.3 12.6 5.5L14.1 4C12.5 2.4 10.4 1.5 8 1.5C5.6 1.5 3.5 2.4 1.9 4L3.4 5.5C4.6 4.3 6.2 3.6 8 3.6Z" fill="#090907"/>
+          <path d="M8 7.2C9 7.2 9.9 7.6 10.6 8.2L8 10.8L5.4 8.2C6.1 7.6 7 7.2 8 7.2Z" fill="#090907"/>
+        </svg>
+        <svg width="27" height="13" viewBox="0 0 27 13" fill="none">
+          <rect x="0.5" y="0.5" width="22" height="12" rx="3.5" stroke="#090907" fill="none"/>
+          <rect x="2" y="2" width="19" height="9" rx="2" fill="#090907"/>
+          <path d="M24 4.5V8.5C24.8 8.2 25.3 7.4 25.3 6.5C25.3 5.6 24.8 4.8 24 4.5Z" fill="#090907"/>
+        </svg>
+      </div>
+    </div>
+    <div class="app-header">
+      <div class="app-header-nav">
+        <button class="back-button" id="addressBackBtn" aria-label="Go back">
+          <svg width="11" height="20" viewBox="0 0 11 20" fill="none">
+            <path d="M10 1L1.5 10L10 19" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <h1>Checkout</h1>
+      </div>
+    </div>
+
+    <div class="address-page-content">
+      <h2 class="address-page-title">Delivery Address</h2>
+      <div class="address-fields">
+        <div class="form-group">
+          <label class="form-label" for="addrFirstName">First name</label>
+          <input class="form-input" type="text" id="addrFirstName" placeholder="First name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="addrLastName">Last name</label>
+          <input class="form-input" type="text" id="addrLastName" placeholder="Last name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="addrCompany">Company name (optional)</label>
+          <input class="form-input" type="text" id="addrCompany" placeholder="Company name">
+        </div>
+        <div class="form-group">
+          <label class="form-label secondary">Phone number</label>
+          <div class="phone-field">
+            <button class="phone-prefix" aria-label="Select country code">
+              <span>🇩🇪</span>
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                <path d="M1 1L5 5L9 1" stroke="#535353" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <input class="phone-input" type="tel" id="addrPhone" placeholder="Phone number">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label secondary">Country</label>
+          <button class="country-dropdown-form disabled" aria-label="Select country">
+            <span>Germany</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="#090907" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="addrSearch">Address search</label>
+          <div class="address-search-field">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="9" cy="9" r="6" stroke="#A9A9A9" stroke-width="1.5"/>
+              <path d="M13.5 13.5L17 17" stroke="#A9A9A9" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input type="text" id="addrSearch" placeholder="Address">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="addrState">State/Province</label>
+          <input class="form-input" type="text" id="addrState" placeholder="State/Province">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="addrCity">City</label>
+          <input class="form-input" type="text" id="addrCity" placeholder="City">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="addrZip">Zip</label>
+          <input class="form-input" type="text" id="addrZip" placeholder="Zip">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="addrStreet">Street</label>
+          <input class="form-input" type="text" id="addrStreet" placeholder="Street">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="addrHouseNr">House number</label>
+          <input class="form-input" type="text" id="addrHouseNr" placeholder="House number">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="addrLine2">Address line 2</label>
+          <input class="form-input" type="text" id="addrLine2" placeholder="Appartment 35, Left">
+        </div>
+        <div class="checkbox-row checked" id="billingCheckbox" role="checkbox" aria-checked="true" tabindex="0">
+          <div class="checkbox-box">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2.5 6L5 8.5L9.5 3.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="checkbox-label">Use same address as billing address</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="address-page-bottom">
+      <button class="cta-button" id="addressContinueBtn">
+        <span>Continue</span>
+      </button>
+      <div class="home-indicator">
+        <div class="home-indicator-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="modalOverlay"></div>
+  <div class="login-modal" id="loginModal" role="dialog" aria-modal="true" aria-label="Welcome to buycycle">
+    <div class="modal-header">
+      <div class="modal-header-text">
+        <h2 class="modal-title">Welcome to buycycle</h2>
+        <p class="modal-subtitle">Log in or create an account to complete your purchase</p>
+      </div>
+      <button class="modal-close" id="modalClose" aria-label="Close">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6L18 18" stroke="#090907" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-buttons-primary">
+        <button class="btn-create-account">Create an account</button>
+        <button class="btn-login-email">Login with email</button>
+      </div>
+      <div class="modal-divider">
+        <div class="modal-divider-line"></div>
+        <span>or</span>
+        <div class="modal-divider-line"></div>
+      </div>
+      <div class="modal-buttons-social">
+        <button class="btn-social">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M18.17 10.2c0-.63-.06-1.25-.16-1.84H10v3.48h4.58a3.92 3.92 0 0 1-1.7 2.57v2.13h2.74c1.61-1.48 2.54-3.66 2.54-6.34z" fill="#4285F4"/>
+            <path d="M10 18.5c2.3 0 4.23-.76 5.64-2.07l-2.75-2.13c-.76.51-1.73.81-2.89.81-2.22 0-4.1-1.5-4.77-3.52H2.4v2.2A8.5 8.5 0 0 0 10 18.5z" fill="#34A853"/>
+            <path d="M5.23 11.59a5.1 5.1 0 0 1 0-3.18v-2.2H2.4a8.5 8.5 0 0 0 0 7.58l2.83-2.2z" fill="#FBBC05"/>
+            <path d="M10 4.89c1.25 0 2.37.43 3.26 1.27l2.44-2.44A8.46 8.46 0 0 0 10 1.5a8.5 8.5 0 0 0-7.6 4.71l2.83 2.2c.67-2.02 2.55-3.52 4.77-3.52z" fill="#EA4335"/>
+          </svg>
+          Continue with Google
+        </button>
+        <button class="btn-social">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M14.94 5.24A4.72 4.72 0 0 0 10.68.5a4.8 4.8 0 0 0-3.13 5.06 4.1 4.1 0 0 0 3.26-1.88 4.05 4.05 0 0 0 .56-3.51M17.21 13.92c-.03-3.22 2.63-4.76 2.75-4.84a5.95 5.95 0 0 0-4.69-2.54c-2-.2-3.9 1.18-4.91 1.18-1.01 0-2.58-1.15-4.24-1.12A6.25 6.25 0 0 0 .84 9.75c-2.26 3.92-.58 9.73 1.62 12.91 1.08 1.56 2.36 3.31 4.05 3.25 1.62-.07 2.24-1.05 4.2-1.05 1.97 0 2.52 1.05 4.24 1.02 1.75-.03 2.85-1.59 3.91-3.16a13.2 13.2 0 0 0 1.77-3.63 5.6 5.6 0 0 1-3.42-5.17" transform="scale(0.77) translate(1, 1)" fill="#090907"/>
+          </svg>
+          Continue with Apple
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carrier Selection Modal -->
+  <div class="carrier-overlay" id="carrierOverlay"></div>
+  <div class="carrier-modal" id="carrierModal">
+    <div class="carrier-modal-header">
+      <span class="carrier-modal-title">Select carrier</span>
+      <button class="carrier-modal-close" id="carrierModalClose" aria-label="Close">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="4" x2="16" y2="16"></line>
+          <line x1="16" y1="4" x2="4" y2="16"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="carrier-list" id="carrierList"></div>
+  </div>
+
+  <!-- Pick-up Point Flow -->
+  <div class="pickup-flow" id="pickupFlow">
+    <div class="pickup-flow-header">
+      <button class="pickup-flow-back" id="pickupFlowBack" aria-label="Back to checkout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <span class="pickup-flow-title">Select pick-up point</span>
+    </div>
+
+    <div class="pickup-flow-body">
+      <div class="pickup-search-bar">
+        <div class="pickup-search-input">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="9" r="6"></circle>
+            <line x1="14" y1="14" x2="18" y2="18"></line>
+          </svg>
+          <input type="text" id="pickupSearchInput" placeholder="Enter address to search" />
+        </div>
+      </div>
+
+      <div class="pickup-tabs">
+        <button class="pickup-tab active" data-view="list">List</button>
+        <button class="pickup-tab" data-view="map">Map</button>
+      </div>
+
+      <!-- List view -->
+      <div class="pickup-list-view" id="pickupListView">
+        <div class="pickup-list-item" data-station="0">
+          <div class="pickup-carrier-logo">DHL</div>
+          <div class="pickup-item-info">
+            <div class="pickup-item-name">DHL Packstation 412</div>
+            <div class="pickup-item-address">Leopoldstr. 24, 80802 München</div>
+          </div>
+          <div class="pickup-item-right">
+            <span class="pickup-item-price">&euro; 49</span>
+            <span class="pickup-item-distance">0.3 km</span>
+          </div>
+          <svg class="pickup-item-chevron" viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="pickup-list-item" data-station="1">
+          <div class="pickup-carrier-logo">HER</div>
+          <div class="pickup-item-info">
+            <div class="pickup-item-name">Hermes PaketShop Kiosk am Markt</div>
+            <div class="pickup-item-address">Marktstr. 8, 80802 München</div>
+          </div>
+          <div class="pickup-item-right">
+            <span class="pickup-item-price">&euro; 55</span>
+            <span class="pickup-item-distance">0.5 km</span>
+          </div>
+          <svg class="pickup-item-chevron" viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="pickup-list-item" data-station="2">
+          <div class="pickup-carrier-logo">DHL</div>
+          <div class="pickup-item-info">
+            <div class="pickup-item-name">DHL Paketshop Rewe</div>
+            <div class="pickup-item-address">Hohenzollernstr. 50, 80801 München</div>
+          </div>
+          <div class="pickup-item-right">
+            <span class="pickup-item-price">&euro; 49</span>
+            <span class="pickup-item-distance">0.8 km</span>
+          </div>
+          <svg class="pickup-item-chevron" viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="pickup-list-item" data-station="3">
+          <div class="pickup-carrier-logo">HER</div>
+          <div class="pickup-item-info">
+            <div class="pickup-item-name">Hermes PaketShop Schreibwaren Plus</div>
+            <div class="pickup-item-address">Schellingstr. 15, 80799 München</div>
+          </div>
+          <div class="pickup-item-right">
+            <span class="pickup-item-price">&euro; 55</span>
+            <span class="pickup-item-distance">1.2 km</span>
+          </div>
+          <svg class="pickup-item-chevron" viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="pickup-list-item" data-station="4">
+          <div class="pickup-carrier-logo">DHL</div>
+          <div class="pickup-item-info">
+            <div class="pickup-item-name">DHL Packstation 519</div>
+            <div class="pickup-item-address">Ainmillerstr. 2, 80801 München</div>
+          </div>
+          <div class="pickup-item-right">
+            <span class="pickup-item-price">&euro; 49</span>
+            <span class="pickup-item-distance">1.4 km</span>
+          </div>
+          <svg class="pickup-item-chevron" viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="pickup-list-item" data-station="5">
+          <div class="pickup-carrier-logo">HER</div>
+          <div class="pickup-item-info">
+            <div class="pickup-item-name">Hermes PaketShop Tankstelle Schwabing</div>
+            <div class="pickup-item-address">Ungererstr. 70, 80805 München</div>
+          </div>
+          <div class="pickup-item-right">
+            <span class="pickup-item-price">&euro; 55</span>
+            <span class="pickup-item-distance">1.9 km</span>
+          </div>
+          <svg class="pickup-item-chevron" viewBox="0 0 20 20" fill="none"><path d="M8 4l6 6-6 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <!-- Map view -->
+      <div class="pickup-map-view hidden" id="pickupMapView">
+        <div class="pickup-map-placeholder" id="pickupMap">
+          <div class="map-pin active" data-station="0" style="top: 42%; left: 48%;">DHL</div>
+          <div class="map-pin" data-station="1" style="top: 35%; left: 30%;">HER</div>
+          <div class="map-pin" data-station="2" style="top: 55%; left: 65%;">DHL</div>
+          <div class="map-pin" data-station="3" style="top: 25%; left: 55%;">HER</div>
+          <div class="map-pin" data-station="4" style="top: 60%; left: 25%;">DHL</div>
+          <div class="map-pin" data-station="5" style="top: 70%; left: 50%;">HER</div>
+        </div>
+        <div class="pickup-bottom-sheet" id="pickupBottomSheet">
+          <div class="sheet-handle" id="sheetHandle">
+            <div class="sheet-handle-bar"></div>
+          </div>
+          <div class="sheet-content">
+            <div class="sheet-station-info">
+              <div class="pickup-carrier-logo" id="sheetCarrierLogo">DHL</div>
+              <div class="sheet-station-details">
+                <div class="sheet-station-name" id="sheetStationName">DHL Packstation 412</div>
+                <div class="sheet-station-address" id="sheetStationAddress">Leopoldstr. 24, 80802 München</div>
+              </div>
+            </div>
+            <div class="sheet-station-meta">
+              <span class="sheet-station-distance" id="sheetStationDistance">0.3 km</span>
+              <span class="sheet-station-price" id="sheetStationPrice">&euro; 49</span>
+            </div>
+            <button class="btn-choose-station" id="btnChooseStation">Choose this pick-up point</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Delivery option selection with expand/collapse
+  const allDeliveryOptions = document.querySelectorAll('.delivery-option');
+  const STORAGE_KEY = 'bc_last_delivery_option';
+
+  function collapsePanel(el, callback) {
+    if (!el) { if (callback) callback(); return; }
+    el.classList.remove('expanded', 'expanded-initial');
+    el.offsetHeight;
+    el.classList.add('collapsing');
+    el.addEventListener('transitionend', function handler(e) {
+      if (e.target !== el) return;
+      el.removeEventListener('transitionend', handler);
+      el.classList.remove('collapsing');
+      if (callback) callback();
+    }, { once: true });
+    setTimeout(function() {
+      if (el.classList.contains('collapsing')) {
+        el.classList.remove('collapsing');
+        if (callback) callback();
+      }
+    }, 200);
+  }
+
+  function expandPanel(el) {
+    if (!el) return;
+    el.classList.remove('collapsing', 'expanded-initial');
+    el.offsetHeight;
+    el.classList.add('expanded');
+  }
+
+  function getPanels(option) {
+    if (!option) return [];
+    return Array.from(option.querySelectorAll('.delivery-description, .inline-detail'));
+  }
+
+  function selectDeliveryOption(option, animate) {
+    const prevSelected = document.querySelector('.delivery-option.selected');
+    const prevPanels = getPanels(prevSelected);
+    const newPanels = getPanels(option);
+
+    allDeliveryOptions.forEach(opt => {
+      opt.classList.remove('selected');
+      opt.setAttribute('aria-checked', 'false');
+      opt.querySelector('.radio-circle').classList.remove('selected');
+    });
+    option.classList.add('selected');
+    option.setAttribute('aria-checked', 'true');
+    option.querySelector('.radio-circle').classList.add('selected');
+
+    try { localStorage.setItem(STORAGE_KEY, option.dataset.option); } catch (e) {}
+
+    if (!animate) {
+      prevPanels.forEach(p => {
+        if (!newPanels.includes(p)) p.classList.remove('expanded', 'expanded-initial', 'collapsing');
+      });
+      newPanels.forEach(p => {
+        p.classList.remove('expanded', 'collapsing');
+        p.classList.add('expanded-initial');
+      });
+      return;
+    }
+
+    const toCollapse = prevPanels.filter(p => !newPanels.includes(p));
+    toCollapse.forEach(p => collapsePanel(p));
+    newPanels.forEach(p => expandPanel(p));
+  }
+
+  allDeliveryOptions.forEach(option => {
+    option.addEventListener('click', function() {
+      if (this.classList.contains('selected')) return;
+      selectDeliveryOption(this, true);
+    });
+    option.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        this.click();
+      }
+    });
+  });
+
+  (function initDeliveryOption() {
+    var saved = null;
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+    var key = saved || 'home';
+    var target = document.querySelector('.delivery-option[data-option="' + key + '"]');
+    if (!target) target = document.querySelector('.delivery-option[data-option="home"]');
+    allDeliveryOptions.forEach(o => {
+      o.classList.remove('selected');
+      o.setAttribute('aria-checked', 'false');
+      o.querySelector('.radio-circle').classList.remove('selected');
+    });
+    document.querySelectorAll('.delivery-description, .inline-detail').forEach(d => {
+      d.classList.remove('expanded', 'expanded-initial', 'collapsing');
+    });
+    selectDeliveryOption(target, false);
+  })();
+
+  // Address page (full-screen)
+  const addressPage = document.getElementById('addressPage');
+  const addressBackBtn = document.getElementById('addressBackBtn');
+  const addressContinueBtn = document.getElementById('addressContinueBtn');
+
+  function animateOut(el, callback) {
+    el.classList.remove('visible');
+    el.classList.add('hiding');
+    el.addEventListener('animationend', function handler() {
+      el.removeEventListener('animationend', handler);
+      el.classList.remove('hiding');
+      if (callback) callback();
+    }, { once: true });
+  }
+
+  function openAddressPage() {
+    addressPage.classList.add('active');
+  }
+
+  function closeAddressPage(callback) {
+    addressPage.classList.add('hiding');
+    addressPage.addEventListener('transitionend', function handler() {
+      addressPage.removeEventListener('transitionend', handler);
+      addressPage.classList.remove('active', 'hiding');
+      if (callback) callback();
+    }, { once: true });
+  }
+
+  addressBackBtn.addEventListener('click', function() {
+    closeAddressPage();
+  });
+
+  const shippingAddressCard = document.getElementById('shippingAddressCard');
+  const countryDropdown = document.querySelector('.country-dropdown');
+
+  addressContinueBtn.addEventListener('click', function() {
+    const firstName = document.getElementById('addrFirstName').value || 'Jonas';
+    const lastName = document.getElementById('addrLastName').value || 'Jaeger';
+    const street = document.getElementById('addrStreet').value || 'Marktstraße';
+    const houseNr = document.getElementById('addrHouseNr').value || '18';
+    const zip = document.getElementById('addrZip').value || '80802';
+    const city = document.getElementById('addrCity').value || 'München';
+    const phone = document.getElementById('addrPhone').value || '+4908928579850';
+
+    // Populate shipping address card
+    document.getElementById('shippingName').textContent = firstName + ' ' + lastName;
+    document.getElementById('shippingStreet').textContent = street + ' ' + houseNr;
+    document.getElementById('shippingCityZip').textContent = zip + ' ' + city + ', Germany';
+    document.getElementById('shippingPhone').textContent = phone;
+
+    closeAddressPage(function() {
+      // Hide country dropdown and login card
+      countryDropdown.style.display = 'none';
+      addressCard.style.display = 'none';
+
+      // Show shipping address card
+      shippingAddressCard.classList.add('visible');
+
+      // Update CTA to "Continue to payment"
+      ctaIcon.innerHTML = '<path d="M19 12H5M5 12L12 5M5 12L12 19" stroke="#FCFCFC" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>';
+      ctaIcon.setAttribute('viewBox', '0 0 24 24');
+      ctaText.textContent = 'Continue to payment';
+
+      // Update pickup button label and auto-open pickup flow if pending
+      updatePickupButtonLabel();
+      if (pendingPickupFlow) {
+        pendingPickupFlow = false;
+        openPickupFlow();
+      }
+    });
+  });
+
+  // Shipping address card opens address page for editing
+  shippingAddressCard.addEventListener('click', function() {
+    openAddressPage();
+  });
+  shippingAddressCard.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
+  });
+
+  // Billing checkbox toggle
+  const billingCheckbox = document.getElementById('billingCheckbox');
+  billingCheckbox.addEventListener('click', function() {
+    const isChecked = this.classList.toggle('checked');
+    this.setAttribute('aria-checked', isChecked);
+  });
+  billingCheckbox.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
+  });
+
+  // Login modal
+  const loginCta = document.getElementById('loginCta');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const loginModal = document.getElementById('loginModal');
+  const modalClose = document.getElementById('modalClose');
+
+  function openModal() {
+    modalOverlay.classList.add('active');
+    loginModal.classList.add('active');
+  }
+
+  function closeModal() {
+    modalOverlay.classList.add('hiding');
+    loginModal.classList.add('hiding');
+
+    function onEnd() {
+      modalOverlay.classList.remove('active', 'hiding');
+      loginModal.classList.remove('active', 'hiding');
+      loginModal.removeEventListener('transitionend', onEnd);
+    }
+    loginModal.addEventListener('transitionend', onEnd, { once: true });
+  }
+
+  loginCta.addEventListener('click', openModal);
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', closeModal);
+
+  // Close on Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && loginModal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+
+  // Logged-in state transition
+  let isLoggedIn = false;
+  const addressCard = document.getElementById('addressCard');
+  const addressCardIcon = document.getElementById('addressCardIcon');
+  const addressCardTitle = document.getElementById('addressCardTitle');
+  const addressCardSubtitle = document.getElementById('addressCardSubtitle');
+  const ctaIcon = loginCta.querySelector('svg');
+  const ctaText = loginCta.querySelector('span');
+
+  function switchToLoggedIn() {
+    isLoggedIn = true;
+
+    // Update the card
+    addressCardIcon.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3V15M3 9H15" stroke="#090907" stroke-width="1.8" stroke-linecap="round"/></svg>';
+    addressCardIcon.style.background = 'none';
+    addressCardTitle.textContent = 'Add delivery address';
+    addressCardSubtitle.textContent = 'Save your details for faster checkout';
+    addressCard.setAttribute('aria-label', 'Add delivery address');
+
+    // Update the CTA
+    ctaIcon.innerHTML = '<path d="M19 12H5M5 12L12 5M5 12L12 19" stroke="#FCFCFC" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>';
+    ctaIcon.setAttribute('viewBox', '0 0 24 24');
+    ctaText.textContent = 'Add delivery address';
+
+    // Close modal
+    closeModal();
+  }
+
+  // All modal login/signup buttons trigger logged-in state
+  document.querySelector('.btn-create-account').addEventListener('click', switchToLoggedIn);
+  document.querySelector('.btn-login-email').addEventListener('click', switchToLoggedIn);
+  document.querySelectorAll('.btn-social').forEach(function(btn) {
+    btn.addEventListener('click', switchToLoggedIn);
+  });
+
+  // CTA opens address page when logged in, modal when not
+  loginCta.removeEventListener('click', openModal);
+  loginCta.addEventListener('click', function() {
+    if (isLoggedIn) {
+      openAddressPage();
+    } else {
+      openModal();
+    }
+  });
+
+  // Card opens address page when logged in, modal when not
+  addressCard.addEventListener('click', function() {
+    if (isLoggedIn) {
+      openAddressPage();
+    } else {
+      openModal();
+    }
+  });
+  addressCard.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this.click();
+    }
+  });
+
+  // ============================================
+  // HOME DELIVERY CARRIER SELECTION
+  // ============================================
+  const homeCarriers = [
+    { id: 0, code: 'HER', name: 'Hermes Haustür-Zustellung', detail: 'Door-to-door delivery', price: 99 },
+    { id: 1, code: 'DHL', name: 'DHL Express Home', detail: 'Express home delivery', price: 119 }
+  ];
+
+  let selectedCarrierId = 0;
+  const homeCarrierCard = document.getElementById('homeCarrierCard');
+  const homeCarrierIcon = document.getElementById('homeCarrierIcon');
+  const homeCarrierName = document.getElementById('homeCarrierName');
+  const homeCarrierOptionsLabel = document.getElementById('homeCarrierOptionsLabel');
+  const homeCarrierChevron = document.getElementById('homeCarrierChevron');
+  const carrierOverlay = document.getElementById('carrierOverlay');
+  const carrierModal = document.getElementById('carrierModal');
+  const carrierModalClose = document.getElementById('carrierModalClose');
+  const carrierListEl = document.getElementById('carrierList');
+
+  function initHomeCarriers() {
+    var sorted = homeCarriers.slice().sort(function(a, b) { return a.price - b.price; });
+    selectedCarrierId = sorted[0].id;
+    applySelectedCarrier();
+    if (homeCarriers.length > 1) {
+      homeCarrierOptionsLabel.textContent = homeCarriers.length + ' options';
+      homeCarrierOptionsLabel.style.display = '';
+      homeCarrierChevron.style.display = '';
+      homeCarrierCard.style.cursor = 'pointer';
+    } else {
+      homeCarrierOptionsLabel.style.display = 'none';
+      homeCarrierChevron.style.display = 'none';
+      homeCarrierCard.style.cursor = 'default';
+    }
+  }
+
+  function applySelectedCarrier() {
+    var carrier = homeCarriers.find(function(c) { return c.id === selectedCarrierId; });
+    if (!carrier) return;
+    homeCarrierName.textContent = carrier.name;
+    homeCarrierIcon.innerHTML = '';
+    homeCarrierIcon.textContent = carrier.code;
+    homeCarrierIcon.style.fontSize = '10px';
+    homeCarrierIcon.style.fontWeight = '500';
+    homeCarrierIcon.style.color = 'var(--content-tertiary)';
+
+    var priceEl = document.querySelector('.delivery-option[data-option="home"] .delivery-price');
+    if (priceEl) priceEl.innerHTML = '&euro; ' + carrier.price;
+
+    var shippingPriceEl = document.getElementById('shippingPrice');
+    if (shippingPriceEl) shippingPriceEl.innerHTML = '&euro; ' + carrier.price;
+
+    updateTotal();
+  }
+
+  function updateTotal() {
+    var totalEl = document.getElementById('totalPrice');
+    if (!totalEl) return;
+    var itemPrice = 5750;
+    var buyerProtection = 350;
+    var shippingPriceEl = document.getElementById('shippingPrice');
+    var shipping = 0;
+    if (shippingPriceEl) {
+      var m = shippingPriceEl.textContent.match(/[\d,]+/);
+      if (m) shipping = parseInt(m[0].replace(',', ''), 10);
+    }
+    var total = itemPrice + buyerProtection + shipping;
+    totalEl.innerHTML = '&euro; ' + total.toLocaleString('en');
+  }
+
+  function renderCarrierList() {
+    carrierListEl.innerHTML = '';
+    homeCarriers.forEach(function(carrier) {
+      var item = document.createElement('div');
+      item.className = 'carrier-list-item' + (carrier.id === selectedCarrierId ? ' selected' : '');
+      item.innerHTML =
+        '<div class="carrier-list-icon">' + carrier.code + '</div>' +
+        '<div class="carrier-list-info">' +
+          '<div class="carrier-list-name">' + carrier.name + '</div>' +
+          '<div class="carrier-list-detail">' + carrier.detail + '</div>' +
+        '</div>' +
+        '<span class="carrier-list-price">&euro; ' + carrier.price + '</span>' +
+        '<svg class="carrier-list-check" viewBox="0 0 20 20" fill="none"><path d="M4 10l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      item.addEventListener('click', function() {
+        selectedCarrierId = carrier.id;
+        applySelectedCarrier();
+        renderCarrierList();
+        setTimeout(closeCarrierModal, 150);
+      });
+      carrierListEl.appendChild(item);
+    });
+  }
+
+  function openCarrierModal() {
+    if (homeCarriers.length <= 1) return;
+    renderCarrierList();
+    carrierOverlay.classList.remove('hiding');
+    carrierOverlay.classList.add('active');
+    carrierModal.classList.remove('hiding');
+    carrierModal.classList.add('active');
+  }
+
+  function closeCarrierModal() {
+    carrierOverlay.classList.add('hiding');
+    carrierModal.classList.add('hiding');
+    function onEnd() {
+      carrierOverlay.classList.remove('active', 'hiding');
+      carrierModal.classList.remove('active', 'hiding');
+      carrierModal.removeEventListener('transitionend', onEnd);
+    }
+    carrierModal.addEventListener('transitionend', onEnd, { once: true });
+  }
+
+  homeCarrierCard.addEventListener('click', function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    openCarrierModal();
+  });
+  homeCarrierChevron.addEventListener('click', function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    openCarrierModal();
+  });
+  carrierModalClose.addEventListener('click', closeCarrierModal);
+  carrierOverlay.addEventListener('click', closeCarrierModal);
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && carrierModal.classList.contains('active')) {
+      closeCarrierModal();
+    }
+  });
+
+  initHomeCarriers();
+
+  // ============================================
+  // PICK-UP POINT SUB-FLOW
+  // ============================================
+  const pickupFlow = document.getElementById('pickupFlow');
+  const pickupFlowBack = document.getElementById('pickupFlowBack');
+  const pickupSearchInput = document.getElementById('pickupSearchInput');
+  const pickupListView = document.getElementById('pickupListView');
+  const pickupMapView = document.getElementById('pickupMapView');
+  const pickupBottomSheet = document.getElementById('pickupBottomSheet');
+  const sheetHandle = document.getElementById('sheetHandle');
+  const btnChooseStation = document.getElementById('btnChooseStation');
+
+  const pickupStations = [
+    { id: 0, carrier: 'DHL', name: 'DHL Packstation 412', address: 'Leopoldstr. 24, 80802 München', distance: '0.3 km', price: 49 },
+    { id: 1, carrier: 'HER', name: 'Hermes PaketShop Kiosk am Markt', address: 'Marktstr. 8, 80802 München', distance: '0.5 km', price: 55 },
+    { id: 2, carrier: 'DHL', name: 'DHL Paketshop Rewe', address: 'Hohenzollernstr. 50, 80801 München', distance: '0.8 km', price: 49 },
+    { id: 3, carrier: 'HER', name: 'Hermes PaketShop Schreibwaren Plus', address: 'Schellingstr. 15, 80799 München', distance: '1.2 km', price: 55 },
+    { id: 4, carrier: 'DHL', name: 'DHL Packstation 519', address: 'Ainmillerstr. 2, 80801 München', distance: '1.4 km', price: 49 },
+    { id: 5, carrier: 'HER', name: 'Hermes PaketShop Tankstelle Schwabing', address: 'Ungererstr. 70, 80805 München', distance: '1.9 km', price: 55 }
+  ];
+
+  let selectedMapStation = 0;
+  let pendingPickupFlow = false;
+
+  function isAddressFilled() {
+    return shippingAddressCard.classList.contains('visible');
+  }
+
+  function getAddressString() {
+    var zip = document.getElementById('addrZip');
+    var city = document.getElementById('addrCity');
+    var parts = [];
+    if (zip && zip.value.trim()) parts.push(zip.value.trim());
+    if (city && city.value.trim()) parts.push(city.value.trim());
+    return parts.length ? parts.join(' ') : '';
+  }
+
+  function openPickupFlow() {
+    var addr = getAddressString();
+    if (addr) pickupSearchInput.value = addr;
+    pickupFlow.classList.remove('hiding');
+    pickupFlow.classList.add('active');
+    document.querySelectorAll('.pickup-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.pickup-tab[data-view="list"]').classList.add('active');
+    pickupListView.classList.remove('hidden');
+    pickupMapView.classList.add('hidden');
+    updateMapSelection(0);
+  }
+
+  function closePickupFlow() {
+    pickupFlow.classList.add('hiding');
+    pickupFlow.addEventListener('transitionend', function handler() {
+      pickupFlow.removeEventListener('transitionend', handler);
+      pickupFlow.classList.remove('active', 'hiding');
+    }, { once: true });
+  }
+
+  // Entry point: carrier detail card inside pickup-point option
+  const pickupOptionCard = document.querySelector('.delivery-option[data-option="pickup-point"]');
+  const pickupDetailCard = pickupOptionCard.querySelector('.delivery-detail-card');
+
+  function handlePickupCardClick(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!isAddressFilled()) {
+      pendingPickupFlow = true;
+      if (isLoggedIn) {
+        openAddressPage();
+      } else {
+        openModal();
+      }
+      return;
+    }
+    openPickupFlow();
+  }
+  pickupDetailCard.style.cursor = 'pointer';
+  pickupDetailCard.addEventListener('click', handlePickupCardClick);
+  pickupDetailCard.querySelector('.delivery-detail-edit').addEventListener('click', handlePickupCardClick);
+
+  // Update button label based on address state
+  function updatePickupButtonLabel() {
+    var nameEl = pickupDetailCard.querySelector('.delivery-detail-name');
+    if (!nameEl) return;
+    if (isAddressFilled()) {
+      nameEl.textContent = 'Select pick-up station';
+    } else {
+      nameEl.textContent = 'Enter address to select pick-up station';
+    }
+  }
+
+
+  // Back button
+  pickupFlowBack.addEventListener('click', closePickupFlow);
+
+  // Tab switching
+  document.querySelectorAll('.pickup-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.pickup-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      if (this.dataset.view === 'list') {
+        pickupListView.classList.remove('hidden');
+        pickupMapView.classList.add('hidden');
+      } else {
+        pickupListView.classList.add('hidden');
+        pickupMapView.classList.remove('hidden');
+        pickupBottomSheet.classList.remove('collapsed');
+      }
+    });
+  });
+
+  // Map pin selection
+  function updateMapSelection(stationId) {
+    selectedMapStation = stationId;
+    var station = pickupStations[stationId];
+    document.querySelectorAll('.map-pin').forEach(function(pin) {
+      pin.classList.toggle('active', parseInt(pin.dataset.station) === stationId);
+    });
+    document.getElementById('sheetCarrierLogo').textContent = station.carrier;
+    document.getElementById('sheetStationName').textContent = station.name;
+    document.getElementById('sheetStationAddress').textContent = station.address;
+    document.getElementById('sheetStationDistance').textContent = station.distance;
+    document.getElementById('sheetStationPrice').innerHTML = '&euro; ' + station.price;
+  }
+
+  document.querySelectorAll('.map-pin').forEach(function(pin) {
+    pin.addEventListener('click', function() {
+      updateMapSelection(parseInt(this.dataset.station));
+      pickupBottomSheet.classList.remove('collapsed');
+    });
+  });
+
+  // Bottom sheet toggle
+  sheetHandle.addEventListener('click', function() {
+    pickupBottomSheet.classList.toggle('collapsed');
+  });
+
+  // Confirm pick-up point
+  function confirmPickupPoint(stationId) {
+    var station = pickupStations[stationId];
+
+    var carrierIcon = pickupDetailCard.querySelector('.carrier-icon');
+    carrierIcon.innerHTML = '';
+    carrierIcon.textContent = station.carrier;
+    carrierIcon.style.fontSize = '10px';
+    carrierIcon.style.fontWeight = '500';
+    carrierIcon.style.color = 'var(--content-tertiary)';
+
+    var nameEl = pickupDetailCard.querySelector('.delivery-detail-name');
+    nameEl.textContent = station.name;
+
+    var contentEl = pickupDetailCard.querySelector('.delivery-detail-content');
+    var addrLine = contentEl.querySelector('.delivery-detail-address');
+    if (!addrLine) {
+      addrLine = document.createElement('div');
+      addrLine.className = 'delivery-detail-address';
+      addrLine.style.fontSize = 'var(--text-sm)';
+      addrLine.style.lineHeight = 'var(--line-height-sm)';
+      addrLine.style.color = 'var(--content-tertiary)';
+      contentEl.appendChild(addrLine);
+    }
+    addrLine.textContent = station.address;
+
+    var priceEl = pickupOptionCard.querySelector('.delivery-price');
+    priceEl.innerHTML = '&euro; ' + station.price;
+
+    var editBtn = pickupDetailCard.querySelector('.delivery-detail-edit');
+    editBtn.setAttribute('aria-label', 'Change pick-up point');
+
+    closePickupFlow();
+  }
+
+  // List item clicks
+  document.querySelectorAll('.pickup-list-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      confirmPickupPoint(parseInt(this.dataset.station));
+    });
+  });
+
+  // Map CTA button
+  btnChooseStation.addEventListener('click', function() {
+    confirmPickupPoint(selectedMapStation);
+  });
+
+  // Initial label check
+  updatePickupButtonLabel();
+</script>
+
+</body>
+</html>
