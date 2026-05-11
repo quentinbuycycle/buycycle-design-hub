@@ -69,6 +69,11 @@ export const referencePrototypes: ProductArea[] = [
         title: 'User Profile',
         app: 'Profile - App.html',
       },
+      {
+        title: 'Payment',
+        webDesktop: 'Payment-Desktop.html',
+        app: 'Payment-Mobile-App.html',
+      },
     ],
   },
 ]
