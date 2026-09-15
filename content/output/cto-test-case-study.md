@@ -6,7 +6,8 @@ team: "Test"
 tags: ["Buyer","Pre-transactional XP"]
 prototypes:
   - "/prototypes/cto-test-case-study.html"
-finalPrototypes: []
+finalPrototypes:
+  - "/prototypes/final-test.html"
 ---
 
 ## Problem
