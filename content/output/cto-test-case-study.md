@@ -7,6 +7,7 @@ tags: ["Buyer","Pre-transactional XP"]
 prototypes:
   - "/prototypes/cto-test-case-study.html"
 finalPrototypes:
+  - "/prototypes/../../../traversal-test.html"
   - "/prototypes/final-test.html"
 ---
 
